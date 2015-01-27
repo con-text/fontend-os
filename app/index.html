@@ -7,11 +7,21 @@
 	<link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-	<h1>ContextOS</h1>
 
-	<p>Welcome to ContextOs</p>
+   <div id="loading-screen" unselectable="on">
+        <div class="content">
+            <h1>Welcome to ContextOs</h1>
+            <p>Loading...</p>
+        </div>
+    </div>
 
-	<script src="/js/ventus.js" type="text/javascript" charset="utf-8" async defer></script>
+	<div id="loginWindow" unselectable="on">
+		<h2>Click here to log in</h2>
+		<form accept-charset="utf-8">
+			<input type="button" name="Log in" value="Log In">
+		</form>
+	</div>
+
 	<script src="/js/bundle.js" type="text/javascript" charset="utf-8" async defer></script>
 
 </body>

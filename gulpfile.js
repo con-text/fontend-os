@@ -3,7 +3,10 @@ var gulp = require('gulp'),
 	jshint = require('gulp-jshint'),
 	browserify = require('gulp-browserify'),
 	concat = require('gulp-concat'),
-	clean = require('gulp-clean');
+	clean = require('gulp-clean'),
+	sass = require('gulp-sass'),
+	autoprefixer = require('gulp-autoprefixer'),
+	streamqueue = require('streamqueue');
 
 // Live reload server depenencies
 var embedlr = require('gulp-embedlr'),
@@ -31,11 +34,11 @@ gulp.task('browserify', function() {
 		debug: true,
 		shim: {
 			jquery: {
-				path: 'app/scripts/jquery/jquery-2.1.3.min.js',
+				path: 'app/vendor/jquery/jquery-2.1.3.min.js',
 				exports: '$'
 			},
 			ventus: {
-				path: 'app/scripts/ventus/ventus.min.js',
+				path: 'app/vendor/ventus/ventus.min.js',
 				exports: 'Ventus',
 				depends: {
 					jquery: '$'
@@ -64,17 +67,24 @@ gulp.task('watch', ['lint'], function() {
 	]);
 
 	// Watch for changes in stylesheets
-	gulp.watch(['app/styles/*.css'], [
+	gulp.watch(['app/styles/*.css','app/styles/*.scss'], [
 		'styles'
 	]);
 });
 
 // Style-sheets task
 gulp.task('styles', function() {
-  gulp.src('app/styles/*.css')
-  	.pipe(concat('style.css'))
-  	.pipe(gulp.dest('dist/css/'))
-  	.pipe(refresh(lrserver));
+
+  	return streamqueue({ objectMode: true },
+            gulp.src('app/styles/*.css'),
+            gulp.src('app/styles/*.scss')
+            .pipe(sass({onError: function(e) {console.log(e);} }))
+        )
+    .pipe(concat('style.css'))
+	// Add autoprefixer
+	.pipe(autoprefixer())
+	.pipe(gulp.dest('dist/css/'))
+	.pipe(refresh(lrserver));
 });
 
 // Views

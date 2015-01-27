@@ -28,7 +28,20 @@ gulp.task('browserify', function() {
 	gulp.src(['app/scripts/main.js'])
 	.pipe(browserify({
 		insertGlobals: true,
-		debug: true	
+		debug: true,
+		shim: {
+			jquery: {
+				path: 'app/scripts/jquery/jquery-2.1.3.min.js',
+				exports: '$'
+			},
+			ventus: {
+				path: 'app/scripts/ventus/ventus.min.js',
+				exports: 'Ventus',
+				depends: {
+					jquery: '$'
+				}
+			}
+		}
 	}))
 	// Concatinate into one file
 	.pipe(concat("bundle.js"))
@@ -47,12 +60,24 @@ gulp.task('watch', ['lint'], function() {
 
 	// Watch views
 	gulp.watch(['app/index.html', 'app/views/**/*.html'], [
-	  'views'
+		'views'
+	]);
+
+	// Watch for changes in stylesheets
+	gulp.watch(['app/styles/*.css'], [
+		'styles'
 	]);
 });
 
+// Style-sheets task
+gulp.task('styles', function() {
+  gulp.src('app/styles/*.css')
+  	.pipe(concat('style.css'))
+  	.pipe(gulp.dest('dist/css/'))
+  	.pipe(refresh(lrserver));
+});
 
-
+// Views
 gulp.task('views', function() {
 	
 	// Main view
@@ -66,7 +91,8 @@ gulp.task('views', function() {
   	.pipe(refresh(lrserver));
 });
 
-gulp.task('server', function() {
+// Devlopment server
+gulp.task('dev', function() {
 
 	// Set up an express server (but not starting it yet)
 	var server = express();
@@ -79,7 +105,7 @@ gulp.task('server', function() {
 	
 	// Because I like HTML5 pushstate .. this redirects everything back to our index.html
 	server.all('/*', function(req, res) {
-	    res.sendfile('index.html', { root: 'dist' });
+	    res.sendFile('index.html', { root: 'dist' });
 	});
 
 	// Start webserver

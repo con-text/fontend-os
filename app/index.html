@@ -16,10 +16,9 @@
     </div>
 
 	<div id="loginWindow" unselectable="on">
-		<h2>Click here to log in</h2>
-		<form accept-charset="utf-8">
-			<input type="button" name="Log in" value="Log In">
-		</form>
+		<p>Users:</p>
+		<ul id="user-list">
+		</ul>
 	</div>
 
 	<script src="/js/bundle.js" type="text/javascript" charset="utf-8" async defer></script>
@@ -27,6 +26,21 @@
 	<script src="/socket.io/socket.io.js"></script>
 	<script>
   		var socket = io();
+
+  		socket.on('users', function (data) {
+  			var userList = $("#user-list");
+    		userList.empty();
+
+    		data.forEach(function(user) {
+    			var liElement = $("<li></li>");
+    			liElement.append($('<p>', {text: user.name}));
+    			liElement.append($('<img>').attr('src', user.profile_pic));
+
+    			userList.append(liElement);
+    		});
+
+    	});
+
 	</script>
 
 </body>

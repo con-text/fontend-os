@@ -1,6 +1,10 @@
 $defaultWindowPadding: 20px;
 $bgColour: #005199;
 
+html, body {
+	overflow: hidden;
+	height: 100%;
+}
 body {
 	background-color: $bgColour;
 }

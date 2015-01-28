@@ -8,6 +8,27 @@ html, body {
 body {
 	background-color: $bgColour;
 }
+
+#users {
+	z-index: 1;
+	position: absolute;
+	top: 0;
+	color: #FFFFFF;
+	margin: 10px 0 0 10px;
+	
+	.user {
+		.userPic {
+			width: 40px;
+			height: 40px;
+			margin-top: 10px;
+		}
+
+		.userName {
+			font-size: 1.1em;
+		}
+	}
+}
+
 #loginWindow {
 	padding: $defaultWindowPadding;
 }

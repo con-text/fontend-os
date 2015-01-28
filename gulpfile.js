@@ -6,7 +6,8 @@ var gulp = require('gulp'),
 	clean = require('gulp-clean'),
 	sass = require('gulp-sass'),
 	autoprefixer = require('gulp-autoprefixer'),
-	streamqueue = require('streamqueue');
+	streamqueue = require('streamqueue'),
+	reactify = require('reactify');
 
 // Live reload server depenencies
 var embedlr = require('gulp-embedlr'),
@@ -31,6 +32,7 @@ gulp.task('browserify', function() {
 	.pipe(browserify({
 		insertGlobals: true,
 		debug: true,
+		transform: ['reactify'],
 		shim: {
 			jquery: {
 				path: 'app/vendor/jquery/jquery-2.1.3.min.js',
@@ -42,6 +44,10 @@ gulp.task('browserify', function() {
 				depends: {
 					jquery: '$'
 				}
+			},
+			react: {
+				path: 'app/vendor/react/react-0.12.2.js',
+				exports: 'React'
 			}
 		}
 	}))

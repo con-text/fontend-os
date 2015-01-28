@@ -3,45 +3,26 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title></title>
+	<title>ContextOs</title>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
 	<link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
-   <div id="loading-screen" unselectable="on">
+	<div id="users">
+	</div>
+
+    <div id="loading-screen" unselectable="on">
         <div class="content">
             <h1>Welcome to ContextOs</h1>
             <p>Loading...</p>
         </div>
     </div>
 
-	<div id="loginWindow" unselectable="on">
-		<p>Users:</p>
-		<ul id="user-list">
-		</ul>
-	</div>
-
-	<script src="/js/bundle.js" type="text/javascript" charset="utf-8" async defer></script>
+	<div id="loginWindow" unselectable="on"></div>
 
 	<script src="/socket.io/socket.io.js"></script>
-	<script>
-  		var socket = io();
-
-  		socket.on('users', function (data) {
-  			var userList = $("#user-list");
-    		userList.empty();
-
-    		data.forEach(function(user) {
-    			var liElement = $("<li></li>");
-    			liElement.append($('<p>', {text: user.name}));
-    			liElement.append($('<img>').attr('src', user.profile_pic));
-
-    			userList.append(liElement);
-    		});
-
-    	});
-
-	</script>
-
+	<script src="/js/bundle.js" type="text/javascript" charset="utf-8"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
 </body>
 </html>

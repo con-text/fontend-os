@@ -30,7 +30,7 @@ var User = React.createClass({
 var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
 
 var UsersList = React.createClass({
-	
+
 	render: function() {
 		var userNodes = this.props.users.map(function (user) {
 			return (
@@ -69,8 +69,12 @@ var UsersBox = React.createClass({
 });
 
 $(document).ready(function() {
-    
+
     var wm = new Ventus.WindowManager();
+
+		// Make it global
+		window.wm = wm;
+
     wm.mode = "fullscreen";
 
     var loginWindow = wm.createWindow.fromQuery('#users',{
@@ -86,7 +90,7 @@ $(document).ready(function() {
 
     loginWindow.open();
 
-    // Render react element in 
+    // Render react element in
     React.render(
 	   <UsersBox />,
 	   document.getElementById('users')

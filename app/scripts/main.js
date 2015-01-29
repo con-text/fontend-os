@@ -8,6 +8,9 @@ var React = require('react');
 // Initialize socket.io
 var socket = io();
 
+// Other components
+var TaskBar = require('./taskbar/taskbar');
+
 var User = React.createClass({
 	render: function() {
 		return (
@@ -67,26 +70,32 @@ var UsersBox = React.createClass({
 
 $(document).ready(function() {
     
-    //var wm = new Ventus.WindowManager();
-    //wm.mode = "fullscreen";
+    var wm = new Ventus.WindowManager();
+    wm.mode = "fullscreen";
 
-    /*var loginWindow = wm.createWindow.fromQuery('#users',{
+    var loginWindow = wm.createWindow.fromQuery('#users',{
         title: 'List of Users',
         x: 50,
         y: 50,
         width: 400,
         height: 550
-    });*/
+    });
 
     // Hide loading overlay
     $('#loading-screen').hide();
 
-    //loginWindow.open();
+    loginWindow.open();
 
     // Render react element in 
     React.render(
-	  <UsersBox />,
-	  document.getElementById('users')
+	   <UsersBox />,
+	   document.getElementById('users')
 	);
+
+    // Render Taskbar
+    React.render(
+        <TaskBar />,
+        document.getElementById('taskbar')
+    );
 
 });

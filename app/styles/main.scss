@@ -1,5 +1,8 @@
 $defaultWindowPadding: 20px;
-$bgColour: #005199;
+$bgColour: #C3C3C8;
+
+
+@import 'components/taskbar';
 
 html, body {
 	overflow: hidden;

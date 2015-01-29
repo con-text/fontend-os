@@ -72,7 +72,7 @@ gulp.task('watch', ['lint'], function() {
 	]);
 
 	// Watch for changes in stylesheets
-	gulp.watch(['app/styles/*.css','app/styles/*.scss'], [
+	gulp.watch(['app/styles/*.css','app/styles/*.scss', 'app/styles/**/*.scss'], [
 		'styles'
 	]);
 });

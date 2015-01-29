@@ -1,9 +1,50 @@
 $defaultWindowPadding: 20px;
 $bgColour: #005199;
 
+html, body {
+	overflow: hidden;
+	height: 100%;
+}
 body {
 	background-color: $bgColour;
 }
+
+.example-enter {
+  opacity: 0.01;
+  transition: opacity .5s ease-in;
+}
+
+.example-enter.example-enter-active {
+  opacity: 1;
+}
+
+.example-leave {
+  opacity: 1;
+  transition: opacity .5s ease-in;
+}
+
+.example-leave.example-leave-active {
+  opacity: 0.01;
+}
+
+#users {
+	
+	color: #000;
+	margin: 20px 0 0 10px;
+	
+	.user {
+		.userPic {
+			width: 40px;
+			height: 40px;
+			margin-top: 10px;
+		}
+
+		.userName {
+			font-size: 1.1em;
+		}
+	}
+}
+
 #loginWindow {
 	padding: $defaultWindowPadding;
 }

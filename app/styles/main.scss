@@ -9,12 +9,28 @@ body {
 	background-color: $bgColour;
 }
 
+.example-enter {
+  opacity: 0.01;
+  transition: opacity .5s ease-in;
+}
+
+.example-enter.example-enter-active {
+  opacity: 1;
+}
+
+.example-leave {
+  opacity: 1;
+  transition: opacity .5s ease-in;
+}
+
+.example-leave.example-leave-active {
+  opacity: 0.01;
+}
+
 #users {
-	z-index: 1;
-	position: absolute;
-	top: 0;
-	color: #FFFFFF;
-	margin: 10px 0 0 10px;
+	
+	color: #000;
+	margin: 20px 0 0 10px;
 	
 	.user {
 		.userPic {

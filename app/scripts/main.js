@@ -8,7 +8,6 @@ var React = require('react');
 // Initialize socket.io
 var socket = io();
 
-
 var User = React.createClass({
 	render: function() {
 		return (
@@ -24,20 +23,24 @@ var User = React.createClass({
 	}
 });
 
+
+var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
+
 var UsersList = React.createClass({
 	
 	render: function() {
-		console.log("Props", this.props);
 		var userNodes = this.props.users.map(function (user) {
 			return (
-				<User name={user.name} profilePic={user.profilePic} />
+				<User key={user.name} name={user.name} profilePic={user.profilePic} />
 			);
 		});
 
 		return(
-			<div className='usersList'>
-				{userNodes}
-			</div>
+			<ReactCSSTransitionGroup transitionName='example'>
+				<div className='usersList'>
+					{userNodes}
+				</div>
+			</ReactCSSTransitionGroup >
 		);
 	}
 });
@@ -50,40 +53,35 @@ var UsersBox = React.createClass({
   		var self = this;
   		// Listen to users event
 		socket.on('users', function (data) {
-			console.log(data)
 			self.setState({data: data});
 		});
   	},
   	render: function() {
     	return (
     		<div id="users-box">
-    			<h1>Users</h1>
     			<UsersList users={this.state.data} />
     		</div>
     	);
   	}
 });
 
-
-
-
-
 $(document).ready(function() {
     
-    var wm = new Ventus.WindowManager();
+    //var wm = new Ventus.WindowManager();
+    //wm.mode = "fullscreen";
 
-    var loginWindow = wm.createWindow.fromQuery('#loginWindow',{
-        title: 'Log in',
+    /*var loginWindow = wm.createWindow.fromQuery('#users',{
+        title: 'List of Users',
         x: 50,
         y: 50,
         width: 400,
-        height: 250
-    });
+        height: 550
+    });*/
 
     // Hide loading overlay
     $('#loading-screen').hide();
 
-    loginWindow.open();
+    //loginWindow.open();
 
     // Render react element in 
     React.render(

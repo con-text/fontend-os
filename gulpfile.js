@@ -46,7 +46,7 @@ gulp.task('browserify', function() {
 				}
 			},
 			react: {
-				path: 'app/vendor/react/react-0.12.2.js',
+				path: 'app/vendor/react/react-addons-0.12.2.js',
 				exports: 'React'
 			}
 		}

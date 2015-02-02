@@ -30,11 +30,21 @@ body {
   opacity: 0.01;
 }
 
+#app {
+	position: absolute;
+	top: 0;
+	left: 0;
+
+	.loading-screen {
+		width: 100px;
+		margin: 0 auto;
+	}
+}
 #users {
-	
+
 	color: #000;
 	margin: 20px 0 0 10px;
-	
+
 	.user {
 		.userPic {
 			width: 40px;
@@ -67,7 +77,7 @@ body {
 	background-color:  $bgColour;
 
 	.content {
-		
+
 		bottom: 20px;
 		left: 20%;
 

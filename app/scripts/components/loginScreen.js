@@ -1,6 +1,9 @@
 /** @jsx React.DOM */
 'use strict';
 
+// Initialize socket.io
+var socket = io();
+
 var React = require('react');
 var User = React.createClass({
 
@@ -22,20 +25,30 @@ var User = React.createClass({
 var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
 
 var UsersList = React.createClass({
-  
+
+  getInitialState: function() {
+      return {
+        users: [{name: 'Benji', profilePic: 'http://placehold.it/50'},
+          {name: 'Nobody', profilePic: 'http://placehold.it/50'}]
+      }
+  },
+
   render: function() {
-    var userNodes = this.props.users.map(function (user) {
+    var userNodes = this.state.users.map(function (user) {
       return (
         <User key={user.name} name={user.name} profilePic={user.profilePic} />
       );
     });
 
     return(
+      <div id="login-list">
       <ReactCSSTransitionGroup transitionName='example'>
         <div className='usersList'>
           {userNodes}
         </div>
       </ReactCSSTransitionGroup >
+
+      </div>
     );
   }
 });

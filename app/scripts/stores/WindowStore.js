@@ -1,11 +1,12 @@
 
 var WindowDispatcher = require('../dispatchers/WindowDispatcher');
 var WindowConstants = require('../constants/WindowConstants');
-
 var EventEmitter = require('events').EventEmitter;
 var assign = require('object-assign');
-
+var Ventus = require('ventus');
 var CHANGE_EVENT = 'change';
+
+var wm = new Ventus.WindowManager();
 
 var _windows = {};
 
@@ -16,6 +17,16 @@ function create(title) {
     id: id,
     title: title
   }
+
+  var newWindow = wm.createWindow({
+      title: title,
+      x: 50,
+      y: 50,
+      width: 400,
+      height: 550
+  });
+
+  newWindow.open();
 }
 
 var WindowStore = assign({}, EventEmitter.prototype, {

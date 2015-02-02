@@ -11,18 +11,7 @@ var wm = window.wm;
 
 var Icon = React.createClass({
 	handleClick: function() {
-		
-		// Create Window
 		WindowActions.createWindow("New Window");
-		var newWindow = window.wm.createWindow({
-	    title: 'A new window',
-	    x: 50,
-	    y: 50,
-	    width: 400,
-	    height: 250
-		});
-
-		newWindow.open();
 	},
 	render: function() {
 		return (
@@ -35,7 +24,7 @@ var Icon = React.createClass({
 var Taskbar = React.createClass({
 	render: function() {
 		return (
-			<div className="taskBar">
+			<div className="taskbar">
 				<Icon />
 				<Icon />
 				<Icon />

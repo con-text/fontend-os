@@ -4,12 +4,16 @@
 var $ = require('jquery');
 var React = require('react');
 
+var WindowActions = require('../../actions/WindowActions');
+
 // Get window manager handle
 var wm = window.wm;
 
 var Icon = React.createClass({
 	handleClick: function() {
-		console.log(window.wm);
+		
+		// Create Window
+		WindowActions.createWindow("New Window");
 		var newWindow = window.wm.createWindow({
 	    title: 'A new window',
 	    x: 50,

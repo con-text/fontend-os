@@ -9,7 +9,7 @@ var React = require('react');
 var socket = io();
 
 // Other components
-var TaskBar = require('./taskbar/taskbar');
+var TaskBar = require('./components/taskbar/taskbar');
 
 var User = React.createClass({
 	render: function() {
@@ -94,12 +94,12 @@ $(document).ready(function() {
     React.render(
 	   <UsersBox />,
 	   document.getElementById('users')
-	);
+	  );
 
     // Render Taskbar
     React.render(
-        <TaskBar />,
-        document.getElementById('taskbar')
+  		<TaskBar />,
+      document.getElementById('taskbar')
     );
 
 });

@@ -29,3 +29,5 @@ node_modules
 
 # Ignore dist files
 dist/*
+
+.DS_Store

@@ -44,10 +44,6 @@ gulp.task('browserify', function() {
 				depends: {
 					jquery: '$'
 				}
-			},
-			react: {
-				path: 'app/vendor/react/react-addons-0.12.2.js',
-				exports: 'React'
 			}
 		}
 	}))
@@ -94,7 +90,7 @@ gulp.task('styles', function() {
 
 // Views
 gulp.task('views', function() {
-	
+
 	// Main view
 	gulp.src('./app/index.html')
 	.pipe(gulp.dest('dist/'));
@@ -106,8 +102,13 @@ gulp.task('views', function() {
   	.pipe(refresh(lrserver));
 });
 
+// Default task
+gulp.task('default', ['browserify', 'views', 'styles'], function() {
+
+});
+
 // Devlopment server
-gulp.task('dev', function() {
+gulp.task('dev', ['browserify', 'views', 'styles'], function() {
 
 	var serverConfig = {
 		destDir: "dist",
@@ -119,7 +120,7 @@ gulp.task('dev', function() {
 	var server = require('./server');
 
 	server.startServer(serverConfig, function(express, startServer) {
-		
+
 		// Extra config
 		// Add live reload
 		express.use(livereload({port: livereloadport}));
@@ -128,7 +129,7 @@ gulp.task('dev', function() {
 		startServer();
 
 	}, onServerStarted);
-   
+
     // Run the watch task, to keep taps on changes
     gulp.start('watch');
 });

@@ -1,10 +1,13 @@
 /** @jsx React.DOM */
 'use strict';
 
-// Initialize socket.io
-var socket = io();
 var React = require('react');
 var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
+var AvailableUsersStore = require('../stores/AvailableUsersStore');
+var AvailableUsersSocketUtils = require('../utils/AvailableUsersSocketUtils');
+
+// Start the socker helpe
+AvailableUsersSocketUtils.listenOverSocket();
 
 // Single list element
 var User = React.createClass({
@@ -27,6 +30,8 @@ var User = React.createClass({
 var UsersList = React.createClass({
 
   render: function() {
+
+    // Get all user nodes
     var userNodes = this.props.users.map(function (user) {
       return (
         <User key={user.name} name={user.name} profilePic={user.profilePic} />
@@ -34,7 +39,6 @@ var UsersList = React.createClass({
     });
 
     var isEmpty = userNodes.length === 0;
-    console.log(isEmpty, userNodes);
 
     if(isEmpty) {
       return (
@@ -61,19 +65,27 @@ var UsersBox = React.createClass({
 
     // Initial state
     getInitialState: function() {
-      return {data: []};
+      return {
+        available: AvailableUsersStore.getAvailable()
+      };
     },
 
     // After component rendered
     componentDidMount: function() {
-      var self = this;
-      // Listen to users event
-      socket.on('users', function (data) {
-        self.setState({data: data});
-      });
+      AvailableUsersStore.addChangeListener(this._onChange);
     },
 
-    // Render the element
+    componentWillUnmount: function() {
+      AvailableUsersStore.removeChangeListener(this._onChange);
+    },
+
+    _onChange: function() {
+      this.setState({available: AvailableUsersStore.getAvailable()});
+    },
+
+    /**
+    * return {object}
+    */
     render: function() {
 
       return (
@@ -83,7 +95,7 @@ var UsersBox = React.createClass({
               <span className="page-header">
                 <h1 className="text-center">Welcome to Context</h1>
               </span>
-              <UsersList users={this.state.data} />
+              <UsersList users={this.state.available} />
             </div>
           </div>
         </div>

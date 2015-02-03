@@ -30,9 +30,11 @@ var SessionStore = assign({}, EventEmitter.prototype, {
 });
 
 // Register with the dispatcher
-SessionDispatcher.register(function(action) {
+SessionDispatcher.register(function(payload) {
 
-  switch(action.actionType) {
+  var action = payload.action;
+
+  switch(action.type) {
     case SessionConstants.CREATE_WINDOW:
       createSession(action.user);
       SessionStore.emitChange();

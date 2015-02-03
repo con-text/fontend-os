@@ -14,7 +14,7 @@ var App = React.createClass({
   },
 
   render: function() {
-    
+
     if(this.state.session) {
       return(
         <TaskBar />

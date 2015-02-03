@@ -42,11 +42,12 @@ var WindowStore = assign({}, EventEmitter.prototype, {
 });
 
 // Register with the dispatcher
-WindowDispatcher.register(function(action) {
+WindowDispatcher.register(function(payload) {
 
+  var action = payload.action;
   var title;
 
-  switch(action.actionType) {
+  switch(action.action) {
     case WindowConstants.CREATE_WINDOW:
       title = action.title;
       create(title);

@@ -3,8 +3,10 @@
 
 // Initialize socket.io
 var socket = io();
-
 var React = require('react');
+var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
+
+// Single list element
 var User = React.createClass({
 
   render: function() {
@@ -21,9 +23,7 @@ var User = React.createClass({
   }
 });
 
-
-var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
-
+// List of users
 var UsersList = React.createClass({
 
   render: function() {
@@ -33,37 +33,56 @@ var UsersList = React.createClass({
       );
     });
 
-    return(
+    var isEmpty = userNodes.length === 0;
+    console.log(isEmpty, userNodes);
 
+    if(isEmpty) {
+      return (
+        <div id="login-list" className="empty">
+          <p className="text-center">Turn on your auth device.</p>
+        </div>
+      );
+    } else {
+      return(
         <div id="login-list">
-          <ReactCSSTransitionGroup transitionName='example'>
+          <ReactCSSTransitionGroup transitionName='userList'>
             <div className='usersList'>
               {userNodes}
             </div>
           </ReactCSSTransitionGroup >
         </div>
-
-    );
+      );
+    }
   }
 });
 
+// Login box
 var UsersBox = React.createClass({
+
+    // Initial state
     getInitialState: function() {
       return {data: []};
     },
+
+    // After component rendered
     componentDidMount: function() {
       var self = this;
       // Listen to users event
-    socket.on('users', function (data) {
-      self.setState({data: data});
-    });
+      socket.on('users', function (data) {
+        self.setState({data: data});
+      });
     },
+
+    // Render the element
     render: function() {
+
       return (
         <div className="container">
           <div className="row">
             <div id="users-box" className="col-md-5 col-md-offset-3">
-              <span className="page-header">Welcome to Context</span>
+              <span className="page-header">
+                <h1 className="text-center">Welcome to Context</h1>
+              </span>
               <UsersList users={this.state.data} />
             </div>
           </div>

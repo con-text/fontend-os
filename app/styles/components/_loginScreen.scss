@@ -1,0 +1,20 @@
+
+#users-box {
+  margin-top: 20%;
+  background: #ffffff;
+  padding: 10px 5px;
+
+  .title {
+      text-align: centre;
+      font-size: 2em;
+      float: right;
+      margin-top: 0px;
+      padding: 20px 10px;
+  }
+  .user {
+    margin: 15px 10px;
+    vertical-align: middle;
+
+    cursor:pointer;
+  }
+}

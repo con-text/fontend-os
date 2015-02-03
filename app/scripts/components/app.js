@@ -14,8 +14,7 @@ var App = React.createClass({
   },
 
   render: function() {
-
-    console.log("Session object", this.state.session)
+    
     if(this.state.session) {
       return(
         <TaskBar />

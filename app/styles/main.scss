@@ -1,13 +1,15 @@
 $defaultWindowPadding: 20px;
-$bgColour: #C3C3C8;
+$bgColour: #f0f0f0;
 
 
 @import 'components/taskbar';
+@import 'components/loginScreen';
 
 html, body {
 	overflow: hidden;
 	height: 100%;
 }
+
 body {
 	background-color: $bgColour;
 }
@@ -34,11 +36,8 @@ body {
 	position: absolute;
 	top: 0;
 	left: 0;
-
-	.loading-screen {
-		width: 100px;
-		margin: 0 auto;
-	}
+	right: 0;
+	bottom: 0;
 }
 #users {
 

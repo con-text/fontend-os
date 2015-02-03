@@ -26,19 +26,8 @@ var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
 
 var UsersList = React.createClass({
 
-  getInitialState: function() {
-      return {
-        users: [
-          {name: 'Benji', profilePic: 'http://placehold.it/50'},
-          {name: 'Denis', profilePic: 'http://placehold.it/50'},
-          {name: 'Ethan', profilePic: 'http://placehold.it/50'},
-          {name: 'Maciej', profilePic: 'http://placehold.it/50'}
-        ]
-      }
-  },
-
   render: function() {
-    var userNodes = this.state.users.map(function (user) {
+    var userNodes = this.props.users.map(function (user) {
       return (
         <User key={user.name} name={user.name} profilePic={user.profilePic} />
       );
@@ -74,7 +63,7 @@ var UsersBox = React.createClass({
         <div className="container">
           <div className="row">
             <div id="users-box" className="col-md-5 col-md-offset-3">
-              <span className="title">Welcome to Context</span>
+              <span className="page-header">Welcome to Context</span>
               <UsersList users={this.state.data} />
             </div>
           </div>

@@ -48,11 +48,9 @@ var SessionStore = assign({}, EventEmitter.prototype, {
 SessionDispatcher.register(function(payload) {
 
   var action = payload.action;
-  console.log(action)
   switch(action.type) {
     case ActionTypes.CREATE_SESSION:
       createSession(action.user);
-      console.log("DISPATCHER REG", payload.action)
       SessionStore.emitChange();
       break;
     case ActionTypes.DESTROY_SESSION:

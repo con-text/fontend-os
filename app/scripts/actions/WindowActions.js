@@ -5,9 +5,17 @@ var ActionTypes = WindowConstants.ActionTypes;
 
 module.exports = {
 
-  createWindow: function(title) {
+  createWindowFromEl: function(title, el) {
     WindowDispatcher.handleViewAction({
-      type: ActionTypes.CREATE_WINDOW,
+      type: ActionTypes.CREATE_WINDOW_FROM_ELEMENT,
+      title: title,
+      el: el
+    });
+  },
+
+  toggleWindow: function(title) {
+    WindowDispatcher.handleViewAction({
+      type: ActionTypes.TOGGLE_WINDOW,
       title: title
     });
   }

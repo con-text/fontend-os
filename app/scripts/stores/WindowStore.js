@@ -5,28 +5,42 @@ var EventEmitter = require('events').EventEmitter;
 var assign = require('object-assign');
 var Ventus = require('ventus');
 var CHANGE_EVENT = 'change';
+var ActionTypes = WindowConstants.ActionTypes;
 
 var wm = new Ventus.WindowManager();
 
+// List of opened windows
 var _windows = {};
 
+function createFromEl(title, el) {
 
-function create(title) {
-  var id = (+new Date() + Math.floor(Math.random() * 999999)).toString(36);
-  _windows[id] = {
-    id: id,
-    title: title
-  }
-
-  var newWindow = wm.createWindow({
-      title: title,
-      x: 50,
-      y: 50,
-      width: 400,
-      height: 550
+  // Create a window from a DOM element
+  _windows[title] = wm.createWindow.fromElement(el, {
+    title: title,
+    width: 500,
+    height: 500,
+    x: 0,
+    y: 0,
+    softRemove: true,
   });
 
-  newWindow.open();
+  _windows[title].open();
+}
+
+function toggleWindow(title) {
+
+  if(_windows[title]) {
+    var win = _windows[title];
+
+    if(win.opened) {
+      win.close();
+    }
+    else if(win.closed) {
+      wm.windows.push(win);
+      console.log(win.content)
+      win.open();
+    }
+  }
 }
 
 var WindowStore = assign({}, EventEmitter.prototype, {
@@ -37,6 +51,20 @@ var WindowStore = assign({}, EventEmitter.prototype, {
 
   emitChange: function() {
     this.emit(CHANGE_EVENT);
+  },
+
+  /**
+   * @param {function} callback
+   */
+  addChangeListener: function(callback) {
+    this.on(CHANGE_EVENT, callback);
+  },
+
+  /**
+   * @param {function} callback
+   */
+  removeChangeListener: function(callback) {
+    this.removeListener(CHANGE_EVENT, callback);
   }
 
 });
@@ -47,16 +75,17 @@ WindowDispatcher.register(function(payload) {
   var action = payload.action;
   var title;
 
-  switch(action.action) {
-    case WindowConstants.CREATE_WINDOW:
-      title = action.title;
-      create(title);
+  switch(action.type) {
+    case ActionTypes.CREATE_WINDOW_FROM_ELEMENT:
+      createFromEl(action.title, action.el);
       WindowStore.emitChange();
       break;
-    case WindowConstants.DESTROY_WINDOW:
+    case ActionTypes.DESTROY_WINDOW:
       WindowStore.emitChange();
       break;
-
+    case ActionTypes.TOGGLE_WINDOW:
+      toggleWindow(action.title);
+      break;
     default:
       // No operation
   }

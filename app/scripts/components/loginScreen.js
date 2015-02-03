@@ -5,6 +5,7 @@ var React = require('react');
 var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
 var AvailableUsersStore = require('../stores/AvailableUsersStore');
 var AvailableUsersSocketUtils = require('../utils/AvailableUsersSocketUtils');
+var SessionApiUtils = require('../utils/SessionApiUtils');
 
 // Start the socker helpe
 AvailableUsersSocketUtils.listenOverSocket();
@@ -12,9 +13,18 @@ AvailableUsersSocketUtils.listenOverSocket();
 // Single list element
 var User = React.createClass({
 
+  handleClick: function() {
+
+    //TODO: This is fake, change it to real data
+    SessionApiUtils.authenticateUser({
+      name: this.props.name
+    });
+
+  },
+
   render: function() {
     return (
-      <div className="user row">
+      <div className="user row" onClick={this.handleClick}>
         <div className="col-md-2">
           <img className="userPic img-circle" src={this.props.profilePic}></img>
         </div>
@@ -32,11 +42,14 @@ var UsersList = React.createClass({
   render: function() {
 
     // Get all user nodes
-    var userNodes = this.props.users.map(function (user) {
+    var userNodes = this.props.users.map(function (user, i) {
+
+      // Create single list element
       return (
         <User key={user.name} name={user.name} profilePic={user.profilePic} />
       );
-    });
+
+    }, this);
 
     var isEmpty = userNodes.length === 0;
 

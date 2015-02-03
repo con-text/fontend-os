@@ -13,6 +13,14 @@ var App = React.createClass({
       }
   },
 
+  componentDidMount: function() {
+    SessionStore.addChangeListener(this._onChange);
+  },
+
+  componentWillUnmount: function() {
+    SessionStore.removeChangeListener(this._onChange);
+  },
+
   render: function() {
 
     if(this.state.session) {
@@ -24,7 +32,14 @@ var App = React.createClass({
         <UsersBox />
       )
     }
+  },
+
+  _onChange: function() {
+      this.setState({session: SessionStore.getCurrentUser()});
+      console.log(this.state);
   }
+
+
 });
 
 module.exports = App;

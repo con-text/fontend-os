@@ -15,21 +15,20 @@ var User = React.createClass({
 
   handleClick: function() {
 
-    //TODO: This is fake, change it to real data
-    SessionApiUtils.authenticateUser({
-      name: this.props.name
-    });
-
+    // Call authenticate API and invoke action
+    SessionApiUtils.authenticateUser(this.props.user);
   },
 
   render: function() {
+
     return (
       <div className="user row" onClick={this.handleClick}>
         <div className="col-md-2">
-          <img className="userPic img-circle" src={this.props.profilePic}></img>
+          <img className="userPic test img-circle"
+            src={this.props.user.profilePicUrl} />
         </div>
         <div className="col-md-10">
-          <h3 className="userName col-md-3">{this.props.name}</h3>
+          <h3 className="userName col-md-3">{this.props.user.username}</h3>
         </div>
       </div>
     )
@@ -46,7 +45,7 @@ var UsersList = React.createClass({
 
       // Create single list element
       return (
-        <User key={user.name} name={user.name} profilePic={user.profilePic} />
+        <User key={i} user={user} />
       );
 
     }, this);

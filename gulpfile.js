@@ -51,7 +51,19 @@ gulp.task('browserify', function() {
 	.pipe(concat("bundle.js"))
 	// Output to destination directory
 	.pipe(gulp.dest("dist/js"));
+
 });
+
+// Notify Livereload
+function notifyLr(e) {
+	var fileName = require('path').relative(__dirname, e.path);
+	console.log("File changed", filename)
+	lrserver.changed({
+		body: {
+			files: [fileName]
+		}
+	});
+}
 
 // Watch task
 gulp.task('watch', ['lint'], function() {
@@ -60,17 +72,17 @@ gulp.task('watch', ['lint'], function() {
 	gulp.watch(['app/scripts/*.js', 'app/scripts/**/*.js'], [
 		'lint',
 		'browserify'
-	]);
+	], notifyLr);
 
 	// Watch views
 	gulp.watch(['app/index.html', 'app/views/**/*.html'], [
 		'views'
-	]);
+	], notifyLr);
 
 	// Watch for changes in stylesheets
 	gulp.watch(['app/styles/*.css','app/styles/*.scss', 'app/styles/**/*.scss'], [
 		'styles'
-	]);
+	], notifyLr);
 });
 
 // Style-sheets task
@@ -85,7 +97,6 @@ gulp.task('styles', function() {
 	// Add autoprefixer
 	.pipe(autoprefixer())
 	.pipe(gulp.dest('dist/css/'))
-	.pipe(refresh(lrserver));
 });
 
 // Views
@@ -97,9 +108,7 @@ gulp.task('views', function() {
 
 	// Sub-views
 	gulp.src('./app/views/**/*')
-	.pipe(gulp.dest('dist/views/'))
-	// Refresh live server
-  	.pipe(refresh(lrserver));
+	.pipe(gulp.dest('dist/views/'));
 });
 
 // Default task

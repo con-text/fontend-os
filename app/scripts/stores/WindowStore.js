@@ -21,7 +21,7 @@ function createFromEl(title, el) {
     height: 500,
     x: 0,
     y: 0,
-    softRemove: true,
+    softRemove: true
   });
 
   _windows[title].open();
@@ -34,10 +34,9 @@ function toggleWindow(title) {
 
     if(win.opened) {
       win.close();
-    }
-    else if(win.closed) {
+    } else if(win.closed) {
+      // Re add the window
       wm.windows.push(win);
-      console.log(win.content)
       win.open();
     }
   }

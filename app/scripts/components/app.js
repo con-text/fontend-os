@@ -8,6 +8,7 @@ var SessionStore = require('../stores/SessionStore');
 var WindowStore = require('../stores/WindowStore');
 
 var Window = require('./window/window');
+var Browser = require('./browser/browser');
 
 var App = React.createClass({
   getInitialState: function() {
@@ -33,15 +34,18 @@ var App = React.createClass({
       return(
         <div className="desktop">
 
-        <Window title="calculator">
-          <div id="calc-app">
-            <h1>Calculator</h1>
-            <p>Lorem ipsum</p>
-          </div>
-        </Window>
+          <Window title="calculator">
+            <div id="calc-app">
+              <h1>Calculator</h1>
+              <p>Lorem ipsum</p>
+            </div>
+          </Window>
 
+          <Window title="Browser">
+            <Browser />
+          </Window>
 
-        <TaskBar />
+          <TaskBar />
         </div>
       );
     } else {

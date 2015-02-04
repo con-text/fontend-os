@@ -367,10 +367,10 @@
   -webkit-transition: none;
           transition: none;
 }
-.wm-window.move {
+/*.wm-window.move {
   -webkit-animation: wobbly 0.5s 0.2s infinite;
           animation: wobbly 0.5s 0.2s infinite;
-}
+}*/
 .wm-window.move * {
   -webkit-user-select: none;
      -moz-user-select: none;

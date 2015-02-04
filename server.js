@@ -1,10 +1,9 @@
 var express = require('express');
 var app = express();
-
 var server = require('http').Server(app);
 var io = require('socket.io')(server);
-
 var net = require('net');
+var rest = require('restler');
 
 module.exports.startServer = function (config, configCallback, startCallback) {
 
@@ -33,11 +32,28 @@ module.exports.startServer = function (config, configCallback, startCallback) {
 	}
 }
 
-var userInfo = {};
-userInfo['0001'] = {name: 'Benji', profilePic: 'http://placehold.it/50'};
-userInfo['0002'] = {name: 'Denis', profilePic: 'http://placehold.it/50'};
-userInfo['0003'] = {name: 'Ethan', profilePic: 'http://placehold.it/50'};
-userInfo['0004'] = {name: 'Maciej', profilePic: 'http://placehold.it/50'};
+function getUserProfile(userId, callback) {
+	var baseUrl = 'http://contexte.herokuapp.com';
+
+	//   // Assume we get this id
+	  var id = "EA8F2A44";
+
+	// Call the service
+	rest.get(baseUrl + '/fetchUserInfo/' + id).on('complete', function(data) {
+		callback(data);
+	});
+}
+
+
+app.get('/user/:userId/profile', function(req, res) {
+
+	var userId = req.params.userId;
+
+	getUserProfile(userId, function(data) {
+			res.json(data);
+	});
+
+});
 
 // Start the server
 function startServer(server, port, callback) {
@@ -65,14 +81,17 @@ function startServer(server, port, callback) {
 				return;
 			}
 
-			var info = userInfo[user.id] || userInfo[0];
-			user.profilePic = info.profilePic;
-			user.name = info.name;
-			availableUsers.push(user);
-		});
+			getUserProfile(user.id, function(userProfie) {
+				availableUsers.push(userProfie);
 
-		// Push new state to web socket
-		io.emit('users', availableUsers);
+				// Do we now have all users?
+				if(availableUsers.length === users.length) {
+
+					// Push new state to web socket
+					io.emit('users', availableUsers);
+				}
+			});
+		});
 	});
 
 	client.on('end', function () {

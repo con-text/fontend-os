@@ -18,8 +18,8 @@ var Window = React.createClass({
   },
 
   componentDidMount: function() {
-    var el = this.refs.window.getDOMNode();
-    WindowActions.createWindowFromEl(this.props.title, el);
+    //var el = this.refs.window.getDOMNode();
+    //WindowActions.createWindowFromEl(this.props.title, el);
   },
 
   render: function() {

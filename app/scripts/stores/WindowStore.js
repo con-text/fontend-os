@@ -6,8 +6,14 @@ var assign = require('object-assign');
 var Ventus = require('ventus');
 var CHANGE_EVENT = 'change';
 var ActionTypes = WindowConstants.ActionTypes;
-
+var React = require('React');
 var wm = new Ventus.WindowManager();
+
+// Require apps
+var Browser = require('../components/browser/browser');
+
+var apps = [];
+apps.push(Browser);
 
 // List of opened windows
 var _windows = {};
@@ -15,7 +21,7 @@ var _windows = {};
 function createFromEl(title, el) {
 
   // Create a window from a DOM element
-  _windows[title] = wm.createWindow.fromElement(el, {
+  _windows[title] = wm.createWindow({
     title: title,
     width: 500,
     height: 500,
@@ -25,6 +31,11 @@ function createFromEl(title, el) {
   });
 
   _windows[title].open();
+
+  // Create react component from class
+  var component = React.createElement(apps[0]);
+
+  React.render(component, _windows[title].$content[0]);
 }
 
 function toggleWindow(title) {
@@ -39,13 +50,15 @@ function toggleWindow(title) {
       wm.windows.push(win);
       win.open();
     }
+  } else {
+    createFromEl(title, apps[0]);
   }
 }
 
 var WindowStore = assign({}, EventEmitter.prototype, {
 
   getAll: function() {
-      return _windows;
+      return apps;
   },
 
   emitChange: function() {

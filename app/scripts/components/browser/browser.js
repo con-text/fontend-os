@@ -8,12 +8,19 @@ var PageViewer = require('./pageViewer');
 
 var Browser = React.createClass({
   render: function() {
+    var webpage = {
+      address: "http://bbc.co.uk/"
+    };
     return (
-      <div id="browser">
-        <AddressBar />
-        <PageViewer />
+      <div id="browser" className="browser">
+        <div>
+          <input />
+        </div>
+        <div>
+          <PageViewer key='1' webpage={webpage} />
+        </div>
       </div>
-    )
+    );
   }
 });
 

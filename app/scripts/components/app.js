@@ -38,11 +38,8 @@ var App = React.createClass({
             <div id="calc-app">
               <h1>Calculator</h1>
               <p>Lorem ipsum</p>
+              <input placeholder="Calculate..." />
             </div>
-          </Window>
-
-          <Window title="Browser">
-            <Browser />
           </Window>
 
           <TaskBar />

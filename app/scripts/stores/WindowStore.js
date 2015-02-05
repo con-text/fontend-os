@@ -1,12 +1,10 @@
-
 var WindowDispatcher = require('../dispatchers/WindowDispatcher');
 var WindowConstants = require('../constants/WindowConstants');
 var EventEmitter = require('events').EventEmitter;
 var assign = require('object-assign');
 var CHANGE_EVENT = 'change';
 var ActionTypes = WindowConstants.ActionTypes;
-var React = require('react');
-
+var React = require('React');
 
 // Require apps
 var Browser = require('../components/browser/browser');

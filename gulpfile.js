@@ -7,21 +7,21 @@ var gulp = require('gulp'),
 	sass = require('gulp-sass'),
 	autoprefixer = require('gulp-autoprefixer'),
 	streamqueue = require('streamqueue'),
+	react = require('gulp-react'),
 	reactify = require('reactify');
 
 // Live reload server depenencies
 var embedlr = require('gulp-embedlr'),
-    refresh = require('gulp-livereload'),
-    lrserver = require('tiny-lr')(),
-    livereload = require('connect-livereload'),
-    livereloadport = 35729,
+		livereload = require('gulp-livereload'),
     serverport = 5000;
 
 // JSHint task - detects errors and problems in JS code
 gulp.task('lint', function() {
-  gulp.src('.app/scripts/*.js')
+  gulp.src('./app/scripts/**/*.js')
+	.pipe(react())
   .pipe(jshint())
-  .pipe(jshint.reporter('default'))
+  .pipe(jshint.reporter('jshint-stylish'))
+	.pipe(livereload());
 });
 
 // Browserify task
@@ -54,35 +54,26 @@ gulp.task('browserify', function() {
 
 });
 
-// Notify Livereload
-function notifyLr(e) {
-	var fileName = require('path').relative(__dirname, e.path);
-	console.log("File changed", filename)
-	lrserver.changed({
-		body: {
-			files: [fileName]
-		}
-	});
-}
-
 // Watch task
 gulp.task('watch', ['lint'], function() {
+
+	livereload.listen();
 
 	// Watch scripts folders
 	gulp.watch(['app/scripts/*.js', 'app/scripts/**/*.js'], [
 		'lint',
 		'browserify'
-	], notifyLr);
+	]);
 
 	// Watch views
 	gulp.watch(['app/index.html', 'app/views/**/*.html'], [
 		'views'
-	], notifyLr);
+	]);
 
 	// Watch for changes in stylesheets
 	gulp.watch(['app/styles/*.css','app/styles/*.scss', 'app/styles/**/*.scss'], [
 		'styles'
-	], notifyLr);
+	]);
 });
 
 // Style-sheets task
@@ -97,6 +88,8 @@ gulp.task('styles', function() {
 	// Add autoprefixer
 	.pipe(autoprefixer())
 	.pipe(gulp.dest('dist/css/'))
+	.pipe(livereload());
+
 });
 
 // Views
@@ -108,7 +101,8 @@ gulp.task('views', function() {
 
 	// Sub-views
 	gulp.src('./app/views/**/*')
-	.pipe(gulp.dest('dist/views/'));
+	.pipe(gulp.dest('dist/views/'))
+	.pipe(livereload());
 });
 
 // Default task

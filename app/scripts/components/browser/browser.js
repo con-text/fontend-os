@@ -6,22 +6,23 @@ var React = require('react');
 var AddressBar = require('./addressBar');
 var PageViewer = require('./pageViewer');
 
-var Browser = React.createClass({
+module.exports = React.createClass({
+  getInitialState: function() {
+    return {
+      text: ""
+    }
+  },
   render: function() {
-    var webpage = {
-      address: "http://bbc.co.uk/"
-    };
     return (
-      <div id="browser" className="browser">
-        <div>
-          <input />
-        </div>
-        <div>
-          <PageViewer key='1' webpage={webpage} />
-        </div>
+      <div className="widget">
+          <h2>Browser</h2>
+          <input className="widget" value={this.state.text} onChange={this.handleChange} />
+          <p>{this.state.text}</p>
       </div>
     );
+  },
+
+  handleChange: function(e) {
+    this.setState({text: e.target.value });
   }
 });
-
-module.exports = Browser;

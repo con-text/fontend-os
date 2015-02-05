@@ -42,6 +42,7 @@ var Taskbar = React.createClass({
 
 	render: function() {
 
+		this.state.apps.push({title: "browser"});
 		// Get all icons for windows
 		var appIcons = this.state.apps.map(function(app, index) {
 

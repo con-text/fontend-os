@@ -3,17 +3,36 @@ var WindowDispatcher = require('../dispatchers/WindowDispatcher');
 var WindowConstants = require('../constants/WindowConstants');
 var EventEmitter = require('events').EventEmitter;
 var assign = require('object-assign');
-var Ventus = require('ventus');
 var CHANGE_EVENT = 'change';
 var ActionTypes = WindowConstants.ActionTypes;
-var React = require('React');
-var wm = new Ventus.WindowManager();
+var React = require('react');
+
 
 // Require apps
 var Browser = require('../components/browser/browser');
+var Widget = React.createClass({
+  getInitialState: function() {
+    return {
+      text: ""
+    }
+  },
+  render: function() {
+    return (
+      <div className="widget">
+          <h1>Widget</h1>
+          <input className="widget-input" value={this.state.text} onChange={this.handleChange} />
+          <p>{this.state.text}</p>
+      </div>
+    );
+  },
+
+  handleChange: function(e) {
+    this.setState({text: e.target.value });
+  }
+});
 
 var apps = [];
-apps.push(Browser);
+//apps.push(Browser);
 
 // List of opened windows
 var _windows = {};
@@ -21,7 +40,7 @@ var _windows = {};
 function createFromEl(title, el) {
 
   // Create a window from a DOM element
-  _windows[title] = wm.createWindow({
+  _windows[title] = global.wm.createWindow({
     title: title,
     width: 500,
     height: 500,
@@ -33,9 +52,9 @@ function createFromEl(title, el) {
   _windows[title].open();
 
   // Create react component from class
-  var component = React.createElement(apps[0]);
+  var component = React.createElement(Browser);
 
-  React.render(component, _windows[title].$content[0]);
+  React.render(component, _windows[title].$content.get(0));
 }
 
 function toggleWindow(title) {

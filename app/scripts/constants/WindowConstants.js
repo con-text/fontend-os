@@ -12,4 +12,4 @@ module.exports = {
     SERVER_ACTION: null,
     VIEW_ACTION: null
   })
-}
+};

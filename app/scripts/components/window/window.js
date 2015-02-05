@@ -1,7 +1,6 @@
 /** @jsx React.DOM */
 'use strict';
 
-var $ = require('jquery');
 var React = require('react');
 
 var WindowActions = require('../../actions/WindowActions');
@@ -27,7 +26,7 @@ var Window = React.createClass({
       <section ref="window" className={"window-"+this.props.title}>
         {this.props.children}
       </section>
-    )
+    );
   }
 });
 

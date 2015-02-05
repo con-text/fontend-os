@@ -1,7 +1,6 @@
 /** @jsx React.DOM */
 'use strict';
 
-var $ = require('jquery');
 var React = require('react');
 var WindowStore = require('../../stores/WindowStore');
 var WindowActions = require('../../actions/WindowActions');
@@ -15,14 +14,14 @@ var Icon = React.createClass({
 		return (
 			<span className="app-icon" data-icon={this.props.name}
 				onClick={this.handleClick} />
-		)
+		);
 	}
 });
 
 function getStateFromStores() {
 	return {
 		apps: WindowStore.getAll()
-	}
+	};
 }
 
 // Taskbar for launching apps

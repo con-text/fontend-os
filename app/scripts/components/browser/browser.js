@@ -10,7 +10,7 @@ module.exports = React.createClass({
   getInitialState: function() {
     return {
       text: ""
-    }
+    };
   },
   render: function() {
     return (

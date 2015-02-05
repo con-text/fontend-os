@@ -20,8 +20,7 @@ gulp.task('lint', function() {
   gulp.src('./app/scripts/**/*.js')
 	.pipe(react())
   .pipe(jshint())
-  .pipe(jshint.reporter('jshint-stylish'))
-	.pipe(livereload());
+  .pipe(jshint.reporter('jshint-stylish'));
 });
 
 // Browserify task

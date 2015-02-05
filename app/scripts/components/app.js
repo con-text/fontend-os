@@ -11,11 +11,12 @@ var Window = require('./window/window');
 var Browser = require('./browser/browser');
 
 var App = React.createClass({
+
   getInitialState: function() {
       return {
         session: SessionStore.getCurrentUser(),
         windows: WindowStore.getAll()
-      }
+      };
   },
 
   componentDidMount: function() {
@@ -48,7 +49,7 @@ var App = React.createClass({
     } else {
       return(
         <UsersBox />
-      )
+      );
     }
   },
 

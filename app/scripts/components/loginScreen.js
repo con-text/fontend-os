@@ -31,7 +31,7 @@ var User = React.createClass({
           <h3 className="userName col-md-3">{this.props.user.username}</h3>
         </div>
       </div>
-    )
+    );
   }
 });
 

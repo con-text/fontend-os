@@ -4,15 +4,20 @@ var EventEmitter = require('events').EventEmitter;
 var assign = require('object-assign');
 var CHANGE_EVENT = 'change';
 var ActionTypes = WindowConstants.ActionTypes;
-var React = require('React');
+var React = require('react');
+var Ventus = require('ventus');
+
+// Window manager
+var wm = new Ventus.WindowManager();
 
 // Require apps
 var Browser = require('../components/browser/browser');
+
 var Widget = React.createClass({
   getInitialState: function() {
     return {
       text: ""
-    }
+    };
   },
   render: function() {
     return (
@@ -38,7 +43,7 @@ var _windows = {};
 function createFromEl(title, el) {
 
   // Create a window from a DOM element
-  _windows[title] = global.wm.createWindow({
+  _windows[title] = wm.createWindow({
     title: title,
     width: 500,
     height: 500,

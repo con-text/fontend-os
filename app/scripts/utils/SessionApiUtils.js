@@ -5,7 +5,7 @@ var baseUrl = 'http://localhost:5000';
 
 function tryAuthenticate(user, options) {
 
-  var options = options || {};
+  options = options || {};
 
   // Assume now we authenticate everyone
   var authSuccess = true;
@@ -30,6 +30,6 @@ module.exports = {
         error: function(err) {
           console.log(err);
         }
-      })
+      });
   }
-}
+};

@@ -122,22 +122,8 @@ gulp.task('dev', ['browserify', 'views', 'styles'], function() {
 	// Run server
 	var server = require('./server');
 
-	server.startServer(serverConfig, function(express, startServer) {
+	server.startServer(serverConfig);
 
-		// Extra config
-		// Add live reload
-		express.use(livereload({port: livereloadport}));
-
-		// Start the server
-		startServer();
-
-	}, onServerStarted);
-
-    // Run the watch task, to keep taps on changes
-    gulp.start('watch');
+  // Run the watch task, to keep taps on changes
+	gulp.start('watch');
 });
-
-function onServerStarted () {
-	console.log("Starting live reload server at port " + livereloadport);
-	lrserver.listen(livereloadport);
-}

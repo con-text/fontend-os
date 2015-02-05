@@ -113,5 +113,7 @@ function startServer(server, port, callback) {
 		process.exit();
 	});
 
-	callback();
+	if(callback) {
+		callback();
+	}
 }

@@ -3,9 +3,10 @@ var app = express();
 var server = require('http').Server(app);
 var io = require('socket.io')(server);
 var net = require('net');
-var rest = require('restler');
+var path = require('path');
+var fs = require('fs');
 
-module.exports.startServer = function (config, configCallback, startCallback) {
+module.exports.startServer = function (config, additionalConfig) {
 
 	var params = config || {};
 	var destDir = params.destDir || "dest";
@@ -15,44 +16,33 @@ module.exports.startServer = function (config, configCallback, startCallback) {
 	// Set static folder
 	app.use(express.static("./"+destDir));
 
+	// Load other routes
+	var normalizedPath = path.join(__dirname, "server");
+
+	fs.readdirSync(normalizedPath).forEach(function(file) {
+		var component = require("./server/" + file);
+
+		// If the required module can add any route handlers, let it do so
+		if(component.routeHandler) {
+			component.routeHandler(app);
+		}
+	});
+
 	// Point / to entry point
 	app.get('/', function(req, res) {
 	    res.sendFile(entryPoint, { root: './'+destDir });
 	});
 
 	// If we have extra config, call it before
-	if(configCallback) {
+	if(additionalConfig) {
 
-		configCallback(app, function () {
-			startServer(server, serverPort, startCallback);
+		additionalConfig(app, function () {
+			startServer(server, serverPort);
 		});
-
 	} else {
-		startServer(server, serverPort, startCallback);
+		startServer(server, serverPort);
 	}
 };
-
-function getUserProfile(userId, callback) {
-	var baseUrl = 'http://contexte.herokuapp.com';
-
-	//   // Assume we get this id
-	  var id = "EA8F2A44";
-
-	// Call the service
-	rest.get(baseUrl + '/users/' + id).on('complete', function(data) {
-		callback(data.message);
-	});
-}
-
-app.get('/user/:userId/profile', function(req, res) {
-
-	var userId = req.params.userId;
-
-	getUserProfile(userId, function(data) {
-			res.json(data);
-	});
-
-});
 
 // Start the server
 function startServer(server, port) {

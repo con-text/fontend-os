@@ -17,7 +17,11 @@ var embedlr = require('gulp-embedlr'),
 
 // JSHint task - detects errors and problems in JS code
 gulp.task('lint', function() {
-  gulp.src('./app/scripts/**/*.js')
+  gulp.src(['server.js',
+		'./client/scripts/**/*.js',
+		'./client/scripts/main.js',
+		'./server/**/*.js'
+	 ])
 	.pipe(react())
   .pipe(jshint())
   .pipe(jshint.reporter('jshint-stylish'));
@@ -27,18 +31,18 @@ gulp.task('lint', function() {
 gulp.task('browserify', function() {
 
 	// Main entry point
-	gulp.src(['app/scripts/main.js'])
+	gulp.src(['client/scripts/main.js'])
 	.pipe(browserify({
 		insertGlobals: true,
 		debug: true,
 		transform: ['reactify'],
 		shim: {
 			jquery: {
-				path: 'app/vendor/jquery/jquery-2.1.3.min.js',
+				path: 'client/vendor/jquery/jquery-2.1.3.min.js',
 				exports: '$'
 			},
 			ventus: {
-				path: 'app/vendor/ventus/ventus.min.js',
+				path: 'client/vendor/ventus/ventus.min.js',
 				exports: 'Ventus',
 				depends: {
 					jquery: '$'
@@ -59,18 +63,18 @@ gulp.task('watch', ['lint'], function() {
 	livereload.listen();
 
 	// Watch scripts folders
-	gulp.watch(['app/scripts/*.js', 'app/scripts/**/*.js'], [
+	gulp.watch(['client/scripts/*.js', 'client/scripts/**/*.js'], [
 		'lint',
 		'browserify'
 	]);
 
 	// Watch views
-	gulp.watch(['app/index.html', 'app/views/**/*.html'], [
+	gulp.watch(['client/index.html', 'client/views/**/*.html'], [
 		'views'
 	]);
 
 	// Watch for changes in stylesheets
-	gulp.watch(['app/styles/*.css','app/styles/*.scss', 'app/styles/**/*.scss'], [
+	gulp.watch(['client/styles/*.css','client/styles/*.scss', 'client/styles/**/*.scss'], [
 		'styles'
 	]);
 });
@@ -79,8 +83,8 @@ gulp.task('watch', ['lint'], function() {
 gulp.task('styles', function() {
 
   	return streamqueue({ objectMode: true },
-            gulp.src('app/styles/*.css'),
-            gulp.src('app/styles/*.scss')
+            gulp.src('client/styles/*.css'),
+            gulp.src('client/styles/*.scss')
             .pipe(sass({onError: function(e) {console.log(e);} }))
         )
     .pipe(concat('style.css'))
@@ -95,11 +99,11 @@ gulp.task('styles', function() {
 gulp.task('views', function() {
 
 	// Main view
-	gulp.src('./app/index.html')
+	gulp.src('./client/index.html')
 	.pipe(gulp.dest('dist/'));
 
 	// Sub-views
-	gulp.src('./app/views/**/*')
+	gulp.src('./client/views/**/*')
 	.pipe(gulp.dest('dist/views/'))
 	.pipe(livereload());
 });

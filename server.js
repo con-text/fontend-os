@@ -30,7 +30,7 @@ module.exports.startServer = function (config, configCallback, startCallback) {
 	} else {
 		startServer(server, serverPort, startCallback);
 	}
-}
+};
 
 function getUserProfile(userId, callback) {
 	var baseUrl = 'http://contexte.herokuapp.com';
@@ -55,7 +55,7 @@ app.get('/user/:userId/profile', function(req, res) {
 });
 
 // Start the server
-function startServer(server, port, callback) {
+function startServer(server, port) {
 
 	io.on('connection', function(socket){
 		console.log('a user connected');
@@ -74,7 +74,7 @@ function startServer(server, port, callback) {
 		var availableUsers = [];
 
 		// Send empty list
-		if(users.length == 0) {
+		if(users.length === 0) {
 			// Push new state to web socket
 			io.emit('users', []);
 		}
@@ -112,13 +112,21 @@ function startServer(server, port, callback) {
 		console.log( "\nShutting down - SIGINT (Ctrl-C)" );
 
 	 	// Close BLE service socket
-	 	client.end()
+	 	client.end();
 
 	 	// some other closing procedures go here
 		process.exit();
 	});
+}
 
-	if(callback) {
-		callback();
-	}
+// If called from command line
+if(require.main === module) {
+
+	var serverConfig = {
+		destDir: "dist",
+		serverPort: 5000,
+		entryPoint: "index.html"
+	};
+
+	module.exports.startServer(serverConfig);
 }

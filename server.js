@@ -39,11 +39,10 @@ function getUserProfile(userId, callback) {
 	  var id = "EA8F2A44";
 
 	// Call the service
-	rest.get(baseUrl + '/fetchUserInfo/' + id).on('complete', function(data) {
-		callback(data);
+	rest.get(baseUrl + '/users/' + id).on('complete', function(data) {
+		callback(data.message);
 	});
 }
-
 
 app.get('/user/:userId/profile', function(req, res) {
 
@@ -73,6 +72,12 @@ function startServer(server, port, callback) {
 		var availability = JSON.parse(data);
 		var users = availability.clients;
 		var availableUsers = [];
+
+		// Send empty list
+		if(users.length == 0) {
+			// Push new state to web socket
+			io.emit('users', []);
+		}
 
 		// Match IDs to user data
 		users.forEach(function (user) {

@@ -28,7 +28,7 @@ var User = React.createClass({
             src={this.props.user.profilePicUrl} />
         </div>
         <div className="col-md-10">
-          <h3 className="userName col-md-3">{this.props.user.username}</h3>
+          <h3 className="userName col-md-3">{this.props.user.name}</h3>
         </div>
       </div>
     );

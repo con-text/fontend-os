@@ -5,6 +5,7 @@ var io = require('socket.io')(server);
 var net = require('net');
 var path = require('path');
 var fs = require('fs');
+var ble = require('./bleservice');
 
 module.exports.startServer = function (config, additionalConfig) {
 
@@ -47,62 +48,24 @@ module.exports.startServer = function (config, additionalConfig) {
 // Start the server
 function startServer(server, port) {
 
+
+	// Initialize web-socket
 	io.on('connection', function(socket){
 		console.log('a user connected');
 	});
 
+	// Initialize connection to BLE
+	var socket = ble.connectToBleService(io);
+
+	// Listen to the TCP port
 	server.listen(port);
 
-	var client = net.connect({port: 5001, host: 'localhost'}, function (conn) {
-		console.log("Listening to BLE service on 5001");
-	});
-
-	client.on('data', function (data) {
-
-		var availability = JSON.parse(data);
-		var users = availability.clients;
-		var availableUsers = [];
-
-		// Send empty list
-		if(users.length === 0) {
-			// Push new state to web socket
-			io.emit('users', []);
-		}
-
-		// Match IDs to user data
-		users.forEach(function (user) {
-
-			if(user.status == "disconnected") {
-				return;
-			}
-
-			getUserProfile(user.id, function(userProfie) {
-				availableUsers.push(userProfie);
-
-				// Do we now have all users?
-				if(availableUsers.length === users.length) {
-
-					// Push new state to web socket
-					io.emit('users', availableUsers);
-				}
-			});
-		});
-	});
-
-	client.on('end', function () {
-		console.log("Disconnected from BLE service");
-	});
-
-	client.on('error', function(err) {
-		console.log("Error during connection to the BLE servie", err);
-	});
-
-
+	// On ctrl-c exit
 	process.on( 'SIGINT', function() {
 		console.log( "\nShutting down - SIGINT (Ctrl-C)" );
 
 	 	// Close BLE service socket
-	 	client.end();
+		socket.end();
 
 	 	// some other closing procedures go here
 		process.exit();

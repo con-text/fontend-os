@@ -4,13 +4,14 @@ var gulp = require('gulp'),
 	browserify = require('gulp-browserify'),
 	concat = require('gulp-concat'),
 	clean = require('gulp-clean'),
-	sass = require('gulp-sass'),
+	less = require('gulp-less'),
 	autoprefixer = require('gulp-autoprefixer'),
 	streamqueue = require('streamqueue'),
 	react = require('gulp-react'),
 	reactify = require('reactify'),
 	mocha = require('gulp-mocha'),
-	zip = require('gulp-zip');
+	zip = require('gulp-zip'),
+	path = require('path');
 
 // Live reload server depenencies
 var embedlr = require('gulp-embedlr'),
@@ -93,15 +94,14 @@ gulp.task('styles', function() {
 
   	return streamqueue({ objectMode: true },
             gulp.src('client/styles/*.css'),
-            gulp.src('client/styles/*.scss')
-            .pipe(sass({onError: function(e) {console.log(e);} }))
+            gulp.src(['client/styles/main.less'])
+            .pipe(less())
         )
     .pipe(concat('style.css'))
-	// Add autoprefixer
-	.pipe(autoprefixer())
-	.pipe(gulp.dest('dist/css/'))
-	.pipe(livereload());
-
+		// Add autoprefixer
+		.pipe(autoprefixer())
+		.pipe(gulp.dest('dist/css/'))
+		.pipe(livereload());
 });
 
 // Views

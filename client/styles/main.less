@@ -1,9 +1,9 @@
-$defaultWindowPadding: 20px;
-$bgColour: #f0f0f0;
+@defaultWindowPadding: 20px;
+@bgColour: #f0f0f0;
 
 
-@import 'components/taskbar';
-@import 'components/loginScreen';
+@import 'components/taskbar.less';
+@import 'components/loginScreen.less';
 
 html, body {
 	overflow: hidden;
@@ -11,7 +11,7 @@ html, body {
 }
 
 body {
-	background-color: $bgColour;
+	background-color: @bgColour;
 }
 
 .example-enter {
@@ -58,7 +58,7 @@ body {
 }
 
 #loginWindow {
-	padding: $defaultWindowPadding;
+	padding: @defaultWindowPadding;
 }
 
 #loading-screen {
@@ -73,7 +73,7 @@ body {
 
 	font-weight: 300;
 
-	background-color:  $bgColour;
+	background-color:  @bgColour;
 
 	.content {
 

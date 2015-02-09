@@ -8,7 +8,8 @@ var gulp = require('gulp'),
 	autoprefixer = require('gulp-autoprefixer'),
 	streamqueue = require('streamqueue'),
 	react = require('gulp-react'),
-	reactify = require('reactify');
+	reactify = require('reactify'),
+	karma = require('gulp-karma');
 
 // Live reload server depenencies
 var embedlr = require('gulp-embedlr'),
@@ -25,6 +26,13 @@ gulp.task('lint', function() {
 	.pipe(react())
   .pipe(jshint())
   .pipe(jshint.reporter('jshint-stylish'));
+});
+
+// JSHint task for tests
+gulp.task('lint-tests', function() {
+	gulp.src(['./tests/**/*.js'])
+	.pipe(jshint())
+	.pipe(jshint.reporter('jshint-stylish'));
 });
 
 // Browserify task
@@ -111,6 +119,16 @@ gulp.task('views', function() {
 // Default task
 gulp.task('default', ['browserify', 'views', 'styles'], function() {
 
+});
+
+// Tests
+gulp.task('test', ['lint','lint-tests'], function() {
+
+	return gulp.src('./tests/**/*.js')
+	.pipe(karma({
+		configFile: 'karma.conf.js',
+		action: 'run'
+	}));
 });
 
 // Devlopment server

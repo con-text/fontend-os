@@ -2,6 +2,7 @@
 'use strict';
 
 var React = require('react');
+
 var AddressBar = require('./addressBar');
 var PageViewer = require('./pageViewer');
 

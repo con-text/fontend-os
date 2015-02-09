@@ -13,29 +13,8 @@ var wm = new Ventus.WindowManager();
 // Require apps
 var Browser = require('../components/browser/browser');
 
-var Widget = React.createClass({
-  getInitialState: function() {
-    return {
-      text: ""
-    };
-  },
-  render: function() {
-    return (
-      <div className="widget">
-          <h1>Widget</h1>
-          <input className="widget-input" value={this.state.text} onChange={this.handleChange} />
-          <p>{this.state.text}</p>
-      </div>
-    );
-  },
-
-  handleChange: function(e) {
-    this.setState({text: e.target.value });
-  }
-});
-
 var apps = [];
-//apps.push(Browser);
+apps.push(Browser);
 
 // List of opened windows
 var _windows = {};
@@ -55,7 +34,7 @@ function createFromEl(title, el) {
   _windows[title].open();
 
   // Create react component from class
-  var component = React.createElement(Browser);
+  var component = React.createElement(apps[0]);
 
   React.render(component, _windows[title].$content.get(0));
 }

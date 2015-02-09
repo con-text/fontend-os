@@ -1,0 +1,5 @@
+{
+  "name": "browser",
+  "appId": "e8a6e0ca-b060-11e4-ab7d-12e3f512a338",
+  "start": "app.js"
+}

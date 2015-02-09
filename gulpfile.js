@@ -9,7 +9,8 @@ var gulp = require('gulp'),
 	streamqueue = require('streamqueue'),
 	react = require('gulp-react'),
 	reactify = require('reactify'),
-	karma = require('gulp-karma');
+	mocha = require('gulp-mocha'),
+	zip = require('gulp-zip');
 
 // Live reload server depenencies
 var embedlr = require('gulp-embedlr'),
@@ -124,11 +125,18 @@ gulp.task('default', ['browserify', 'views', 'styles'], function() {
 // Tests
 gulp.task('test', ['lint','lint-tests'], function() {
 
-	return gulp.src('./tests/**/*.js')
-	.pipe(karma({
-		configFile: 'karma.conf.js',
-		action: 'run'
-	}));
+	return gulp.src('./test/test.js')
+	.pipe(mocha());
+
+});
+
+gulp.task('build', ['test', 'browserify', 'views', 'styles']);
+
+// Prepare the package
+gulp.task('package', ['build'], function(){
+	return gulp.src(['apps/**/*', 'dist/**/*', 'server/**/*', 'server.js']).
+	pipe(zip('build.zip')).
+	pipe(gulp.dest('build'));
 });
 
 // Devlopment server

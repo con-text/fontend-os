@@ -31,4 +31,7 @@ node_modules
 # Ignore dist files
 dist/*
 
+# Build
+build/
+
 .DS_Store

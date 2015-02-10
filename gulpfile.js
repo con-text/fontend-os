@@ -43,7 +43,7 @@ gulp.task('lint-tests', function() {
 gulp.task('browserify', function() {
 
 	// Main entry point
-	gulp.src(['client/scripts/main.js'])
+	return gulp.src(['client/scripts/main.js'])
 	.pipe(browserify({
 		insertGlobals: true,
 		debug: true,
@@ -58,7 +58,7 @@ gulp.task('browserify', function() {
 
 // Copy bower components
 gulp.task('copy-bower', function() {
-	gulp.src('./bower_components/**/*')
+	gulp.src('bower_components/**/*')
 	.pipe(gulp.dest('dist/vendor'));
 
 });
@@ -143,9 +143,9 @@ gulp.task('package', ['build'], function(){
 		}
 	}
 
+	// filterFolders = ['apps/**/*', 'dist/**/*', 'server/*', 'server.js', 'bleservice.js', 'config/*'];
 	return gulp.src(['**/*']).
 	pipe(gulpFilter(filterFolders)).
-	// return gulp.src(['apps/**/*', 'dist/**/*', 'server/*', 'server.js']).
 	pipe(zip("build.zip")).
 	pipe(gulp.dest('build'));
 });

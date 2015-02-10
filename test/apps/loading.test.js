@@ -14,7 +14,7 @@ require('blanket')({
 // Get code that we want to test
 var appsApi = require('../../server/apps');
 
-var testComponent = require('../../dist/test/apps/browser/app');
+var testComponent = require('../../dist/apps/browser/app');
 
 describe("Apps", function() {
 

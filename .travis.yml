@@ -1,28 +1,21 @@
 language: node_js
 node_js:
-  - '0.10'
+- '0.10'
 before_script:
-  - npm install -g bower
-  - npm install -g karma
-  - bower install
-  - npm install -g gulp
+- npm install -g bower
+- npm install -g karma
+- bower install
+- npm install -g gulp
 script:
- - gulp package
-# deploy:
-#   provider: releases
-#   user: "ethangk"
-#   password:
-#     secure: MWpS4S0XKcnM6DgCc6eK3pueOTOtsAtqTFD3J9fBtM37IS7zjsWSeJLxkv+30x24KXKaWKc943QtW5I0kWprB8WrY3RywBdTDjFrMe2kyb91UI4Ml0FnSkp1hAzOUjbUtv2tUJ5G7QtKgm1eqqbFKwjjXNFpx8YL/GyrL0dMd74=
-#   file: "build/build.zip"
-#   skip_cleanup: true
-#   on:
-#     tags: true
-#     all_branches: true
+- gulp package
 deploy:
   provider: s3
-  access_key_id: ARTIFACTS_KEY
-  secret_access_key: ARTIFACTS_SECRET
-  bucket: ARTIFACTS_BUCKET
-  skip_cleanup: true
-  local_dir: build
+  access_key_id: AKIAJLDJQSBGHHGDNHOQ
+  secret_access_key:
+    secure: A2SJQxe9rQ33YEbguiZh+Hjz34ey05etkCs+gyDi9wZeTunM97E92DO8OLDwzF2HHiqqju/PBPFB2cKCAn0cUr6IOpHeOsLYemMJXwH0Y+19nRJCtQ3BFDBY1VgYx8z1KfKdIIwtt2oDsH+52kUBzPOY7RCOZDA35v/Y3sjJNys=
+  bucket: context-builds
+  local-dir: build
+  acl: ''
+  on:
+    repo: con-text/frontend-os
   region: eu-west-1

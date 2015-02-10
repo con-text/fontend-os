@@ -1,43 +1,49 @@
 var net = require('net');
+var JsonSocket = require('json-socket');
 var userApi = require('./server/users');
+
+var socketPath = '/tmp/ble.sock';
 
 module.exports.connectToBleService = function(io) {
 
   // Use UNIX socket
-  var socket = net.connect('/tmp/ble.sock', function (conn) {
-    console.log("Listening to BLE service.");
-  });
+  var socket = new JsonSocket(new net.Socket());
 
-  socket.on('data', function (data) {
+  socket.connect(socketPath, function () {
+    console.log("Listening to BLE service on " + socketPath);
 
-    var availability = JSON.parse(data);
-    var users = availability.clients;
-    var availableUsers = [];
+    // Process message
+    socket.on('message', function (message) {
 
-    // Send empty list
-    if(users.length === 0) {
-      // Push new state to web socket
-      io.emit('users', []);
-    }
+      var users = message.clients;
+      var availableUsers = [];
 
-    // Match IDs to user data
-    users.forEach(function (user) {
-
-      if(user.status == "disconnected") {
-        return;
+      // Send empty list
+      if(users.length === 0) {
+        // Push new state to web socket
+        io.emit('users', []);
       }
 
-      userApi.getUserProfile(user.id, function(userProfie) {
-        availableUsers.push(userProfie);
+      // Match IDs to user data
+      users.forEach(function (user) {
 
-        // Do we now have all users?
-        if(availableUsers.length === users.length) {
-
-          // Push new state to web socket
-          io.emit('users', availableUsers);
+        if(user.status == "disconnected") {
+          return;
         }
+
+        userApi.getUserProfile(user.id, function(userProfie) {
+          availableUsers.push(userProfie);
+
+          // Do we now have all users?
+          if(availableUsers.length === users.length) {
+
+            // Push new state to web socket
+            io.emit('users', availableUsers);
+          }
+        });
       });
     });
+
   });
 
   socket.on('end', function () {

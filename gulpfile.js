@@ -58,8 +58,12 @@ gulp.task('browserify', function() {
 
 // Copy bower components
 gulp.task('copy-bower', function() {
-	gulp.src('bower_components/**/*')
-	.pipe(gulp.dest('dist/vendor'));
+	// gulp.src('bower_components/**/*')
+	// .pipe(gulp.dest('dist/vendor'));
+	gulp.src(['**/*']).
+	pipe(gulpFilter(['bower_components/**/*'])).
+	pipe(gulp.dest('dist/vendor'));
+
 });
 
 // Watch task

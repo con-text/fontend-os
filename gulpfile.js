@@ -58,7 +58,7 @@ gulp.task('browserify', function() {
 
 // Copy bower components
 gulp.task('copy-bower', function() {
-	gulp.src('./bower_components/**')
+	gulp.src('./bower_components/**/*')
 		.pipe(gulp.dest('dist/vendor'));
 });
 
@@ -130,8 +130,6 @@ gulp.task('build', ['test', 'copy-bower', 'browserify', 'views', 'styles']);
 // Prepare the package
 gulp.task('package', ['build'], function(){
 	var d = new Date();
-	var zipName = d.getDate() + "-" + (parseInt(d.getMonth(),10)+1) + "-" + d.getFullYear() + "_" + d.getHours() + "-" + d.getMinutes();
-		zipName+=".zip";
 	var productionDep = fs.readFileSync( "package.json" );
 		productionDep = JSON.parse(productionDep);
 		productionDep = productionDep.dependencies;
@@ -147,7 +145,7 @@ gulp.task('package', ['build'], function(){
 	return gulp.src(['**/*']).
 	pipe(gulpFilter(filterFolders)).
 	// return gulp.src(['apps/**/*', 'dist/**/*', 'server/*', 'server.js']).
-	pipe(zip(zipName)).
+	pipe(zip("build.zip")).
 	pipe(gulp.dest('build'));
 });
 

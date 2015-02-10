@@ -1,3 +1,13 @@
 language: node_js
 node_js:
 - '0.10'
+deploy:
+  provider: releases
+  user: "ethangk"
+  password:
+    secure: MWpS4S0XKcnM6DgCc6eK3pueOTOtsAtqTFD3J9fBtM37IS7zjsWSeJLxkv+30x24KXKaWKc943QtW5I0kWprB8WrY3RywBdTDjFrMe2kyb91UI4Ml0FnSkp1hAzOUjbUtv2tUJ5G7QtKgm1eqqbFKwjjXNFpx8YL/GyrL0dMd74=
+  file: "build/build.zip"
+  skip_cleanup: true
+  on:
+    tags: true
+    all_branches: true

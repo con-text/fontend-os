@@ -15,7 +15,6 @@ deploy:
     secure: A2SJQxe9rQ33YEbguiZh+Hjz34ey05etkCs+gyDi9wZeTunM97E92DO8OLDwzF2HHiqqju/PBPFB2cKCAn0cUr6IOpHeOsLYemMJXwH0Y+19nRJCtQ3BFDBY1VgYx8z1KfKdIIwtt2oDsH+52kUBzPOY7RCOZDA35v/Y3sjJNys=
   bucket: context-builds
   local-dir: build
-  acl: ''
   on:
     repo: con-text/frontend-os
   region: eu-west-1

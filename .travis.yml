@@ -19,5 +19,4 @@ script:
 #     tags: true
 #     all_branches: true
 addons:
-  artifacts:
-   paths: - $HOME/build/build.zip
+  artifacts: true

@@ -15,6 +15,7 @@ var gulp = require('gulp'),
 	gulpFilter = require('gulp-filter'),
 	fs = require('fs');
 
+
 // Live reload server depenencies
 var embedlr = require('gulp-embedlr'),
 		livereload = require('gulp-livereload'),
@@ -135,7 +136,7 @@ gulp.task('package', ['build'], function(){
 		productionDep = JSON.parse(productionDep);
 		productionDep = productionDep.dependencies;
 
-	var filterFolders = ['apps/**/*', 'dist/**/*', 'server/*', 'server.js', 'bleservice.js', 'config/*'];
+	var filterFolders = ['dist/**/*', 'server/*', 'server.js', 'bleservice.js', 'config/*'];
 
 	for(var k in productionDep){
 		if(productionDep.hasOwnProperty(k)){
@@ -143,7 +144,6 @@ gulp.task('package', ['build'], function(){
 		}
 	}
 
-	// filterFolders = ['apps/**/*', 'dist/**/*', 'server/*', 'server.js', 'bleservice.js', 'config/*'];
 	return gulp.src(['**/*']).
 	pipe(gulpFilter(filterFolders)).
 	pipe(zip("build.zip")).

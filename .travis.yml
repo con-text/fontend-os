@@ -19,4 +19,5 @@ script:
 #     tags: true
 #     all_branches: true
 addons:
-  artifacts: true
+  artifacts:
+  	debug: true

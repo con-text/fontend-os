@@ -45,26 +45,19 @@ gulp.task('browserify', function() {
 	.pipe(browserify({
 		insertGlobals: true,
 		debug: true,
-		transform: ['reactify'],
-		shim: {
-			jquery: {
-				path: 'client/vendor/jquery/jquery-2.1.3.min.js',
-				exports: '$'
-			},
-			ventus: {
-				path: 'client/vendor/ventus/ventus.min.js',
-				exports: 'Ventus',
-				depends: {
-					jquery: '$'
-				}
-			}
-		}
+		transform: ['reactify']
 	}))
 	// Concatinate into one file
 	.pipe(concat("bundle.js"))
 	// Output to destination directory
 	.pipe(gulp.dest("dist/js"));
 
+});
+
+// Copy bower components
+gulp.task('copy-bower', function() {
+	gulp.src('./bower_components/**')
+		.pipe(gulp.dest('dist/vendor'));
 });
 
 // Watch task
@@ -130,7 +123,7 @@ gulp.task('test', ['lint','lint-tests'], function() {
 
 });
 
-gulp.task('build', ['test', 'browserify', 'views', 'styles']);
+gulp.task('build', ['test', 'copy-bower', 'browserify', 'views', 'styles']);
 
 // Prepare the package
 gulp.task('package', ['build'], function(){
@@ -140,7 +133,7 @@ gulp.task('package', ['build'], function(){
 });
 
 // Devlopment server
-gulp.task('dev', ['browserify', 'views', 'styles'], function() {
+gulp.task('dev', ['browserify', 'copy-bower', 'views', 'styles'], function() {
 
 	var serverConfig = {
 		destDir: "dist",

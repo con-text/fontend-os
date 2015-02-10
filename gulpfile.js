@@ -11,7 +11,9 @@ var gulp = require('gulp'),
 	reactify = require('reactify'),
 	mocha = require('gulp-mocha'),
 	zip = require('gulp-zip'),
-	path = require('path');
+	path = require('path'),
+	gulpFilter = require('gulp-filter'),
+	fs = require('fs');
 
 // Live reload server depenencies
 var embedlr = require('gulp-embedlr'),
@@ -134,8 +136,25 @@ gulp.task('build', ['test', 'browserify', 'views', 'styles']);
 
 // Prepare the package
 gulp.task('package', ['build'], function(){
-	return gulp.src(['apps/**/*', 'dist/**/*', 'server/**/*', 'server.js']).
-	pipe(zip('build.zip')).
+	var d = new Date();
+	var zipName = d.getDate() + "-" + (parseInt(d.getMonth(),10)+1) + "-" + d.getFullYear() + "_" + d.getHours() + "-" + d.getMinutes();
+		zipName+=".zip";
+	var productionDep = fs.readFileSync( "package.json" );
+		productionDep = JSON.parse(productionDep);
+		productionDep = productionDep.dependencies;
+
+	var filterFolders = ['apps/**/*', 'dist/**/*', 'server/*', 'server.js', 'bleservice.js', 'config/*'];
+
+	for(var k in productionDep){
+		if(productionDep.hasOwnProperty(k)){
+			filterFolders.push("node_modules/"+k+"/**/*");
+		}
+	}
+
+	return gulp.src(['**/*']).
+	pipe(gulpFilter(filterFolders)).
+	// return gulp.src(['apps/**/*', 'dist/**/*', 'server/*', 'server.js']).
+	pipe(zip(zipName)).
 	pipe(gulp.dest('build'));
 });
 

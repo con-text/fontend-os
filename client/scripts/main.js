@@ -2,7 +2,6 @@
 'use strict';
 
 var React = require('react/addons');
-var Ventus = require('ventus');
 
 // Other components
 var WindowStore = require('./stores/WindowStore');

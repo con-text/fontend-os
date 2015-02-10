@@ -5,7 +5,6 @@ var assign = require('object-assign');
 var CHANGE_EVENT = 'change';
 var ActionTypes = WindowConstants.ActionTypes;
 var React = require('react');
-var Ventus = require('ventus');
 
 // Window manager
 var wm = new Ventus.WindowManager();
@@ -44,7 +43,7 @@ function toggleWindow(title) {
   if(_windows[title]) {
     var win = _windows[title];
 
-    if(win.opened) {
+    if(!win.closed) {
       win.close();
     } else if(win.closed) {
       // Re add the window

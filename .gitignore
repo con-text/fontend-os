@@ -35,3 +35,6 @@ dist/*
 build/
 
 .DS_Store
+
+# Bower components
+bower_components/

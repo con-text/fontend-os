@@ -13,7 +13,8 @@ var gulp = require('gulp'),
 	zip = require('gulp-zip'),
 	path = require('path'),
 	gulpFilter = require('gulp-filter'),
-	fs = require('fs');
+	fs = require('fs'),
+	print = require('gulp-print');
 
 // Live reload server depenencies
 var embedlr = require('gulp-embedlr'),
@@ -59,7 +60,8 @@ gulp.task('browserify', function() {
 // Copy bower components
 gulp.task('copy-bower', function() {
 	gulp.src('./bower_components/**/*')
-		.pipe(gulp.dest('dist/vendor'));
+	.pipe(print())
+	.pipe(gulp.dest('dist/vendor'));
 });
 
 // Watch task

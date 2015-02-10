@@ -20,4 +20,4 @@ script:
 #     all_branches: true
 addons:
   artifacts:
-  	paths: - $HOME/build/build.zip
+   paths: - $HOME/build/build.zip

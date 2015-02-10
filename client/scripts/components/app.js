@@ -8,7 +8,6 @@ var SessionStore = require('../stores/SessionStore');
 var WindowStore = require('../stores/WindowStore');
 
 var Window = require('./window/window');
-var Browser = require('./browser/browser');
 
 var App = React.createClass({
 

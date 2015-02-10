@@ -9,12 +9,6 @@ var React = require('react');
 // Window manager
 var wm = new Ventus.WindowManager();
 
-// Require apps
-var Browser = require('../components/browser/browser');
-
-var apps = [];
-apps.push(Browser);
-
 // List of opened windows
 var _windows = {};
 
@@ -33,7 +27,7 @@ function createFromEl(title, el) {
   _windows[title].open();
 
   // Create react component from class
-  var component = React.createElement(apps[0]);
+  var component = React.createElement(null);
 
   React.render(component, _windows[title].$content.get(0));
 }
@@ -51,14 +45,14 @@ function toggleWindow(title) {
       win.open();
     }
   } else {
-    createFromEl(title, apps[0]);
+    createFromEl(title, null);
   }
 }
 
 var WindowStore = assign({}, EventEmitter.prototype, {
 
   getAll: function() {
-      return apps;
+      return [{name: "A"}];
   },
 
   emitChange: function() {

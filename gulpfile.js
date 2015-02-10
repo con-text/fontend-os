@@ -117,15 +117,29 @@ gulp.task('default', ['browserify', 'views', 'styles'], function() {
 
 });
 
-// Tests
-gulp.task('test', ['lint','lint-tests'], function() {
+gulp.task('browserify-apps', ['lint'], function() {
 
-	return gulp.src('./test/test.js')
-	.pipe(mocha());
+	var outputDir = "dist/apps";
+
+	// Reactify apps
+	gulp.src(['apps/**/*.js'])
+		.pipe(react())
+		.pipe(gulp.dest(outputDir));
+
+	// Copy manifests
+	gulp.src(['apps/**/manifest.json'])
+		.pipe(gulp.dest(outputDir));
+});
+
+// Tests
+gulp.task('test', ['lint-tests', 'browserify', 'browserify-apps'], function() {
+
+	gulp.src('./test/test.js')
+		.pipe(mocha());
 
 });
 
-gulp.task('build', ['test', 'copy-bower', 'browserify', 'views', 'styles']);
+gulp.task('build', ['test', 'copy-bower', 'browserify-apps', 'browserify', 'views', 'styles']);
 
 // Prepare the package
 gulp.task('package', ['build'], function(){
@@ -143,10 +157,9 @@ gulp.task('package', ['build'], function(){
 	}
 
 	return gulp.src(['**/*']).
-	pipe(gulpFilter(filterFolders)).
-	// return gulp.src(['apps/**/*', 'dist/**/*', 'server/*', 'server.js']).
-	pipe(zip("build.zip")).
-	pipe(gulp.dest('build'));
+		pipe(gulpFilter(filterFolders)).
+		pipe(zip("build.zip")).
+		pipe(gulp.dest('build'));
 });
 
 // Devlopment server

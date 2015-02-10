@@ -8,11 +8,19 @@ before_script:
 - npm install -g gulp
 script:
 - gulp package
-deploy:
-  provider: s3
+# deploy:
+#   provider: s3
+#   access_key_id: AKIAJLDJQSBGHHGDNHOQ
+#   secret_access_key:
+#     secure: A2SJQxe9rQ33YEbguiZh+Hjz34ey05etkCs+gyDi9wZeTunM97E92DO8OLDwzF2HHiqqju/PBPFB2cKCAn0cUr6IOpHeOsLYemMJXwH0Y+19nRJCtQ3BFDBY1VgYx8z1KfKdIIwtt2oDsH+52kUBzPOY7RCOZDA35v/Y3sjJNys=
+#   bucket: context-builds
+#   local-dir: build
+#   region: eu-west-1
+provider: s3
   access_key_id: AKIAJLDJQSBGHHGDNHOQ
   secret_access_key:
     secure: A2SJQxe9rQ33YEbguiZh+Hjz34ey05etkCs+gyDi9wZeTunM97E92DO8OLDwzF2HHiqqju/PBPFB2cKCAn0cUr6IOpHeOsLYemMJXwH0Y+19nRJCtQ3BFDBY1VgYx8z1KfKdIIwtt2oDsH+52kUBzPOY7RCOZDA35v/Y3sjJNys=
   bucket: context-builds
-  local-dir: build
+  skip_cleanup: true
+  local_dir: build
   region: eu-west-1

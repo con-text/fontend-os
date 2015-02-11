@@ -23,12 +23,12 @@ describe("Apps", function() {
       sinon.stub(appsApi, 'loadReactClass').returns(testComponent);
   });
 
-  describe("loader", function() {
+  describe("loading apps", function() {
 
     it("should load all apps with manifest", function() {
 
       // Set up a mock
-      var mockAppList = [{name: 'browser',},{name: 'notes'}];
+      var mockAppList = [{id:'1', name: 'browser'},{id: '2', name: 'notes'}];
       sinon.stub(appsApi, 'getManifests').returns(mockAppList);
 
       var allApps = appsApi.getApps();
@@ -43,9 +43,17 @@ describe("Apps", function() {
 
       // Render the component
       var element = React.createElement(testComponent);
+      // 
+      // expect(TestUtils.isElementOfType(testApp.reactElement, testComponent))
+      //   .to.equal(true);
+    });
 
-      expect(TestUtils.isElementOfType(testApp.getReactElement(), testComponent))
-        .to.equal(true);
+    it("should read properties from the manifest", function() {
+      appsApi.getApps().forEach(function(app) {
+        expect(app).to.have.property("id");
+        expect(app).to.have.property("name");
+        expect(app).to.have.property("reactClass");
+      });
     });
   });
 });

@@ -3,20 +3,13 @@ var path = require('path');
 var React = require('react');
 
 function App(props) {
+  this.id = props.id;
   this.name = props.name;
-  this.el = React.createElement(props.reactClass);
+  this.reactClass = React.createElement(props.reactClass);
 }
 
-App.prototype.getName = function() {
-  return this.name;
-};
-
-App.prototype.getReactElement = function() {
-  return this.el;
-};
-
 App.prototype.renderReact = function() {
-  return React.renderToString(this.getReactElement());
+  return React.renderToString(this.reactElement);
 };
 
 module.exports = {
@@ -29,6 +22,7 @@ module.exports = {
 
     this.getManifests().forEach(function(manifest) {
       apps.push(new App({
+        id: manifest.id,
         name: manifest.name,
         reactClass: this.loadReactClass(manifest),
       }));
@@ -36,7 +30,7 @@ module.exports = {
     return apps;
   },
 
-  loadReactClass: function() {
+  loadReactClass: function(manifest) {
     return require(path.join(manifest.directory, manifest.mainClass));
   },
 
@@ -57,7 +51,6 @@ module.exports = {
         var currentFolder = normalizedPath;
 
         fs.readdirSync(currentFolder).forEach(function(file) {
-
           // Check if manifest
           var filePath = path.join(currentFolder, file);
           if(file === "manifest.json") {
@@ -78,15 +71,7 @@ module.exports = {
     var self = this;
     app.get('/apps', function(req, res) {
       var apps = self.getApps();
-      var appsJson = [];
-      apps.forEach(function(app) {
-        appsJson.push({
-          name: app.getName(),
-          reactElement: app.renderReact()
-        });
-      });
-
-      res.json(appsJson);
+      res.json(apps);
     });
   }
 };

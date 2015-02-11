@@ -15,31 +15,50 @@ var gulp = require('gulp'),
 	gulpFilter = require('gulp-filter'),
 	fs = require('fs'),
 	s3 = require("gulp-s3");
-
+	del = require('del');
 
 // Live reload server depenencies
 var embedlr = require('gulp-embedlr'),
 		livereload = require('gulp-livereload'),
     serverport = 5000;
 
+// Clean
+gulp.task('clean', function() {
+	del(['dist/', 'build/', 'npm-debug.log']);
+});
+
+gulp.task('lint:apps', function() {
+	return gulp.src('./apps/**/*.js')
+		.pipe(react())
+		.pipe(jshint())
+		.pipe(jshint.reporter('jshint-stylish'));
+});
+
+gulp.task('lint:client', function() {
+	return gulp.src(['./client/scripts/**/*.js', './client/scripts/main.js'])
+		.pipe(react())
+		.pipe(jshint())
+		.pipe(jshint.reporter('jshint-stylish'));
+});
+
 // JSHint task - detects errors and problems in JS code
-gulp.task('lint', function() {
-  gulp.src(['server.js',
-		'./client/scripts/**/*.js',
-		'./client/scripts/main.js',
+gulp.task('lint:server', function() {
+   return gulp.src([
+		'server.js',
 		'./server/**/*.js'
 	 ])
-	.pipe(react())
-  .pipe(jshint())
+	.pipe(jshint())
   .pipe(jshint.reporter('jshint-stylish'));
 });
 
 // JSHint task for tests
-gulp.task('lint-tests', function() {
+gulp.task('lint:tests', function() {
 	gulp.src(['./tests/**/*.js'])
 	.pipe(jshint())
 	.pipe(jshint.reporter('jshint-stylish'));
 });
+
+gulp.task('lint', ['lint:tests', 'lint:server', 'lint:client', 'lint:apps']);
 
 // Browserify task
 gulp.task('browserify', function() {
@@ -74,6 +93,11 @@ gulp.task('watch', ['lint'], function() {
 	gulp.watch(['client/scripts/*.js', 'client/scripts/**/*.js'], [
 		'lint',
 		'browserify'
+	]);
+
+	gulp.watch(['apps/**/*.js', 'apps/**/manifest.json'], [
+		'lint',
+		'browserify-apps'
 	]);
 
 	// Watch views
@@ -135,9 +159,9 @@ gulp.task('browserify-apps', ['lint'], function() {
 });
 
 // Tests
-gulp.task('test', ['lint-tests', 'browserify', 'browserify-apps'], function() {
+gulp.task('test', ['lint', 'browserify', 'browserify-apps'], function() {
 
-	gulp.src('./test/test.js')
+	return gulp.src('./test/test.js')
 		.pipe(mocha());
 
 });
@@ -173,7 +197,7 @@ gulp.task('push', ['package'], function(){
 });
 
 // Devlopment server
-gulp.task('dev', ['browserify', 'copy-bower', 'views', 'styles'], function() {
+gulp.task('dev', ['build'], function() {
 
 	var serverConfig = {
 		destDir: "dist",
@@ -187,5 +211,21 @@ gulp.task('dev', ['browserify', 'copy-bower', 'views', 'styles'], function() {
 	server.startServer(serverConfig);
 
   // Run the watch task, to keep taps on changes
+	gulp.start('watch');
+});
+
+gulp.task('dev-nobuild', function(){
+	var serverConfig = {
+		destDir: "dist",
+		serverPort: serverport,
+		entryPoint: "index.html"
+	};
+
+	// Run server
+	var server = require('./server');
+
+	server.startServer(serverConfig);
+
+	// Run the watch task, to keep taps on changes
 	gulp.start('watch');
 });

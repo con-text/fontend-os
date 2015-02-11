@@ -13,8 +13,7 @@ var App = React.createClass({
 
   getInitialState: function() {
       return {
-        session: SessionStore.getCurrentUser(),
-        windows: WindowStore.getAll()
+        session: SessionStore.getCurrentUser()
       };
   },
 

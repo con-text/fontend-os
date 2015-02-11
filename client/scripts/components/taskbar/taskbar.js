@@ -8,7 +8,7 @@ var WindowActions = require('../../actions/WindowActions');
 // Single icon
 var Icon = React.createClass({
 	handleClick: function() {
-		WindowActions.toggleWindow(this.props.name);
+		WindowActions.toggleWindow(this.props.appId);
 	},
 	render: function() {
 		return (
@@ -18,20 +18,24 @@ var Icon = React.createClass({
 	}
 });
 
-function getStateFromStores() {
-	return {
-		apps: WindowStore.getAll()
-	};
-}
-
 // Taskbar for launching apps
 var Taskbar = React.createClass({
 
 	getInitialState: function() {
-		return getStateFromStores();
+		return {
+			apps: []
+		};
 	},
 
-	componentDidMound: function() {
+	componentDidMount: function() {
+
+		WindowStore.getAll(function(apps) {
+			console.log(apps);
+			this.setState({
+				apps: apps
+			});
+		}.bind(this));
+
 		WindowStore.addChangeListener(this._onChange);
 	},
 
@@ -41,12 +45,10 @@ var Taskbar = React.createClass({
 
 	render: function() {
 
-		this.state.apps.push({title: "browser"});
 		// Get all icons for windows
 		var appIcons = this.state.apps.map(function(app, index) {
-
 			return (
-				<Icon key={index} name="App" />
+				<Icon key={app.id} name={app.name} appId={app.id} />
 			);
 
 		}, this);
@@ -59,7 +61,7 @@ var Taskbar = React.createClass({
 	},
 
 	_onChange: function() {
-		this.setState(getStateFromStores());
+		//this.setState(getStateFromStores());
 	}
 });
 

@@ -32,6 +32,7 @@
     "gulp-livereload": "^3.6.0",
     "gulp-mocha": "^2.0.0",
     "gulp-react": "^2.0.0",
+    "gulp-s3": "^0.3.0",
     "gulp-util": "^3.0.2",
     "gulp-zip": "^2.0.2",
     "jasmine-core": "^2.1.3",

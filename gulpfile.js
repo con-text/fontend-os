@@ -13,7 +13,8 @@ var gulp = require('gulp'),
 	zip = require('gulp-zip'),
 	path = require('path'),
 	gulpFilter = require('gulp-filter'),
-	fs = require('fs');
+	fs = require('fs'),
+	s3 = require("gulp-s3");
 
 
 // Live reload server depenencies
@@ -163,6 +164,12 @@ gulp.task('package', ['build'], function(){
 		pipe(zip("build.zip")).
 		pipe(gulp.dest('build'));
 
+});
+
+gulp.task('push', ['package'], function(){
+	var aws = JSON.parse(fs.readFileSync('./awsconfig.json'));
+	gulp.src('./build/build.zip')
+	    .pipe(s3({key: aws.AWSAccessKey, secret: aws.AWSSecretAccessKey, bucket: aws.BUCKET, region: aws.AWSRegion}));
 });
 
 // Devlopment server

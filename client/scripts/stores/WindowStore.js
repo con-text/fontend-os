@@ -1,9 +1,13 @@
 var WindowDispatcher = require('../dispatchers/WindowDispatcher');
 var WindowConstants = require('../constants/WindowConstants');
+var ActionTypes = WindowConstants.ActionTypes;
+
+var AppsApiUtils = require('../utils/AppsApiUtils');
+
 var EventEmitter = require('events').EventEmitter;
 var assign = require('object-assign');
 var CHANGE_EVENT = 'change';
-var ActionTypes = WindowConstants.ActionTypes;
+
 var React = require('react');
 
 // Window manager
@@ -11,12 +15,16 @@ var wm = new Ventus.WindowManager();
 
 // List of opened windows
 var _windows = {};
+var _apps = {};
 
-function createFromEl(title, el) {
+function createFromEl(id) {
 
   // Create a window from a DOM element
-  _windows[title] = wm.createWindow({
-    title: title,
+  console.log("Creating element", id, _apps);
+  var app = _apps[id];
+
+  _windows[id] = wm.createWindow({
+    title: app.name,
     width: 500,
     height: 500,
     x: 0,
@@ -24,18 +32,20 @@ function createFromEl(title, el) {
     softRemove: true
   });
 
-  _windows[title].open();
+  _windows[id].open();
 
   // Create react component from class
-  var component = React.createElement(null);
+  console.log(app.reactClass);
+  var component = React.createElement(app.reactClass);
 
-  React.render(component, _windows[title].$content.get(0));
+  React.render(app.reactElement, _windows[id].$content.get(0));
+  //_windows[id].$content.replaceWith(app.reactElement);
 }
 
-function toggleWindow(title) {
+function toggleWindow(id) {
 
-  if(_windows[title]) {
-    var win = _windows[title];
+  if(_windows[id]) {
+    var win = _windows[id];
 
     if(!win.closed) {
       win.close();
@@ -45,14 +55,29 @@ function toggleWindow(title) {
       win.open();
     }
   } else {
-    createFromEl(title, null);
+    createFromEl(id);
   }
 }
 
 var WindowStore = assign({}, EventEmitter.prototype, {
 
-  getAll: function() {
-      return [{name: "A"}];
+  getAll: function(cb) {
+      AppsApiUtils.getAll(function(data, err) {
+
+        console.log("keys", Object.keys(_apps));
+
+        if(Object.keys(_apps).length === 0) {
+          console.log(data);
+          data.forEach(function(app) {
+            _apps[app.id] = app;
+            console.log("Assinging app", app.id)
+          });
+
+          console.log(_apps);
+        }
+
+        cb(data, err);
+      });
   },
 
   emitChange: function() {

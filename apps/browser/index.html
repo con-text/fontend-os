@@ -4,28 +4,44 @@
 	/** @jsx React.DOM */
 	'use strict';
 
-	// var React = require('react');
-
 	var Browser = React.createClass({
-	  getInitialState: function() {
-	    return {
-	      text: ''
-	    };
-	  },
-	  render: function() {
-	    return (
-	      <div className="browser">
-	        <input value={this.state.text} onChange={this.handleChange} />
-	        <p>You typed: {this.state.text}</p>
-	      </div>
-	    );
-	  },
+		getInitialState: function() {
+			return {
+				text: '',
+				url: ''
+			};
+		},
+		render: function() {
+			return (
+				<div className="browser">
+					<input value={this.state.text} onChange={this.handleChange} />
+					<button onClick={this.handleClick}>Go</button>
+					<div>{this.state.text}</div>
+					<iframe sandbox="allow-same-origin allow-scripts allow-popups allow-forms"
+					src={this.state.url} width="100%" height="100%" />
+				</div>
+			);
+		},
 
-	  handleChange: function(e) {
-	    this.setState({
-	      text: e.target.value
-	    });
-	  }
+		handleChange: function(e) {
+			this.setState({
+				text: e.target.value,
+				url: this.state.url
+			});
+		},
+
+		handleClick: function(e) {
+
+			var url = this.state.text;
+			this.setState({
+				text: url,
+				url: url
+			});
+
+			e.preventDefault();
+		},
+
+
 
 	});
 

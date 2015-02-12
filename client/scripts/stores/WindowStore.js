@@ -35,18 +35,10 @@ function createFromEl(id) {
 
   // Create react component from class
   console.log("React class", app.reactClass);
-  var component = React.createElement('iframe');
-  var el = React.createElement(app.reactClass);
-  var iframeContent = React.createElement('div', {className: 'app'},el );
-  console.log(iframeContent);
-
-  console.log("Is valid", React.isValidElement(component));
+  var url = 'http://localhost:3001/app/123/' + app.id;
+  var component = React.createElement('iframe', {src: url, className: "app-window"});
   var renderedIframe = React.render(component, _windows[id].$content.get(0));
   var doc = renderedIframe.getDOMNode();
-  console.log(doc);
-  console.log(doc.contentDocument.body);
-  React.render(iframeContent, doc.contentDocument.body);
-  //_windows[id].$content.replaceWith(app.reactElement);
 }
 
 function toggleWindow(id) {

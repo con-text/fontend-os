@@ -106,7 +106,7 @@ gulp.task('watch', ['build'], function() {
 	]);
 
 	// Watch for changes in stylesheets
-	gulp.watch(['client/styles/*.css','client/styles/*.scss', 'client/styles/**/*.scss'], [
+	gulp.watch(['client/styles/*.css','client/styles/*.less', 'client/styles/**/*.less'], [
 		'styles'
 	]);
 });

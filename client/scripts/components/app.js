@@ -7,8 +7,6 @@ var TaskBar = require('./taskbar/taskbar');
 var SessionStore = require('../stores/SessionStore');
 var WindowStore = require('../stores/WindowStore');
 
-var Window = require('./window/window');
-
 var App = React.createClass({
 
   getInitialState: function() {
@@ -32,15 +30,6 @@ var App = React.createClass({
     if(this.state.session || true) {
       return(
         <div className="desktop">
-
-          <Window title="calculator">
-            <div id="calc-app">
-              <h1>Calculator</h1>
-              <p>Lorem ipsum</p>
-              <input placeholder="Calculate..." />
-            </div>
-          </Window>
-
           <TaskBar />
         </div>
       );

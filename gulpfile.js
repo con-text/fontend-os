@@ -15,7 +15,8 @@ var gulp = require('gulp'),
 	gulpFilter = require('gulp-filter'),
 	fs = require('fs'),
 	s3 = require("gulp-s3");
-	del = require('del');
+	del = require('del'),
+	imagemin = require('gulp-imagemin');
 
 // Live reload server depenencies
 var embedlr = require('gulp-embedlr'),
@@ -164,7 +165,8 @@ gulp.task('test', ['build'], function() {
 
 });
 
-gulp.task('build', ['copy-bower', 'lint', 'browserify', 'views', 'styles']);
+gulp.task('build', ['copy-bower', 'lint', 'browserify', 'views', 'styles',
+	'images']);
 
 // Prepare the package
 gulp.task('package', ['build'], function(){
@@ -186,6 +188,14 @@ gulp.task('package', ['build'], function(){
 		pipe(zip("build.zip")).
 		pipe(gulp.dest('build'));
 
+});
+
+gulp.task('images', function() {
+	return gulp.src('client/images/*')
+		.pipe(imagemin({
+				progressive: true
+		}))
+		.pipe(gulp.dest('dist/images'));
 });
 
 gulp.task('push', ['package'], function(){

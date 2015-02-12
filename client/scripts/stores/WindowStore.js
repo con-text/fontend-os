@@ -34,10 +34,18 @@ function createFromEl(id) {
   _windows[id].open();
 
   // Create react component from class
-  console.log(app, app.reactClass);
-  var component = React.createElement(app.reactClass);
-  console.log(React.isValidElement(component));
-  React.render(component, _windows[id].$content.get(0));
+  console.log("React class", app.reactClass);
+  var component = React.createElement('iframe');
+  var el = React.createElement(app.reactClass);
+  var iframeContent = React.createElement('div', {className: 'app'},el );
+  console.log(iframeContent);
+
+  console.log("Is valid", React.isValidElement(component));
+  var renderedIframe = React.render(component, _windows[id].$content.get(0));
+  var doc = renderedIframe.getDOMNode();
+  console.log(doc);
+  console.log(doc.contentDocument.body);
+  React.render(iframeContent, doc.contentDocument.body);
   //_windows[id].$content.replaceWith(app.reactElement);
 }
 

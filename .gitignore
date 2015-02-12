@@ -38,3 +38,4 @@ build/
 
 # Bower components
 bower_components/
+awsconfig.json

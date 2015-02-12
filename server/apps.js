@@ -6,6 +6,7 @@ function App(props) {
   this.id = props.id;
   this.name = props.name;
   this.reactClass = React.createElement(props.reactClass);
+  this.mainPage = props.mainPage;
 }
 
 App.prototype.renderReact = function() {
@@ -24,10 +25,12 @@ module.exports = {
     this.getManifests().forEach(function(manifest) {
 
       var reactClass = this.loadReactClass(manifest);
+      var mainPage = this.loadMainPage(manifest);
       apps.push(new App({
         id: manifest.id,
         name: manifest.name,
         reactClass: reactClass,
+        mainPage: mainPage
       }));
     }, this);
     return apps;
@@ -35,6 +38,10 @@ module.exports = {
 
   loadReactClass: function(manifest) {
     return require(path.join(manifest.directory, manifest.mainClass));
+  },
+
+  loadMainPage: function(manifest){
+    return fs.readFileSync(path.join(manifest.directory, "index.html")).toString();
   },
 
   getManifests: function() {

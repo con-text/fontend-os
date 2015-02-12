@@ -1,13 +1,12 @@
 var applications = require('./server/apps.js');
+var applicationList = applications.getApps();
 var express = require('express');
 var app = express();
 
 
 app.get('/', function (req, res) {
-	console.log(applications);
-	console.log(applications.getApps());
 	var appIds = [];
-	applications.getApps().forEach(function(m){
+	applicationList.getApps().forEach(function(m){
 		appIds.push(m.id);
 	});
   res.json(appIds);
@@ -16,7 +15,7 @@ app.get('/', function (req, res) {
 var appExists = function(id){
 	var found = false;
 	var index = -1;
-	applications.getApps().forEach(function(m,idx){
+	applicationList.forEach(function(m,idx){
 		if(m.id == id){
 			found = true;
 			index = idx;
@@ -26,14 +25,17 @@ var appExists = function(id){
 	return {found:found, index: index};
 }
 
-app.get('/app/:id', function(req,res){
+app.get('/app/:uuid/:appid', function(req,res){
 	console.log(req.params);
+	var uuid = req.params.uuid;
+	var appid = req.params.appid;
 	// var id = req.body.id;
-	var realApp = appExists(req.params.id);
+	var realApp = appExists(appid);
+
+	
+	
 	if(realApp.found){
-		// console.log(applications.getApps()[realApp.index].reactClass);
-		// res.send("m");
-		res.send(applications.getApps()[realApp.index].renderReact());
+		res.send(applicationList[realApp.index].mainPage);
 	}
 	else{
 		res.send("App doesn't exist");

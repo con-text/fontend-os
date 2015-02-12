@@ -1,0 +1,37 @@
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/0.12.2/react.min.js" type="text/javascript"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/0.12.2/JSXTransformer.js" type="text/javascript"></script>
+<script type="text/jsx">
+	/** @jsx React.DOM */
+	'use strict';
+
+	// var React = require('react');
+
+	var Browser = React.createClass({
+	  getInitialState: function() {
+	    return {
+	      text: ''
+	    };
+	  },
+	  render: function() {
+	    return (
+	      <div className="browser">
+	        <input value={this.state.text} onChange={this.handleChange} />
+	        <p>You typed: {this.state.text}</p>
+	      </div>
+	    );
+	  },
+
+	  handleChange: function(e) {
+	    this.setState({
+	      text: e.target.value
+	    });
+	  }
+
+	});
+
+
+	// Browser.render();
+	React.render(<Browser />, document.body);
+	// module.exports = Browser;
+
+</script>

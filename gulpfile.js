@@ -95,7 +95,7 @@ gulp.task('watch', ['build'], function() {
 		'browserify'
 	]);
 
-	gulp.watch(['apps/**/*.js', 'apps/**/manifest.json'], [
+	gulp.watch(['apps/**/*.js', 'apps/**/manifest.json', 'apps/**/index.html'], [
 		'lint',
 		'browserify:apps'
 	]);
@@ -154,6 +154,9 @@ gulp.task('browserify:apps', ['lint:apps'], function() {
 
 	// Copy manifests
 	gulp.src(['apps/**/manifest.json'])
+		.pipe(gulp.dest(outputDir));
+
+	gulp.src(['apps/**/index.html'])
 		.pipe(gulp.dest(outputDir));
 });
 

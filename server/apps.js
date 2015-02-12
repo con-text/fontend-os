@@ -9,7 +9,8 @@ function App(props) {
 }
 
 App.prototype.renderReact = function() {
-  return React.renderToString(this.reactElement);
+  //changed this to reactClass, is this used anywhere else?
+  return React.renderToString(this.reactClass);
 };
 
 module.exports = {

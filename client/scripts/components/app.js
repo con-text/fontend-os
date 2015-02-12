@@ -29,7 +29,7 @@ var App = React.createClass({
 
   render: function() {
 
-    if(this.state.session) {
+    if(this.state.session || true) {
       return(
         <div className="desktop">
 

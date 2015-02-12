@@ -20,7 +20,6 @@ var _apps = {};
 function createFromEl(id) {
 
   // Create a window from a DOM element
-  console.log("Creating element", id, _apps);
   var app = _apps[id];
 
   _windows[id] = wm.createWindow({
@@ -35,10 +34,10 @@ function createFromEl(id) {
   _windows[id].open();
 
   // Create react component from class
-  console.log(app.reactClass);
+  console.log(app, app.reactClass);
   var component = React.createElement(app.reactClass);
-
-  React.render(app.reactElement, _windows[id].$content.get(0));
+  console.log(React.isValidElement(component));
+  React.render(component, _windows[id].$content.get(0));
   //_windows[id].$content.replaceWith(app.reactElement);
 }
 
@@ -64,16 +63,10 @@ var WindowStore = assign({}, EventEmitter.prototype, {
   getAll: function(cb) {
       AppsApiUtils.getAll(function(data, err) {
 
-        console.log("keys", Object.keys(_apps));
-
         if(Object.keys(_apps).length === 0) {
-          console.log(data);
           data.forEach(function(app) {
             _apps[app.id] = app;
-            console.log("Assinging app", app.id)
           });
-
-          console.log(_apps);
         }
 
         cb(data, err);

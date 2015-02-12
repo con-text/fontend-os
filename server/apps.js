@@ -21,10 +21,12 @@ module.exports = {
     var apps = [];
 
     this.getManifests().forEach(function(manifest) {
+
+      var reactClass = this.loadReactClass(manifest);
       apps.push(new App({
         id: manifest.id,
         name: manifest.name,
-        reactClass: this.loadReactClass(manifest),
+        reactClass: reactClass,
       }));
     }, this);
     return apps;

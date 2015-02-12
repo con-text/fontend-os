@@ -7,7 +7,7 @@ var Browser = React.createClass({
   getInitialState: function() {
     return {
       text: ''
-    }
+    };
   },
   render: function() {
     return (
@@ -21,7 +21,7 @@ var Browser = React.createClass({
   handleChange: function(e) {
     this.setState({
       text: e.target.value()
-    })
+    });
   }
 
 });

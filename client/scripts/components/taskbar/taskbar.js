@@ -30,7 +30,6 @@ var Taskbar = React.createClass({
 	componentDidMount: function() {
 
 		WindowStore.getAll(function(apps) {
-			console.log(apps);
 			this.setState({
 				apps: apps
 			});

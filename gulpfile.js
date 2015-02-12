@@ -53,7 +53,7 @@ gulp.task('lint:server', function() {
 
 // JSHint task for tests
 gulp.task('lint:tests', function() {
-	gulp.src(['./tests/**/*.js'])
+	return gulp.src(['./tests/**/*.js'])
 	.pipe(jshint())
 	.pipe(jshint.reporter('jshint-stylish'));
 });
@@ -61,8 +61,7 @@ gulp.task('lint:tests', function() {
 gulp.task('lint', ['lint:tests', 'lint:server', 'lint:client', 'lint:apps']);
 
 // Browserify task
-gulp.task('browserify', function() {
-
+gulp.task('browserify:client',  function() {
 	// Main entry point
 	return gulp.src(['client/scripts/main.js'])
 	.pipe(browserify({
@@ -74,18 +73,18 @@ gulp.task('browserify', function() {
 	.pipe(concat("bundle.js"))
 	// Output to destination directory
 	.pipe(gulp.dest("dist/js"));
-
 });
 
 // Copy bower components
 gulp.task('copy-bower', function() {
-	gulp.src('bower_components/**/*')
+	return gulp.src('bower_components/**/*')
 	.pipe(gulp.dest('dist/vendor'));
-
 });
 
+gulp.task('browserify', ['browserify:client', 'browserify:apps']);
+
 // Watch task
-gulp.task('watch', ['lint'], function() {
+gulp.task('watch', ['build'], function() {
 
 	livereload.listen();
 
@@ -97,7 +96,7 @@ gulp.task('watch', ['lint'], function() {
 
 	gulp.watch(['apps/**/*.js', 'apps/**/manifest.json'], [
 		'lint',
-		'browserify-apps'
+		'browserify:apps'
 	]);
 
 	// Watch views
@@ -140,11 +139,10 @@ gulp.task('views', function() {
 });
 
 // Default task
-gulp.task('default', ['browserify', 'views', 'styles'], function() {
-
+gulp.task('default', ['dev'], function() {
 });
 
-gulp.task('browserify-apps', ['lint'], function() {
+gulp.task('browserify:apps', ['lint:apps'], function() {
 
 	var outputDir = "dist/apps";
 
@@ -159,14 +157,14 @@ gulp.task('browserify-apps', ['lint'], function() {
 });
 
 // Tests
-gulp.task('test', ['lint', 'browserify', 'browserify-apps'], function() {
+gulp.task('test', ['build'], function() {
 
 	return gulp.src('./test/test.js')
 		.pipe(mocha());
 
 });
 
-gulp.task('build', ['test', 'copy-bower', 'browserify-apps', 'browserify', 'views', 'styles']);
+gulp.task('build', ['copy-bower', 'lint', 'browserify', 'views', 'styles']);
 
 // Prepare the package
 gulp.task('package', ['build'], function(){

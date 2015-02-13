@@ -24,8 +24,8 @@ function createFromEl(id) {
 
   _windows[id] = wm.createWindow({
     title: app.name,
-    width: 500,
-    height: 500,
+    height: 786,
+    width: 1024,
     x: 0,
     y: 0,
     softRemove: true

@@ -1,18 +1,12 @@
 var fs = require('fs');
 var path = require('path');
-var React = require('react');
+
 
 function App(props) {
   this.id = props.id;
   this.name = props.name;
-  this.reactClass = React.createElement(props.reactClass);
   this.mainPage = props.mainPage;
 }
-
-App.prototype.renderReact = function() {
-  //changed this to reactClass, is this used anywhere else?
-  return React.renderToString(this.reactClass);
-};
 
 module.exports = {
 
@@ -29,15 +23,10 @@ module.exports = {
       apps.push(new App({
         id: manifest.id,
         name: manifest.name,
-        reactClass: reactClass,
         mainPage: mainPage
       }));
     }, this);
     return apps;
-  },
-
-  loadReactClass: function(manifest) {
-    return require(path.join(manifest.directory, manifest.mainClass));
   },
 
   loadMainPage: function(manifest){

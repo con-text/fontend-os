@@ -6,6 +6,7 @@ var net = require('net');
 var path = require('path');
 var fs = require('fs');
 var ble = require('./bleservice');
+var configFile = require('./config/config');
 
 module.exports.startServer = function (config, additionalConfig) {
 
@@ -14,8 +15,8 @@ module.exports.startServer = function (config, additionalConfig) {
 	var serverPort = params.serverPort || 3000;
 	var entryPoint = params.entryPoint || "index.html";
 
-	// Set static folder
-	app.use(express.static("./"+destDir));
+	// Run config
+	configFile.configure(app, express);
 
 	// Load other routes
 	var normalizedPath = path.join(__dirname, "server");

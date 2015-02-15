@@ -25,7 +25,7 @@ module.exports = {
     this.getManifests().forEach(function(manifest) {
 
       var reactClass = this.loadReactClass(manifest);
-      var mainPage = this.loadMainPage(manifest);
+      var mainPage = injectAPI(this.loadMainPage(manifest), manifest);
       apps.push(new App({
         id: manifest.id,
         name: manifest.name,
@@ -91,4 +91,15 @@ function readManifest(path) {
   var fileContent = fs.readFileSync(path, 'utf8');
   var parsedObject = JSON.parse(fileContent);
   return parsedObject;
+}
+
+
+//this will be used to inject the api that apps will use into the source of the page.
+//for now, it's simple, just adding it before hand. Later on we can explore putting in into the
+//correct secion of the dom
+function injectAPI(webSource, manifest){
+  var content = "<script type='text/javascript' src='../../js/StateInterface.js'>"
+      content+= "var appId = '" + manifest.id + "'";
+      content+= "</script>";
+  return content += webSource;
 }

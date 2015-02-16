@@ -61,5 +61,13 @@
   "bugs": {
     "url": "https://github.com/con-text/fontend-os/issues"
   },
-  "homepage": "https://github.com/con-text/fontend-os"
+  "homepage": "https://github.com/con-text/fontend-os",
+  "window": {
+    "fullscreen" : true,
+    "width": 800,
+    "height": 640
+  },
+  "chromium-args": "--child-clean-exit",
+  "main": "index.html",
+  "single-instance": true
 }

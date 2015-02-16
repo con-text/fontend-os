@@ -1,5 +1,12 @@
 @taskBarBackground: #6C729B;
-@taskBarIconSize: 48px;
+@taskBarIconSize: 64px;
+
+
+@-webkit-keyframes animatedBackground {
+	0% { background-position: 0 0; }
+	50% { background-position: 0 -15px; }
+	100% { background-position: 0 0px; }
+}
 
 .taskbar {
 	z-index: 1;
@@ -18,18 +25,23 @@
 		float: left;
 
 		margin-left: 5px;
-		margin-right: 5px;
-		background: red;
+		margin-right: 15px;
+		background: none;
 
-		&[data-icon='calculator'] {
-			background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAB7klEQVR4Xu1bO0oFQRD0HUARMTRVr2BgbCqKJzHxDiaexM8BDMz0DPJCMxHRC2gNGPg22OlytnpHKKEjq3811TPNg12sxf52AbuEHcK2Yy6zoV6R+QF2DnupVbGoAfD/fdgTbDOA7QnyhmIOYMuxoiIE3CHAcU+dEbVcA3vWSsAnAqwTSXuCftSUG1HA16CjiM+cJFD1RpqhAs7Z+U9uql4TEDgxitFAPDWEqtcKCBwHxWggnhpC1WsFBI6DYjQQTw2h6rUCAsdBMRqIp4ZQ9VoBgeOgGA3EU0Ooev+iAHUDU8cf7dEEBOgeSirg0hXECmj9QcQK6ErQfDEeAY/ACANTPIO1GNRiglpb8cN25SNgAir3UuuJsgRbAQMGPALqV4CVqBrvEfAIrDIgvwP45TTXwwSoL8Hc8+SzWQFqBaifNTa+n0E/g8nPICtRNd4j4BHwCKwwIN8D1DPNxk+/A/jdLNdDroDcdvhsJkC9CvNnkushVwB7Sanx6ZeguiE2vgnwJuhN0Jvgbwb8Cqj3APaWVuPTX4HctYbPJh8BvqRcDxOgvgNyz5PP1qyA8vHhBp+3C49JPpy8QSsnXbTDF3ELl9PWEdhDgEfYFp9/Vo93ZC8fTz+3ElD8d2BXsKN/MA7lW+d72AVs9Mvx0tg3+LiiQXH0lysAAAAASUVORK5CYII=);
-			background-repeat: no-repeat;
-			background-color: inherit;
-			background-size: cover;
+		img {
+			background: none;
+			width: @taskBarIconSize;
+			height: @taskBarIconSize;
+
 		}
 
 		&:hover {
 			cursor: pointer;
+
+			-webkit-animation-name: animatedBackground;
+			-webkit-animation-duration: 1s;
+			-webkit-animation-timing-function: linear;
+			-webkit-animation-iteration-count: infinite;
 		}
 	}
 }

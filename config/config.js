@@ -15,11 +15,8 @@ var config = {
   appsServerHost: 'http://localhost:3001',
 
   configure: function(app, express) {
-
-    console.log("Configure")
     // Set static folder
     app.use(express.static("./" + this.distDir));
-
     app.use(allowAppsOrigin);
   }
 };

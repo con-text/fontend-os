@@ -34,11 +34,9 @@ function createFromEl(id) {
   _windows[id].open();
 
   // Create react component from class
-  console.log("React class", app.reactClass);
   var url = 'http://localhost:3001/app/123/' + app.id;
   var component = React.createElement('iframe', {src: url, className: "app-window"});
   var renderedIframe = React.render(component, _windows[id].$content.get(0));
-  var doc = renderedIframe.getDOMNode();
 }
 
 function toggleWindow(id) {

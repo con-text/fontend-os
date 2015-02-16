@@ -156,6 +156,10 @@ gulp.task('browserify:apps', ['lint:apps'], function() {
 	gulp.src(['apps/**/manifest.json'])
 		.pipe(gulp.dest(outputDir));
 
+	// Copy assets
+	gulp.src(['apps/**/*.png', 'apps/**/*.jpg'])
+		.pipe(gulp.dest(outputDir));
+
 	gulp.src(['apps/**/index.html'])
 		.pipe(gulp.dest(outputDir));
 });

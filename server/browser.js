@@ -16,8 +16,7 @@ function getPage(req, res) {
 }
 
 module.exports = {
-
   routeHandler: function(app) {
-    app.get('/browser/page', getPage)
+    app.get('/browser/page', getPage);
   }
-}
+};

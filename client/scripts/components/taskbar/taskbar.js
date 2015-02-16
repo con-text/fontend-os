@@ -11,10 +11,18 @@ var Icon = React.createClass({
 		WindowActions.toggleWindow(this.props.appId);
 	},
 	render: function() {
-		return (
-			<span className="app-icon" data-icon={this.props.name}
-				onClick={this.handleClick} />
-		);
+		if(this.props.iconSrc) {
+
+			return (
+				<span className="app-icon" onClick={this.handleClick}>
+					<img src={this.props.iconSrc} alt="icon" />
+				</span>
+			);
+		} else {
+			return (
+				<span className="app-icon" onClick={this.handleClick} />
+			);
+		}
 	}
 });
 
@@ -47,7 +55,7 @@ var Taskbar = React.createClass({
 		// Get all icons for windows
 		var appIcons = this.state.apps.map(function(app, index) {
 			return (
-				<Icon key={app.id} name={app.name} appId={app.id} />
+				<Icon key={app.id} name={app.name} appId={app.id} iconSrc={app.icon} />
 			);
 
 		}, this);

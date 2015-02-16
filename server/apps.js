@@ -1,11 +1,22 @@
 var fs = require('fs');
 var path = require('path');
 
+function loadMainPage(manifest){
+  var mainFilePath = path.join(manifest.absolutePath, "index.html");
+  return fs.readFileSync(mainFilePath).toString();
+}
 
-function App(props) {
-  this.id = props.id;
-  this.name = props.name;
-  this.mainPage = props.mainPage;
+function App(manifest) {
+
+  // Expect these to be in the manifest
+  this.id = manifest.id;
+  this.name = manifest.name;
+  this.mainPage = loadMainPage(manifest);
+
+  // Icon is optional
+  if(manifest.icon) {
+    this.icon = path.join(manifest.relativePath, manifest.icon);
+  }
 }
 
 module.exports = {
@@ -17,30 +28,25 @@ module.exports = {
     var apps = [];
 
     this.getManifests().forEach(function(manifest) {
-
-      var mainPage = this.loadMainPage(manifest);
-      apps.push(new App({
-        id: manifest.id,
-        name: manifest.name,
-        mainPage: mainPage
-      }));
+      apps.push(new App(manifest));
     }, this);
     return apps;
   },
 
-  loadMainPage: function(manifest){
-    return fs.readFileSync(path.join(manifest.directory, "index.html")).toString();
-  },
+
 
   getManifests: function() {
 
     var manifests = [];
 
-    var normalizedPath = path.join(__dirname, "../dist/apps");
+    var relativePath = "/apps/";
+    var normalizedPath = path.join(__dirname, "../dist/"+ relativePath);
 
     fs.readdirSync(normalizedPath).forEach(function(file) {
 
       var filePath = "./../dist/apps/" + file;
+      var relativeFolderPath = relativePath + file;
+
       normalizedPath = path.join(__dirname, filePath);
       // Now go through directories within apps folder
       if(fs.lstatSync(normalizedPath).isDirectory()) {
@@ -53,7 +59,8 @@ module.exports = {
           var filePath = path.join(currentFolder, file);
           if(file === "manifest.json") {
             var manifest = readManifest(filePath);
-            manifest.directory = currentFolder;
+            manifest.absolutePath = currentFolder;
+            manifest.relativePath = relativeFolderPath;
             manifests.push(manifest);
           }
 

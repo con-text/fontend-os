@@ -8,21 +8,19 @@ var fs = require('fs');
 var ble = require('./bleservice');
 var configFile = require('./config/config');
 
-module.exports.startServer = function (config, additionalConfig) {
+function configAndStartServer(config) {
 
 	var params = config || {};
 	var destDir = params.destDir || "dest";
-	var serverPort = params.serverPort || 3000;
+	var serverPort = params.serverPort || 5000;
 	var entryPoint = params.entryPoint || "index.html";
 
 	// Run config
 	configFile.configure(app, express);
 
 	// Load other routes
-	var normalizedPath = path.join(__dirname, "server");
-
-	fs.readdirSync(normalizedPath).forEach(function(file) {
-		var component = require("./server/" + file);
+	fs.readdirSync("./server").forEach(function(file) {
+		var component = require(path.join(process.cwd(), 'server', file));
 
 		// If the required module can add any route handlers, let it do so
 		if(component.routeHandler) {
@@ -32,18 +30,10 @@ module.exports.startServer = function (config, additionalConfig) {
 
 	// Point / to entry point
 	app.get('/', function(req, res) {
-	    res.sendFile(entryPoint, { root: './'+destDir });
+			res.sendFile(entryPoint, { root: './'+destDir });
 	});
 
-	// If we have extra config, call it before
-	if(additionalConfig) {
-
-		additionalConfig(app, function () {
-			startServer(server, serverPort);
-		});
-	} else {
-		startServer(server, serverPort);
-	}
+	startServer(server, serverPort);
 };
 
 // Start the server
@@ -59,7 +49,9 @@ function startServer(server, port) {
 	var socket = ble.connectToBleService(io);
 
 	// Listen to the TCP port
-	server.listen(port);
+	server.listen(port, function() {
+		window.location = 'http://localhost:' + app.get('port');
+	});
 
 	// On ctrl-c exit
 	process.on( 'SIGINT', function() {
@@ -74,13 +66,8 @@ function startServer(server, port) {
 }
 
 // If called from command line
-if(require.main === module) {
+var serverConfig = {
+	serverPort: 5000
+};
 
-	var serverConfig = {
-		destDir: "dist",
-		serverPort: 5000,
-		entryPoint: "index.html"
-	};
-
-	module.exports.startServer(serverConfig);
-}
+configAndStartServer(serverConfig);

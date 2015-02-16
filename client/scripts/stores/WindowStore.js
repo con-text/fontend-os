@@ -34,7 +34,7 @@ function createFromEl(id) {
   _windows[id].open();
 
   // Create react component from class
-  var url = 'http://localhost:3001/app/123/' + app.id;
+  var url = 'http://localhost:3001/app/tester/' + app.id;
   var component = React.createElement('iframe', {src: url, className: "app-window"});
   var renderedIframe = React.render(component, _windows[id].$content.get(0));
 }

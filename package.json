@@ -67,6 +67,7 @@
     "width": 800,
     "height": 640
   },
+  "node-remote": "*localhost:5000",
   "chromium-args": "--child-clean-exit",
   "main": "index.html",
   "single-instance": true

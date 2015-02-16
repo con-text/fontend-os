@@ -2,11 +2,17 @@ var applications = require('./server/apps.js');
 var applicationList = applications.getApps();
 var express = require('express');
 var app = express();
+var http = require('http-get');
+var bodyParser = require('body-parser');
 
+app.use(bodyParser.urlencoded({ extended: false }))
+
+// parse application/json
+app.use(bodyParser.json())
 
 app.get('/', function (req, res) {
 	var appIds = [];
-	applicationList.getApps().forEach(function(m){
+	applicationList.forEach(function(m){
 		appIds.push(m.id);
 	});
   res.json(appIds);
@@ -32,14 +38,29 @@ app.get('/app/:uuid/:appid', function(req,res){
 	// var id = req.body.id;
 	var realApp = appExists(appid);
 
-	
-	
-	if(realApp.found){
-		res.send(applicationList[realApp.index].mainPage);
-	}
-	else{
-		res.send("App doesn't exist");
-	}
+
+	http.get("https://contexte.herokuapp.com/users/"+uuid, function(err, result){
+		if(err){
+			//user probably doesn't exist, can change this depending on header
+			res.send("User doesn't exist");
+		}
+		else{
+			//not too bothered about the user info at this point
+			if(realApp.found){
+				res.send(applicationList[realApp.index].mainPage);
+			}
+			else{
+				res.send("App doesn't exist");
+			}
+		}
+	});
+
+
+});
+
+app.post('/syncState/:userId/:appId', function(req,res){
+	console.log(req.params);
+	console.log(req.body);
 });
 
 var server = app.listen(3001, function () {

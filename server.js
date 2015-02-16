@@ -50,7 +50,7 @@ function startServer(server, port) {
 
 	// Listen to the TCP port
 	server.listen(port, function() {
-		window.location = 'http://localhost:' + app.get('port');
+		window.location = 'http://localhost:' + port;
 	});
 
 	// On ctrl-c exit

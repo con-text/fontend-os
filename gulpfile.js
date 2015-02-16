@@ -14,7 +14,7 @@ var gulp = require('gulp'),
 	path = require('path'),
 	gulpFilter = require('gulp-filter'),
 	fs = require('fs'),
-	s3 = require("gulp-s3");
+	s3 = require("gulp-s3"),
 	del = require('del'),
 	imagemin = require('gulp-imagemin');
 
@@ -76,6 +76,12 @@ gulp.task('browserify:client',  function() {
 	.pipe(gulp.dest("dist/js"));
 });
 
+//copy the state interface api into the dist folder without concatenating it
+gulp.task('copy-stateinterface', function(){
+	return gulp.src('client/scripts/utils/StateInterface.js')
+	.pipe(gulp.dest("dist/js"));
+});
+
 // Copy bower components
 gulp.task('copy-bower', function() {
 	return gulp.src('bower_components/**/*')
@@ -92,7 +98,8 @@ gulp.task('watch', ['build'], function() {
 	// Watch scripts folders
 	gulp.watch(['client/scripts/*.js', 'client/scripts/**/*.js'], [
 		'lint',
-		'browserify'
+		'browserify',
+		'copy-stateinterface'
 	]);
 
 	gulp.watch(['apps/**/*.js', 'apps/**/manifest.json', 'apps/**/index.html'], [
@@ -169,7 +176,7 @@ gulp.task('test', ['build'], function() {
 });
 
 gulp.task('build', ['copy-bower', 'lint', 'browserify', 'views', 'styles',
-	'images']);
+	'images', 'copy-stateinterface']);
 
 // Prepare the package
 gulp.task('package', ['build'], function(){

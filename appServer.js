@@ -3,11 +3,16 @@ var applicationList = applications.getApps();
 var express = require('express');
 var app = express();
 var http = require('http-get');
+var bodyParser = require('body-parser');
 
+app.use(bodyParser.urlencoded({ extended: false }))
+
+// parse application/json
+app.use(bodyParser.json())
 
 app.get('/', function (req, res) {
 	var appIds = [];
-	applicationList.getApps().forEach(function(m){
+	applicationList.forEach(function(m){
 		appIds.push(m.id);
 	});
   res.json(appIds);
@@ -51,6 +56,11 @@ app.get('/app/:uuid/:appid', function(req,res){
 	});
 
 
+});
+
+app.post('/syncState/:userId/:appId', function(req,res){
+	console.log(req.params);
+	console.log(req.body);
 });
 
 var server = app.listen(3001, function () {

@@ -18,7 +18,7 @@ module.exports = {
 
     this.getManifests().forEach(function(manifest) {
 
-      var reactClass = this.loadReactClass(manifest);
+      // var reactClass = this.loadReactClass(manifest);
       var mainPage = injectAPI(this.loadMainPage(manifest), manifest);
       apps.push(new App({
         id: manifest.id,
@@ -87,8 +87,10 @@ function readManifest(path) {
 //for now, it's simple, just adding it before hand. Later on we can explore putting in into the
 //correct secion of the dom
 function injectAPI(webSource, manifest){
-  var content = "<script type='text/javascript' src='../../js/StateInterface.js'>"
-      content+= "var appId = '" + manifest.id + "'";
+  //this port needs to not be hardcoded
+  var content = "<script type='text/javascript' src='http://localhost:5000/js/StateInterface.js'></script>";
+      content+= "<script type='text/javascript' src='http://localhost:5000/vendor/jquery/dist/jquery.min.js'></script>";
+      content+= "<script type='text/javascript'>var AS = new AppState('" + manifest.id + "'); AS.value('something', 'cool2');";
       content+= "</script>";
   return content += webSource;
 }

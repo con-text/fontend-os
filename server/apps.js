@@ -90,7 +90,7 @@ function injectAPI(webSource, manifest){
   //this port needs to not be hardcoded
   var content = "<script type='text/javascript' src='http://localhost:5000/js/StateInterface.js'></script>";
       content+= "<script type='text/javascript' src='http://localhost:5000/vendor/jquery/dist/jquery.min.js'></script>";
-      content+= "<script type='text/javascript'>var AS = new AppState('" + manifest.id + "'); AS.value('something', 'cool2');";
+      content+= "<script type='text/javascript'>var AS = new AppState('" + manifest.id + "', 'tester'); AS.value('something', 'cool2'); AS.value('somethingElse').push(10);";
       content+= "</script>";
   return content += webSource;
 }

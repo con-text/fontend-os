@@ -3,6 +3,7 @@ function AppState(appId, userId){
 	this.userId = userId;
 	this._state = loadFullState();
 	
+	console.log("INIT APP STATE", this.appId, this.userId);
 
 	// code for adding getters and setters to state, needs work work
 	// for(var key in this._state){
@@ -21,7 +22,6 @@ function AppState(appId, userId){
 }
 
 AppState.prototype.value = function(key, value){
-	this.syncState();
 	if(this._state[key] === undefined){
 		//invalid key
 		console.log("Invalid key",key);
@@ -32,12 +32,13 @@ AppState.prototype.value = function(key, value){
 		return this._state[key];
 	}
 	this._state[key] = value;
+	this.syncState();
 	return;
 }
 
 
 AppState.prototype.syncState = function(){
-	// console.log("Hit syncState",this._state);
+	console.log("Hit syncState",this._state);
 	//for now, sync on every change. This will obviously need to be changed
 	$.post( "/syncState/"+this.userId+"/"+this.appId, this._state );
 }

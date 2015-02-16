@@ -8,6 +8,7 @@
     "express": "^4.11.1",
     "flux": "^2.0.1",
     "http-get": "^0.5.10",
+    "http-post": "^0.1.1",
     "http-proxy": "^1.8.1",
     "json-socket": "*",
     "keymirror": "^0.1.1",

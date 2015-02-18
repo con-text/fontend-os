@@ -82,7 +82,7 @@ app.post('/syncState/:uuid/:appId', function(req,res){
 	console.log("entering state sync post method", req.body);
 	userExists(uuid, function(exists, result){
 		if(exists){
-			http.post("http://localhost:3000/app/syncState/"+uuid+"/"+appId, req.body, function(response){
+			http.post("https://contexte.herokuapp.com/app/syncState/"+uuid+"/"+appId, req.body, function(response){
 				res.json({message:"Sending update"});
 			});
 		}
@@ -99,7 +99,7 @@ app.get('/syncState/:uuid/:appId', function(req,res){
 	userExists(uuid, function(exists,result){
 		if(exists){
 			//get the values
-			httpGet.get("http://localhost:3000/app/syncState/"+uuid+"/"+appId, function(err,result){
+			httpGet.get("https://contexte.herokuapp.com/app/syncState/"+uuid+"/"+appId, function(err,result){
 				var parsedResult = JSON.parse(result.buffer);
 				console.log("parsed result", parsedResult);
 				res.json(parsedResult);

@@ -9,29 +9,45 @@
 
   var parser = math.parser();
 
-var ExprList = React.createClass({
-  render: function() {
-    var createItem = function(itemText) {
-      return <li>{itemText.expression} = {itemText.result}</li>;
-    };
-    return <ul>{this.props.items.map(createItem)}</ul>;
-  }
-});
+  // Expression list
+  var ExprList = React.createClass({
+    render: function() {
+      var items = this.props.items.map(function(itemText) {
+        return <li>{itemText.expression} = {itemText.result}</li>;
+      });
+
+      return <ul>{items}</ul>;
+    }
+  });
 
   var Calculator = React.createClass({
 
     getInitialState: function() {
       return {
+        items: [],
         expression: '',
-        result: null,
-
+        result: null
       };
+    },
+
+    componentDidMount: function() {
+      AS.on('load', function() {
+
+        this.setState({
+          items: AS._state.prevCalcs,
+        });
+
+      }.bind(this));
+    },
+
+    componentWillUnmount: function() {
+      AS.off('load');
     },
 
     render: function() {
       var result = this.state.result !== null ?
         <p>Result: {this.state.result}</p> :
-        <p></p>;
+        '';
 
       return (
         <div className="calculator">
@@ -39,8 +55,10 @@ var ExprList = React.createClass({
           <button onClick={this.handleClear}>Clear</button>
           <input value={this.state.expression} onChange={this.handleChange} />
           <button onClick={this.handleEnter}>Enter</button>
+
           {result}
-        <ExprList items={this.state.items} />
+
+          <ExprList items={this.state.items} />
         </div>
       );
     },
@@ -56,8 +74,12 @@ var ExprList = React.createClass({
       e.preventDefault();
 
       var result = parser.eval(this.state.expression);
+
       AS._state.prevCalcs.push({expression:this.state.expression, result: result});
-      this.setState({items: AS._state.prevCalcs, result:result});
+
+      this.setState({
+        items: AS._state.prevCalcs,
+        result:result});
     },
 
     handleChange: function(e) {

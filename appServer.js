@@ -7,10 +7,10 @@ var http = require('http');
 http.post = require('http-post');
 var bodyParser = require('body-parser');
 
-app.use(bodyParser.urlencoded({ extended: false }))
+app.use(bodyParser.urlencoded({ extended: false }));
 
 // parse application/json
-app.use(bodyParser.json())
+app.use(bodyParser.json());
 
 app.get('/', function (req, res) {
 	var appIds = [];
@@ -31,7 +31,7 @@ var appExists = function(id){
 		}
 	});
 	return {found:found, index: index};
-}
+};
 
 app.get('/app/:uuid/:appId', function(req,res){
 	console.log(req.params);
@@ -120,9 +120,9 @@ app.get('/syncState/:uuid/:appId', function(req,res){
 
 var server = app.listen(3001, function () {
 
-  var host = server.address().address
-  var port = server.address().port
+  var host = server.address().address;
+  var port = server.address().port;
 
-  console.log('Example app listening at http://%s:%s', host, port)
+  console.log('Example app listening at http://%s:%s', host, port);
 
-})
+});

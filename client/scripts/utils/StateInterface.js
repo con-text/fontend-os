@@ -2,6 +2,7 @@ function AppState(appId, userId){
 	this.appId 	= appId;
 	this.userId = userId;
 	this.loadFullState();
+	this.handlers = {};
 }
 
 AppState.prototype.addWatcher = function(){
@@ -10,17 +11,33 @@ AppState.prototype.addWatcher = function(){
 		return function(d){
 			console.log("found change", state);
 			$.post( "/syncState/"+state.userId+"/"+state.appId, {state: JSON.stringify(state._state)} );
-		}
+		};
 	})(this), 4, true);
-}
+};
+
+AppState.prototype.on = function(eventName, callback) {
+	this.handlers[eventName] = callback;
+};
+
+AppState.prototype.off = function(eventName, callback) {
+	delete this.handlers[eventName];
+};
+
+AppState.prototype.emit = function(eventName, data) {
+	var eventHandler = this.handlers[eventName];
+	if(eventHandler) {
+		eventHandler(data);
+	}
+};
+
+
 
 AppState.prototype.fillState = function(data){
 	// console.log(this);
 	// console.log(data);
 	this._state = data;
 	this.addWatcher();
-}
-
+};
 
 AppState.prototype.loadFullState = function(){
 	$.getJSON("/syncState/"+this.userId+"/"+this.appId).done(
@@ -31,6 +48,7 @@ AppState.prototype.loadFullState = function(){
 					data.message.state = {};
 				// console.log("Got",data.message.state,"in",AS);
 				AS.fillState(data.message.state);
-			}
+				AS.emit("load");
+			};
 	})(this));
-}
+};

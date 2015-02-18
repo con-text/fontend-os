@@ -18,7 +18,6 @@ var ExprList = React.createClass({
   }
 });
 
-
   var Calculator = React.createClass({
 
     getInitialState: function() {
@@ -48,6 +47,7 @@ var ExprList = React.createClass({
 
     handleClear: function(e) {
       e.preventDefault();
+
       parser.clear();
       this.setState({expression: '', result: null});
     },
@@ -55,7 +55,6 @@ var ExprList = React.createClass({
     handleEnter: function(e) {
       e.preventDefault();
 
-      
       var result = parser.eval(this.state.expression);
       AS._state.prevCalcs.push({expression:this.state.expression, result: result});
       this.setState({items: AS._state.prevCalcs, result:result});

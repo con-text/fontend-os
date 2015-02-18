@@ -64,10 +64,11 @@
   },
   "homepage": "https://github.com/con-text/fontend-os",
   "window": {
-    "fullscreen": false,
+    "fullscreen": true,
     "width": 800,
     "height": 640
   },
+  "node-remote": "*localhost:5000",
   "chromium-args": "--child-clean-exit",
   "single-instance": true
 }

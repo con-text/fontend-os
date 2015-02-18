@@ -82,7 +82,8 @@ app.post('/syncState/:uuid/:appId', function(req,res){
 	console.log("entering state sync post method", req.body);
 	userExists(uuid, function(exists, result){
 		if(exists){
-			http.post("https://contexte.herokuapp.com/app/syncState/"+uuid+"/"+appId, req.body, function(response){
+			//change to https
+			http.post("http://contexte.herokuapp.com/app/syncState/"+uuid+"/"+appId, req.body, function(response){
 				res.json({message:"Sending update"});
 			});
 		}
@@ -98,11 +99,17 @@ app.get('/syncState/:uuid/:appId', function(req,res){
 	console.log("entering statesync fetch method");
 	userExists(uuid, function(exists,result){
 		if(exists){
-			//get the values
-			httpGet.get("https://contexte.herokuapp.com/app/syncState/"+uuid+"/"+appId, function(err,result){
-				var parsedResult = JSON.parse(result.buffer);
-				console.log("parsed result", parsedResult);
-				res.json(parsedResult);
+			//get the values, change to https soon
+			httpGet.get("http://contexte.herokuapp.com/app/syncState/"+uuid+"/"+appId, function(err,result){
+				if(err){
+					res.json({"message": "error "+err});
+				}
+				else{
+					console.log("results", result);
+					var parsedResult = JSON.parse(result.buffer);
+					console.log("parsed result", parsedResult);
+					res.json(parsedResult);
+				}
 			});
 		}
 		else{

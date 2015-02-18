@@ -6,25 +6,38 @@
 	'use strict';
 
 	var Browser = React.createClass({
+
 		getInitialState: function() {
 			return {
-				text: 'http://google.com'
+				text: '',
+				history: ['about:blank']
 			};
 		},
+
 		componentDidMount: function() {
-			this.refs.frame.getDOMNode().setAttribute('nwdisable', '');
-			this.refs.frame.getDOMNode().setAttribute('nwfaketop', '');
+			var frame = this.refs.frame.getDOMNode();
+			frame.setAttribute('nwdisable', '');
+			frame.setAttribute('nwfaketop', '');
+			frame.addEventListener("DOMAttrModified", this.handleFrameLoad);
 		},
+
+		componentWillUnmount: function() {
+			var frame = this.refs.frame.getDOMNode();
+			frame.removeEventListener("DOMAttrModified", this.handleFrameLoad);
+		},
+
 		render: function() {
+		var url = this.state.history[this.state.history.length - 1];
 			return (
 				<div className="browser">
 					<div className="address-bar">
+						<button disabled={!this.canGoBack()} onClick={this.handleBackClick}>Back</button>
 						<input value={this.state.text} onChange={this.handleChange} />
-						<button onClick={this.handleClick}>Go</button>
+						<button onClick={this.handleGoClick}>Go</button>
 					</div>
 
 					<div className="web-view">
-						<iframe src={this.state.text} ref="frame" width="100%" height="100%" />
+						<iframe ref="frame" src={url} width="100%" height="100%" />
 					</div>
 				</div>
 			);
@@ -36,13 +49,44 @@
 			});
 		},
 
-		handleClick: function(e) {
+		handleBackClick: function(e) {
+			e.preventDefault();
+			var frame = this.refs.frame.getDOMNode();
+			// Drop current one
+			this.state.history.pop();
+			var url;
+			if(this.state.history.length > 0) {
+				url = this.state.history[this.state.history.length - 1];
+			} else {
+				url = "about:blank";
+			}
+			frame.setAttribute('src', url);
+		},
+
+		canGoBack: function() {
+				this.state.history.length > 1;
+		},
+
+		handleGoClick: function(e) {
 			e.preventDefault();
 
 			var url = this.state.text.toString();
-			var el = this.refs.frame.getDOMNode();
-			el.setAttribute('src', url);
+			var frame = this.refs.frame.getDOMNode();
+			frame.setAttribute('src', url);
+			this.setState({history: this.state.history.concat([url])});
+			window.console.log(this.state.history);
+		},
 
+		handleFrameLoad: function(e) {
+
+			console.log("Attr changed");
+
+			if(e.attrName === "src") {
+				var frame = this.refs.frame.getDOMNode();
+				var url = frame.contentWindow.location.href;
+				this.state.history.push(url);
+				console.log("Pusing url". url);
+			}
 		}
 	});
 

@@ -11,7 +11,7 @@ function App(manifest) {
   // Expect these to be in the manifest
   this.id = manifest.id;
   this.name = manifest.name;
-  this.mainPage = loadMainPage(manifest);
+  this.mainPage = injectAPI(loadMainPage(manifest), manifest);
 
   // Icon is optional
   if(manifest.icon) {
@@ -96,9 +96,11 @@ function readManifest(path) {
 //correct secion of the dom
 function injectAPI(webSource, manifest){
   //this port needs to not be hardcoded
-  var content = "<script type='text/javascript' src='http://localhost:5000/js/StateInterface.js'></script>";
-      content+= "<script type='text/javascript' src='http://localhost:5000/vendor/jquery/dist/jquery.min.js'></script>";
-      content+= "<script type='text/javascript'>var AS = new AppState('" + manifest.id + "'); AS.value('something', 'cool2');";
+  var content = "<script type='text/javascript' src='http://localhost:5000/vendor/jquery/dist/jquery.min.js'></script>";
+      content+= "<script type='text/javascript' src='https://rawgit.com/melanke/Watch.JS/master/src/watch.js'></script>";
+      content+= "<script type='text/javascript' src='http://localhost:5000/js/StateInterface.js'></script>";
+      //hardcoded, obviously change this
+      content+= "<script type='text/javascript'>var AS = new AppState('" + manifest.id + "', 'tester');";
       content+= "</script>";
   return content += webSource;
 }

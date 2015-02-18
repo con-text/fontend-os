@@ -1,52 +1,36 @@
 function AppState(appId, userId){
 	this.appId 	= appId;
 	this.userId = userId;
-	this._state = loadFullState();
-	
-
-	// code for adding getters and setters to state, needs work work
-	// for(var key in this._state){
-	// 	if(this._state.hasOwnProperty(key)){
-	// 		console.log("Defining stuff on",key);
-	// 		Object.defineProperty(this._state, key,
-	// 			{
-	// 				set: function (x) { this._state[key] = x; console.log("Setting",key,"to",x)}
-	// 			});
-	// 		Object.defineProperty(this._state, key,
-	// 			{
-	// 				get: function ()  { return this._state[key]; }
-	// 			});
-	// 	}
-	// }
+	this.loadFullState();
 }
 
-AppState.prototype.value = function(key, value){
-	this.syncState();
-	if(this._state[key] === undefined){
-		//invalid key
-		console.log("Invalid key",key);
-		return;
-	}
-	if(value === undefined){
-		//using the getter
-		return this._state[key];
-	}
-	this._state[key] = value;
-	return;
+AppState.prototype.addWatcher = function(){
+	// console.log("ADDWATCHER CONTEXT", this);
+	watch(this._state, (function(state){
+		return function(d){
+			console.log("found change", state);
+			$.post( "/syncState/"+state.userId+"/"+state.appId, {state: JSON.stringify(state._state)} );
+		}
+	})(this), 4, true);
+}
+
+AppState.prototype.fillState = function(data){
+	// console.log(this);
+	// console.log(data);
+	this._state = data;
+	this.addWatcher();
 }
 
 
-AppState.prototype.syncState = function(){
-	// console.log("Hit syncState",this._state);
-	//for now, sync on every change. This will obviously need to be changed
-	$.post( "/syncState/"+this.userId+"/"+this.appId, this._state );
-}
-
-
-function loadFullState(){
-	var mocked = {
-		something: "cool",
-		somethingElse: [1,2,3,4,5]
-	};
-	return mocked;
+AppState.prototype.loadFullState = function(){
+	$.getJSON("/syncState/"+this.userId+"/"+this.appId).done(
+		(function(AS){
+			// console.log("Got into closure",this);
+			return function(data){
+				if(!data.message.state)
+					data.message.state = {};
+				// console.log("Got",data.message.state,"in",AS);
+				AS.fillState(data.message.state);
+			}
+	})(this));
 }

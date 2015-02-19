@@ -1,6 +1,7 @@
-function AppState(appId, userId){
+function AppState(appId, userId, dependencies){
 	this.appId 	= appId;
 	this.userId = userId;
+	this.dependencies = dependencies;
 	this.loadFullState();
 	this.handlers = {};
 }
@@ -35,6 +36,27 @@ AppState.prototype.emit = function(eventName, data) {
 AppState.prototype.fillState = function(data){
 	// console.log(this);
 	// console.log(data);
+	if(this.dependencies){
+		this.dependencies.forEach(function(m){
+			//the property name doesn't exist, lets create it
+			if(!data[m.name]){
+				switch(m.type.toLowerCase()){
+					case "array":
+						data[m.name] = [];
+					break;
+					case "object":
+						data[m.name] = {};
+					break;
+					case "string":
+						data[m.name] = "";
+					break;
+					default:
+						data[m.name] = 0;
+					break;
+				}
+			}
+		});
+	}
 	this._state = data;
 	this.addWatcher();
 }

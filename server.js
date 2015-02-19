@@ -50,9 +50,10 @@ function startServer(server, port) {
 
 	// Listen to the TCP port
 	server.listen(port, function() {
-		window.location = 'http://localhost:' + port;
+		if(typeof(window) !== 'undefined') {
+			window.location = 'http://localhost:' + port;
+		}
 	});
-
 	// On ctrl-c exit
 	process.on( 'SIGINT', function() {
 		console.log( "\nShutting down - SIGINT (Ctrl-C)" );

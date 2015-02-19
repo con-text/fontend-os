@@ -2,6 +2,7 @@ function AppState(appId, userId){
 	this.appId 	= appId;
 	this.userId = userId;
 	this.loadFullState();
+	this.handlers = {};
 }
 
 AppState.prototype.addWatcher = function(){
@@ -21,16 +22,31 @@ AppState.prototype.fillState = function(data){
 	this.addWatcher();
 }
 
+AppState.prototype.on = function(eventName, callback) {
+	this.handlers[eventName] = callback;
+};
+
+AppState.prototype.off = function(eventName, callback) {
+	delete this.handlers[eventName];
+};
+
+AppState.prototype.emit = function(eventName, data) {
+	var eventHandler = this.handlers[eventName];
+	if(eventHandler) {
+		eventHandler(data);
+	}
+};
 
 AppState.prototype.loadFullState = function(){
 	$.getJSON("/syncState/"+this.userId+"/"+this.appId).done(
 		(function(AS){
 			// console.log("Got into closure",this);
 			return function(data){
-				if(!data.message.state)
-					data.message.state = {};
+				console.log(data);
+				if(!data)
+					data = {};
 				// console.log("Got",data.message.state,"in",AS);
-				AS.fillState(data.message.state);
+				AS.fillState(data);
 			}
 	})(this));
 }

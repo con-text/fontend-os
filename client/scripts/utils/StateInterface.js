@@ -11,9 +11,26 @@ AppState.prototype.addWatcher = function(){
 		return function(d){
 			console.log("found change", state);
 			$.post( "/syncState/"+state.userId+"/"+state.appId, {state: JSON.stringify(state._state)} );
-		}
+		};
 	})(this), 4, true);
-}
+};
+
+AppState.prototype.on = function(eventName, callback) {
+	this.handlers[eventName] = callback;
+};
+
+AppState.prototype.off = function(eventName, callback) {
+	delete this.handlers[eventName];
+};
+
+AppState.prototype.emit = function(eventName, data) {
+	var eventHandler = this.handlers[eventName];
+	if(eventHandler) {
+		eventHandler(data);
+	}
+};
+
+
 
 AppState.prototype.fillState = function(data){
 	// console.log(this);
@@ -35,6 +52,7 @@ AppState.prototype.emit = function(eventName, data) {
 	if(eventHandler) {
 		eventHandler(data);
 	}
+
 };
 
 AppState.prototype.loadFullState = function(){
@@ -46,7 +64,8 @@ AppState.prototype.loadFullState = function(){
 				if(!data)
 					data = {};
 				// console.log("Got",data.message.state,"in",AS);
-				AS.fillState(data);
-			}
+				AS.fillState(data.message.state);
+				AS.emit("load");
+			};
 	})(this));
-}
+};

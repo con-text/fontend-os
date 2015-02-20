@@ -34,7 +34,9 @@ module.exports = function(config) {
 
     browserify: {
       debug: true,
-      transform: ['reactify']
+      transform: ['reactify', 'istanbulify'],
+      extensions: [',js', '.jsx'],
+      bundleDelay: 1000 // WAR for karma-browserify race condition
     },
 
     // test results reporter to use

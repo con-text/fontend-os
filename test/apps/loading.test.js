@@ -14,13 +14,17 @@ require('blanket')({
 // Get code that we want to test
 var appsApi = require('../../server/apps');
 
-var testComponent = require('../../dist/apps/browser/app');
+var testClass = React.createClass({
+  render: function() {
+      return React.createElement('div');
+  }
+});
+
+var testComponent = React.createElement(testClass);
 
 describe("Apps", function() {
 
   before(function() {
-      // Stup get react class
-      sinon.stub(appsApi, 'loadReactClass').returns(testComponent);
   });
 
   describe("loading apps", function() {
@@ -28,7 +32,11 @@ describe("Apps", function() {
     it("should load all apps with manifest", function() {
 
       // Set up a mock
-      var mockAppList = [{id:'1', name: 'browser'},{id: '2', name: 'notes'}];
+      var mockAppList = [
+        {id:'1', name: 'browser', absolutePath: "./"},
+        {id: '2', name: 'notes', absolutePath: "./"}
+      ];
+
       sinon.stub(appsApi, 'getManifests').returns(mockAppList);
 
       var allApps = appsApi.getApps();
@@ -43,7 +51,7 @@ describe("Apps", function() {
 
       // Render the component
       var element = React.createElement(testComponent);
-      // 
+      //
       // expect(TestUtils.isElementOfType(testApp.reactElement, testComponent))
       //   .to.equal(true);
     });
@@ -52,7 +60,6 @@ describe("Apps", function() {
       appsApi.getApps().forEach(function(app) {
         expect(app).to.have.property("id");
         expect(app).to.have.property("name");
-        expect(app).to.have.property("reactClass");
       });
     });
   });

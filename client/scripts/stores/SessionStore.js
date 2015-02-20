@@ -4,19 +4,31 @@ var ActionTypes = SessionConstants.ActionTypes;
 var EventEmitter = require('events').EventEmitter;
 var assign = require('object-assign');
 
+var AvailableUsersStore = require('./AvailableUsersStore');
+
 var CHANGE_EVENT = 'change';
 
-var _session;
-
+var _session = null;
 
 function createSession(user) {
-  _session = user;
+  var availableUsers = AvailableUsersStore.getAvailable();
+  if(_session === null && availableUsers.indexOf(user) != -1) {
+    _session = user;
+  }
 }
 
 function destroySession(user) {
-  _session = undefined;
+  _session = null;
 }
 
+function checkIfSessionIsValid() {
+  var availableUsers = AvailableUsersStore.getAvailable();
+  // Validate current session against the list of available users
+  if(_session && availableUsers.indexOf(_session) === -1) {
+    destroySession();
+    SessionStore.emitChange();
+  }
+}
 
 var SessionStore = assign({}, EventEmitter.prototype, {
 
@@ -42,6 +54,10 @@ var SessionStore = assign({}, EventEmitter.prototype, {
     this.removeListener(CHANGE_EVENT, callback);
   }
 
+});
+
+AvailableUsersStore.addChangeListener(function() {
+  checkIfSessionIsValid();
 });
 
 // Register with the dispatcher

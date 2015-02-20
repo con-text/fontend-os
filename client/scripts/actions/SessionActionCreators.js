@@ -10,5 +10,11 @@ module.exports = {
       type: ActionTypes.CREATE_SESSION,
       user: user
     });
+  },
+
+  destoySession: function () {
+    SessionDispatcher.handleViewAction({
+      type: ActionTypes.DESTROY_SESSION
+    });
   }
 };

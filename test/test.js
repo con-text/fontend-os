@@ -1,1 +1,1 @@
-require('./apps/loading.test')
+require('./apps/loading.test');

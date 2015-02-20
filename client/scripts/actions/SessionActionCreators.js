@@ -12,7 +12,7 @@ module.exports = {
     });
   },
 
-  destoySession: function () {
+  destroySession: function () {
     SessionDispatcher.handleViewAction({
       type: ActionTypes.DESTROY_SESSION
     });

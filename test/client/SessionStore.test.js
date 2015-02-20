@@ -19,7 +19,7 @@ describe('SessionStore', function() {
   });
 
   beforeEach(function() {
-    SessionAction.destoySession();
+    SessionAction.destroySession();
   });
 
   it("is empty initally", function () {
@@ -65,7 +65,7 @@ describe('SessionStore', function() {
 
   it("destorys session when action invoked", function() {
     SessionAction.createSession(mockUser);
-    SessionAction.destoySession();
+    SessionAction.destroySession();
     expect(SessionStore.getCurrentUser()).to.be.equal(null);
   });
 });

@@ -101,9 +101,9 @@ var UsersBox = React.createClass({
     render: function() {
 
       return (
-        <div className="container">
+        <div className="container-fluid">
           <div className="row">
-            <div id="users-box" className="col-md-5 col-md-offset-3">
+            <div id="users-box" className='col-md-2 sidebar'>
               <span className="page-header">
                 <h1 className="text-center">Welcome to Context</h1>
               </span>

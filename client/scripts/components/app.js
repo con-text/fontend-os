@@ -27,7 +27,7 @@ var App = React.createClass({
 
   render: function() {
 
-    if(this.state.session || true) {
+    if(this.state.session) {
       return(
         <div className="desktop">
           <TaskBar />

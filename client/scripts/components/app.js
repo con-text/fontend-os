@@ -9,10 +9,22 @@ var WindowStore = require('../stores/WindowStore');
 var AvailableUsersStore = require('../stores/AvailableUsersStore');
 var AvailableUsersSocketUtils = require('../utils/AvailableUsersSocketUtils');
 var UsersList = require('./UsersList');
+var SessionActionCreators = require('../actions/SessionActionCreators');
 
 // Start the socket helpe
 AvailableUsersSocketUtils.listenOverSocket();
 
+var LogOutMenu = React.createClass({
+  render: function() {
+    return <button onClick={this.handleClick}>Log out</button>;
+  },
+
+  handleClick: function(e) {
+    e.preventDefault();
+    SessionActionCreators.destroySession();
+  }
+
+});
 var App = React.createClass({
 
   getStateFromStores: function() {
@@ -48,6 +60,7 @@ var App = React.createClass({
               <UsersList users={this.state.available} />
               <hr />
               <h3>Friends list here</h3>
+              <LogOutMenu />
             </div>
             <div className="desktop col-md-8">
               <TaskBar />

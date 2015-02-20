@@ -11,8 +11,17 @@ var CHANGE_EVENT = 'change';
 var _session = null;
 
 function createSession(user) {
+
   var availableUsers = AvailableUsersStore.getAvailable();
-  if(_session === null && availableUsers.indexOf(user) != -1) {
+  var found = false;
+  for(var index in availableUsers) {
+    var availableUser = availableUsers[index];
+    if(availableUser.id === user.id) {
+      found = true;
+      break;
+    }
+  }
+  if(!_session && found) {
     _session = user;
   }
 }

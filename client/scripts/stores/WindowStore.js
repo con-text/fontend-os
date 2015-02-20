@@ -11,7 +11,7 @@ var CHANGE_EVENT = 'change';
 var React = require('react');
 
 // Window manager
-var wm = new Ventus.WindowManager();
+var wm = {};//new Ventus.WindowManager();
 
 // List of opened windows
 var _windows = {};

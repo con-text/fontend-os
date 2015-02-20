@@ -1,9 +1,12 @@
+var EventEmitter = require('events').EventEmitter;
+
 function AppState(appId, userId, dependencies){
 	this.appId 	= appId;
 	this.userId = userId;
 	this.dependencies = dependencies;
 	this.loadFullState();
 	this.handlers = {};
+	this.eventEmitter = new events.EventEmitter();
 }
 
 AppState.prototype.addWatcher = function(){
@@ -17,25 +20,18 @@ AppState.prototype.addWatcher = function(){
 };
 
 AppState.prototype.on = function(eventName, callback) {
-	this.handlers[eventName] = callback;
+	this.eventEmitter.on(eventName, callback);
 };
 
 AppState.prototype.off = function(eventName, callback) {
-	delete this.handlers[eventName];
+	this.eventEmitter.removeListener(eventName, callback);
 };
 
 AppState.prototype.emit = function(eventName, data) {
-	var eventHandler = this.handlers[eventName];
-	if(eventHandler) {
-		eventHandler(data);
-	}
+	this.eventEmitter.emit(eventName, data);
 };
 
-
-
 AppState.prototype.fillState = function(data){
-	// console.log(this);
-	// console.log(data);
 	if(this.dependencies){
 		this.dependencies.forEach(function(m){
 			//the property name doesn't exist, lets create it
@@ -59,35 +55,16 @@ AppState.prototype.fillState = function(data){
 	}
 	this._state = data;
 	this.addWatcher();
-}
-
-AppState.prototype.on = function(eventName, callback) {
-	this.handlers[eventName] = callback;
-};
-
-AppState.prototype.off = function(eventName, callback) {
-	delete this.handlers[eventName];
-};
-
-AppState.prototype.emit = function(eventName, data) {
-	var eventHandler = this.handlers[eventName];
-	if(eventHandler) {
-		eventHandler(data);
-	}
-
 };
 
 AppState.prototype.loadFullState = function(){
 	$.getJSON("/syncState/"+this.userId+"/"+this.appId).done(
 		(function(AS){
-			// console.log("Got into closure",this);
 			return function(data){
-				console.log(data);
 				if(!data)
 					data = {};
-				// console.log("Got",data.message.state,"in",AS);
 				AS.fillState(data.message.state);
-				AS.emit("load");
+				AS.emit('load');
 			};
 	})(this));
 };

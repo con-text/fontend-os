@@ -36,7 +36,7 @@ var AvailableUsersStore = assign({}, EventEmitter.prototype, {
 });
 
 // Register the store with the dispatcher
-AvailableUsersDispatcher.register(function(payload) {
+AvailableUsersStore.dispatchToken = AvailableUsersDispatcher.register(function(payload) {
 
   var action = payload.action;
 

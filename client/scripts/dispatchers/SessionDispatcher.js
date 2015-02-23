@@ -10,7 +10,12 @@ var SessionDispatcher = assign(new Dispatcher(), {
   * @param {object} action The details of the action
   */
   handleServerAction: function(action) {
+    var payload = {
+      source: PayloadSources.SERVER_ACTION,
+      action: action
+    };
 
+    this.dispatch(payload);
   },
 
   handleViewAction: function(action) {

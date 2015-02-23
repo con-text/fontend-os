@@ -63,11 +63,9 @@ module.exports = {
 		});
 	},
 	syncPost: function(req,res){
-		// console.log(req.params);
-		// console.log(req.body);
 		var uuid = req.params.uuid;
 		var appId= req.params.appId;
-		console.log("entering state sync post method", req.body);
+
 		userExists(uuid, function(exists, result){
 			if(exists){
 				//change to https
@@ -106,4 +104,4 @@ module.exports = {
 			}
 		});
 	}
-}
+};

@@ -22,6 +22,11 @@ describe('SessionStore', function() {
     SessionAction.destroySession();
   });
 
+  afterEach(function() {
+    _mockUsers = [mockUser, otherUser];
+    AvailableUsersActions.updateUsers(_mockUsers);
+  });
+
   it("is empty initally", function () {
     expect(SessionStore.getCurrentUser()).to.be.equal(null);
   });
@@ -59,6 +64,22 @@ describe('SessionStore', function() {
 
     // Session should be destroyed
     expect(SessionStore.getCurrentUser()).to.be.equal(null);
+
+    stub.restore();
+  });
+
+  it("maintains the session if available users changes with current user still there", function() {
+
+    _mockUsers = [mockUser, otherUser];
+    SessionAction.createSession(mockUser);
+    expect(SessionStore.getCurrentUser()).to.be.equal(mockUser, "should be created user");
+
+    // Now available users list changed
+    _mockUsers = [badUser, mockUser, otherUser];
+    AvailableUsersActions.updateUsers(_mockUsers);
+
+    // Session should NOT be destroyed
+    expect(SessionStore.getCurrentUser()).to.be.equal(mockUser, "should be not be destroyed user");
 
     stub.restore();
   });

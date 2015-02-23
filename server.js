@@ -34,7 +34,7 @@ function configAndStartServer(config) {
 	});
 
 	startServer(server, serverPort);
-};
+}
 
 // Start the server
 function startServer(server, port) {
@@ -42,7 +42,7 @@ function startServer(server, port) {
 
 	// Initialize web-socket
 	io.on('connection', function(socket){
-		console.log('a user connected');
+
 	});
 
 	// Initialize connection to BLE

@@ -1,11 +1,15 @@
+var AvailableUsersDispatcher = require('../dispatchers/AvailableUsersDispatcher');
 var SessionDispatcher = require('../dispatchers/SessionDispatcher');
+
 var SessionConstants = require('../constants/SessionConstants');
+var AvailableUsersConstants = require('../constants/AvailableUsersConstants');
 var ActionTypes = SessionConstants.ActionTypes;
+
 var EventEmitter = require('events').EventEmitter;
 var assign = require('object-assign');
 
 var AvailableUsersStore = require('./AvailableUsersStore');
-
+var _ = require('lodash');
 var CHANGE_EVENT = 'change';
 
 var _session = null;
@@ -31,9 +35,27 @@ function destroySession(user) {
 }
 
 function checkIfSessionIsValid() {
+
+  // Check if there is session at all
+  if(!_session) {
+    return;
+  }
+
+  // Get available users
   var availableUsers = AvailableUsersStore.getAvailable();
+
+  var foundUser = false;
+
+  // Compare to session, cannot use === because these are hashes
+  for(var key in availableUsers) {
+    var user = availableUsers[key];
+    if(_.isEqual(user, _session)) {
+          foundUser = true;
+      }
+  }
+
   // Validate current session against the list of available users
-  if(_session && availableUsers.indexOf(_session) === -1) {
+  if(_session && !foundUser) {
     destroySession();
     SessionStore.emitChange();
   }
@@ -65,12 +87,24 @@ var SessionStore = assign({}, EventEmitter.prototype, {
 
 });
 
-AvailableUsersStore.addChangeListener(function() {
-  checkIfSessionIsValid();
+// Register the store with the dispatcher
+AvailableUsersDispatcher.register(function(payload) {
+
+  var action = payload.action;
+
+  switch(action.type) {
+
+    case AvailableUsersConstants.ActionTypes.USERS_UPDATED:
+      AvailableUsersDispatcher.waitFor([AvailableUsersStore.dispatchToken]);
+      checkIfSessionIsValid();
+      break;
+    default:
+      // No operation
+  }
 });
 
 // Register with the dispatcher
-SessionDispatcher.register(function(payload) {
+SessionStore.dispatchToken = SessionDispatcher.register(function(payload) {
 
   var action = payload.action;
   switch(action.type) {
@@ -82,11 +116,9 @@ SessionDispatcher.register(function(payload) {
       destroySession();
       SessionStore.emitChange();
       break;
-
     default:
       // No operation
   }
-
 });
 
 module.exports = SessionStore;

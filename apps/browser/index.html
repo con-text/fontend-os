@@ -27,7 +27,7 @@
 		},
 
 		render: function() {
-			
+
 			var url = this.state.history[this.state.history.length - 1];
 
 			return (
@@ -80,8 +80,6 @@
 		},
 
 		handleFrameLoad: function(e) {
-
-			console.log("Attr changed");
 
 			if(e.attrName === "src") {
 				var frame = this.refs.frame.getDOMNode();

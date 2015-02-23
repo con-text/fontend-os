@@ -1,4 +1,4 @@
-var SessionActionCreators = require('../actions/SessionActionCreators');
+var SessionActionCreators = require('./../actions/SessionActionCreators');
 
 // TODO: Should use HTTPS?
 var baseUrl = 'http://localhost:5000';
@@ -10,26 +10,27 @@ function tryAuthenticate(user, options) {
   // Assume now we authenticate everyone
   var authSuccess = true;
 
-  $.get(baseUrl + '/user/' + user._id + '/profile')
+  $.get(baseUrl + '/user/' + user.uuid + '/profile')
   .done(function(data){
-    options.success(data);
+
+    if(options.success) {
+      options.success(data);
+    }
+
   })
   .fail(function(err) {
-    options.error(null);
+
+    console.error("Failed to authenticate user");
+
+    if(options.error) {
+      options.error(err);
+    }
   });
 }
 
 module.exports = {
 
-  authenticateUser: function(user) {
-
-      tryAuthenticate(user, {
-        success: function(user) {
-          SessionActionCreators.createSession(user);
-        },
-        error: function(err) {
-          console.log(err);
-        }
-      });
+  authenticateUser: function(user, options) {
+      tryAuthenticate(user, options);
   }
 };

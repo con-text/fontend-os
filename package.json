@@ -12,6 +12,7 @@
     "http-proxy": "^1.8.1",
     "json-socket": "*",
     "keymirror": "^0.1.1",
+    "lodash": "^3.3.0",
     "object-assign": "^2.0.0",
     "react": "^0.12.2",
     "restler": "^3.2.2",

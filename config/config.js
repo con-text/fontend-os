@@ -1,6 +1,6 @@
 // CORS handler for apps server
 function allowAppsOrigin(req, res, next) {
-  console.log("in middleware", config.appsServerHost);
+
   res.header('Access-Control-Allow-Origin', config.appsServerHost);
   res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
   res.header('Access-Control-Allow-Headers', 'Content-Type');

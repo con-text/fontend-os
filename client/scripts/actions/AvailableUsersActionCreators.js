@@ -1,7 +1,7 @@
 var AvailableUsersConstants = require('../constants/AvailableUsersConstants');
 var AvailableUsersDispatcher = require('../dispatchers/AvailableUsersDispatcher');
-
 var ActionTypes = AvailableUsersConstants.ActionTypes;
+
 
 module.exports = {
 

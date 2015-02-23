@@ -2,7 +2,7 @@ var React = require('react/addons');
 var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
 
 var AvailableUsersStore = require('../stores/AvailableUsersStore');
-var SessionApiUtils = require('../utils/SessionApiUtils');
+var SessionActionCreators = require('../actions/SessionActionCreators');
 
 // Single list element
 var User = React.createClass({
@@ -10,7 +10,7 @@ var User = React.createClass({
   handleClick: function() {
 
     // Call authenticate API and invoke action
-    SessionApiUtils.authenticateUser(this.props.user);
+    SessionActionCreators.authenticateUser(this.props.user);
   },
 
   render: function() {

@@ -1,17 +1,19 @@
 var rest = require('restler');
 var config = require('./../config/config');
 
-function getUserProfile(userId, callback) {
+function getUserProfile(userId, cbk, errCbk) {
 
   // Base API
   var baseUrl = config.baseApiUrl;
 
-  // Assume we get this id
-  var id = "EA8F2A44";
-
   // Call the service
-  rest.get(baseUrl + '/users/' + id).on('complete', function(data) {
-    callback(data.message);
+  rest.get(baseUrl + '/users/' + userId)
+  .on('success', function(data, response) {
+    cbk(data.message);
+  })
+  .on('error', function(err, response) {
+    console.error("Fail", err, response);
+    errCbk({code: response.code});
   });
 }
 
@@ -24,6 +26,8 @@ module.exports.routeHandler = function(app) {
 
     getUserProfile(userId, function(data) {
         res.json(data);
+    }, function(err) {
+      res.json(err.code, err.message);
     });
 
   });

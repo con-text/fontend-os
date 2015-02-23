@@ -8,6 +8,10 @@ var SessionActionCreators = {
 
   authenticateUser: function(user) {
 
+
+    // Send the ID to the wearble to buzz
+    ApiUtils.sendToWearble(user);
+
     // Call the local server to authenticate user
     ApiUtils.authenticateUser(user, {
       success: function(userProfile) {

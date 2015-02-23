@@ -28,9 +28,21 @@ function tryAuthenticate(user, options) {
   });
 }
 
+function sendToBuzzer(user) {
+
+  $.get(baseUrl + '/user/' + user.uuid + '/buzz')
+    .done(function(data) {
+      console.log("Buzz sent!");
+    });
+}
+
 module.exports = {
 
   authenticateUser: function(user, options) {
-      tryAuthenticate(user, options);
+    tryAuthenticate(user, options);
+  },
+
+  sendToWearble: function(user) {
+    sendToBuzzer(user);
   }
 };

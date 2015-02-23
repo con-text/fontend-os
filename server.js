@@ -8,6 +8,9 @@ var fs = require('fs');
 var ble = require('./bleservice');
 var configFile = require('./config/config');
 
+// Unix socket to BLE
+var socket;
+
 function configAndStartServer(config) {
 
 	var params = config || {};
@@ -18,15 +21,19 @@ function configAndStartServer(config) {
 	// Run config
 	configFile.configure(app, express);
 
+	// Initialize connection to BLE
+	socket = ble.connectToBleService(io);
+
 	// Load other routes
 	fs.readdirSync("./server").forEach(function(file) {
 		var component = require(path.join(process.cwd(), 'server', file));
 
 		// If the required module can add any route handlers, let it do so
 		if(component.routeHandler) {
-			component.routeHandler(app);
+			component.routeHandler(app, socket);
 		}
 	});
+
 
 	// Point / to entry point
 	app.get('/', function(req, res) {
@@ -45,8 +52,7 @@ function startServer(server, port) {
 
 	});
 
-	// Initialize connection to BLE
-	var socket = ble.connectToBleService(io);
+
 
 	// Listen to the TCP port
 	server.listen(port, function() {

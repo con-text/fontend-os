@@ -56,4 +56,4 @@ module.exports.connectToBleService = function(io) {
   });
 
   return socket;
-}
+};

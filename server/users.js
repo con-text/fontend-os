@@ -38,6 +38,6 @@ module.exports.routeHandler = function(app, bleSocket) {
       request: 'buzz',
       data: req.params.userId
     });
-    res.send(200);
+    res.sendStatus(200);
   });
 };

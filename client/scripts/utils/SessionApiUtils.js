@@ -32,7 +32,7 @@ function sendToBuzzer(user) {
 
   $.get(baseUrl + '/user/' + user.uuid + '/buzz')
     .done(function(data) {
-      console.log("Buzz sent!");
+      
     });
 }
 

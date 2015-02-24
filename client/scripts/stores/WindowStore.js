@@ -1,4 +1,4 @@
-var WindowDispatcher = require('../dispatchers/WindowDispatcher');
+var AppDispatcher = require('../dispatchers/AppDispatcher');
 var WindowConstants = require('../constants/WindowConstants');
 var ActionTypes = WindowConstants.ActionTypes;
 
@@ -92,7 +92,7 @@ var WindowStore = assign({}, EventEmitter.prototype, {
 });
 
 // Register with the dispatcher
-WindowDispatcher.register(function(payload) {
+AppDispatcher.register(function(payload) {
 
   var action = payload.action;
   var title;

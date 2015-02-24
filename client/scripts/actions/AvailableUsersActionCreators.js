@@ -1,12 +1,12 @@
+var AppDispatcher           = require('../dispatchers/AppDispatcher');
 var AvailableUsersConstants = require('../constants/AvailableUsersConstants');
-var AvailableUsersDispatcher = require('../dispatchers/AvailableUsersDispatcher');
 var ActionTypes = AvailableUsersConstants.ActionTypes;
 
 
 module.exports = {
 
   updateUsers: function(users) {
-    AvailableUsersDispatcher.handleServerAction({
+    AppDispatcher.handleServerAction({
       type: ActionTypes.USERS_UPDATED,
       users: users
     });

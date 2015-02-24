@@ -46,20 +46,13 @@ function configAndStartServer(config) {
 // Start the server
 function startServer(server, port) {
 
-
-	// Initialize web-socket
-	io.on('connection', function(socket){
-
-	});
-
-
-
 	// Listen to the TCP port
 	server.listen(port, function() {
 		if(typeof(window) !== 'undefined') {
 			window.location = 'http://localhost:' + port;
 		}
 	});
+
 	// On ctrl-c exit
 	process.on( 'SIGINT', function() {
 		console.log( "\nShutting down - SIGINT (Ctrl-C)" );

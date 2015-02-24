@@ -1,15 +1,22 @@
-var WindowConstants = require('../constants/WindowConstants');
+var AvailableUsersConstants = require('../constants/AvailableUsersConstants');
 var Dispatcher = require('flux').Dispatcher;
 var assign = require('object-assign');
 
-var PayloadSources = WindowConstants.PayloadSources;
+var PayloadSources = AvailableUsersConstants.PayloadSources;
 
-var WindowDispatcher = assign(new Dispatcher(), {
+var AppDispatcher = assign(new Dispatcher(), {
 
   /**
   * @param {object} action The details of the action
   */
   handleServerAction: function(action) {
+
+    var payload = {
+      source: PayloadSources.SERVER_ACTION,
+      action: action
+    };
+
+    this.dispatch(payload);
 
   },
 
@@ -24,4 +31,4 @@ var WindowDispatcher = assign(new Dispatcher(), {
 
 });
 
-module.exports = WindowDispatcher;
+module.exports = AppDispatcher;

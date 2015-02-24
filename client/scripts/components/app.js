@@ -7,12 +7,12 @@ var TaskBar = require('./taskbar/taskbar');
 var SessionStore = require('../stores/SessionStore');
 var WindowStore = require('../stores/WindowStore');
 var AvailableUsersStore = require('../stores/AvailableUsersStore');
-var AvailableUsersSocketUtils = require('../utils/AvailableUsersSocketUtils');
+var SocketUtils = require('../utils/SocketUtils');
 var UsersList = require('./UsersList');
 var SessionActionCreators = require('../actions/SessionActionCreators');
 
 // Start the socket helpe
-AvailableUsersSocketUtils.listenOverSocket();
+SocketUtils.listenOverSocket();
 
 var LogOutMenu = React.createClass({
   render: function() {

@@ -1,12 +1,12 @@
 var WindowConstants = require('../constants/WindowConstants');
-var WindowDispatcher = require('../dispatchers/WindowDispatcher');
+var AppDispatcher = require('../dispatchers/AppDispatcher');
 
 var ActionTypes = WindowConstants.ActionTypes;
 
 module.exports = {
 
   createWindowFromEl: function(title, el) {
-    WindowDispatcher.handleViewAction({
+    AppDispatcher.handleViewAction({
       type: ActionTypes.CREATE_WINDOW_FROM_ELEMENT,
       title: title,
       el: el
@@ -14,7 +14,7 @@ module.exports = {
   },
 
   toggleWindow: function(title) {
-    WindowDispatcher.handleViewAction({
+    AppDispatcher.handleViewAction({
       type: ActionTypes.TOGGLE_WINDOW,
       title: title
     });

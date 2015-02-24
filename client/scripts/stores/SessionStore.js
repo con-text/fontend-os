@@ -1,5 +1,5 @@
-var AvailableUsersDispatcher = require('../dispatchers/AvailableUsersDispatcher');
-var SessionDispatcher = require('../dispatchers/SessionDispatcher');
+var AppDispatcher = require('../dispatchers/AppDispatcher');
+var AppDispatcher = require('../dispatchers/AppDispatcher');
 
 var SessionConstants = require('../constants/SessionConstants');
 var AvailableUsersConstants = require('../constants/AvailableUsersConstants');
@@ -87,35 +87,28 @@ var SessionStore = assign({}, EventEmitter.prototype, {
 
 });
 
-// Register the store with the dispatcher
-AvailableUsersDispatcher.register(function(payload) {
-
-  var action = payload.action;
-
-  switch(action.type) {
-
-    case AvailableUsersConstants.ActionTypes.USERS_UPDATED:
-      AvailableUsersDispatcher.waitFor([AvailableUsersStore.dispatchToken]);
-      checkIfSessionIsValid();
-      break;
-    default:
-      // No operation
-  }
-});
-
 // Register with the dispatcher
-SessionStore.dispatchToken = SessionDispatcher.register(function(payload) {
+SessionStore.dispatchToken = AppDispatcher.register(function(payload) {
 
   var action = payload.action;
   switch(action.type) {
+
     case ActionTypes.CREATE_SESSION:
       createSession(action.user);
       SessionStore.emitChange();
       break;
+
     case ActionTypes.DESTROY_SESSION:
       destroySession();
       SessionStore.emitChange();
       break;
+
+    case AvailableUsersConstants.ActionTypes.USERS_UPDATED:
+      // Wait for Available user store to finish handling updates
+      AppDispatcher.waitFor([AvailableUsersStore.dispatchToken]);
+      checkIfSessionIsValid();
+      break;
+
     default:
       // No operation
   }

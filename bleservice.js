@@ -3,13 +3,27 @@ var JsonSocket = require('json-socket');
 var userApi = require('./server/users');
 var keyMirror = require('keymirror');
 
-var MessageCodes = keyMirror({
+var messageCodes = keyMirror({
   activePeripherals: null,
   loginStatus: null
 });
 
-
 var socketPath = '/tmp/ble.sock';
+
+function processMessage(message, io) {
+
+  // Grab the message code and take action
+  if(message.code === messageCodes.activePeripherals) {
+    handleActivePeripheralsMessage(io, message.data.clients);
+  } else if(message.code == messageCodes.loginStatus) {
+    handleLoginStatusMessage(io, message.data);
+  } else {
+    // Don't know this message code
+    console.error("Unknown message code");
+  }
+
+  return;
+}
 
 function handleActivePeripheralsMessage(io, users) {
 
@@ -35,35 +49,20 @@ function handleActivePeripheralsMessage(io, users) {
   });
 }
 
+function handleLoginStatusMessage(io, data) {
+    io.emit('loginStatus', data);
+}
+
 module.exports.connectToBleService = function(io) {
 
   // Use UNIX socket
   var socket = new JsonSocket(new net.Socket());
 
   socket.connect(socketPath, function () {
-    console.log("Listening to BLE service on " + socketPath);
+    console.log("Started listening to BLE service on " + socketPath);
 
     // Process message
-    socket.on('message', function (message) {
-      console.log(message);
-      // Grab the message code
-      var code = message.code;
-
-      switch(code) {
-
-          case MessageCodes.activePeripherals:
-            handleActivePeripheralsMessage(io, message.data.clients);
-            break;
-
-          case MessageCodes.loginStatus:
-            console.log("Login status", message.data);
-            break;
-
-          default:
-            // Don't know this message code
-            break;
-      }
-    });
+    socket.on('message', function(msg) { processMessage(msg, io); });
 
   });
 

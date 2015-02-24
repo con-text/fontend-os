@@ -68,7 +68,8 @@ gulp.task('browserify:client',  function() {
 	.pipe(browserify({
 		insertGlobals: true,
 		debug: true,
-		transform: ['reactify']
+		transform: ['reactify'],
+		extensions: ['.js', '.jsx']
 	}))
 	// Concatinate into one file
 	.pipe(concat("bundle.js"))

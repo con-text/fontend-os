@@ -1,4 +1,4 @@
-var AvailableUsersDispatcher = require('../dispatchers/AvailableUsersDispatcher');
+var AppDispatcher = require('../dispatchers/AppDispatcher');
 var AvailableUsersConstants = require('../constants/AvailableUsersConstants');
 var EventEmitter = require('events').EventEmitter;
 var assign = require('object-assign');
@@ -36,7 +36,7 @@ var AvailableUsersStore = assign({}, EventEmitter.prototype, {
 });
 
 // Register the store with the dispatcher
-AvailableUsersStore.dispatchToken = AvailableUsersDispatcher.register(function(payload) {
+AvailableUsersStore.dispatchToken = AppDispatcher.register(function(payload) {
 
   var action = payload.action;
 

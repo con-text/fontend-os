@@ -4,10 +4,23 @@ var SessionActionCreators = require('../actions/SessionActionCreators');
 
 // Single list element
 var User = React.createClass({
+  
+  propTypes: {
+    disabled: React.PropTypes.bool,
+    user: React.PropTypes.object.isRequired
+  },
+
+  getDefaultProps: function() {
+    return {
+      disabled: false
+    };
+  },
 
   handleClick: function() {
-    // Call authenticate API and invoke action
-    SessionActionCreators.authenticateUser(this.props.user);
+    if(!this.props.disabled) {
+      // Call authenticate API and invoke action
+      SessionActionCreators.authenticateUser(this.props.user);
+    }
   },
 
   render: function() {

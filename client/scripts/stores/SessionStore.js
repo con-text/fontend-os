@@ -13,6 +13,7 @@ var _ = require('lodash');
 var CHANGE_EVENT = 'change';
 
 var _session = null;
+var _isLoggingIn = false;
 
 function createSession(user) {
 
@@ -71,6 +72,10 @@ var SessionStore = assign({}, EventEmitter.prototype, {
     this.emit(CHANGE_EVENT);
   },
 
+  isLoggingIn: function() {
+    return _isLoggingIn;
+  },
+
   /**
    * @param {function} callback
    */
@@ -92,6 +97,21 @@ SessionStore.dispatchToken = AppDispatcher.register(function(payload) {
 
   var action = payload.action;
   switch(action.type) {
+
+    case ActionTypes.START_AUTH:
+      _isLoggingIn = true;
+      SessionStore.emitChange();
+      break;
+
+    case ActionTypes.AUTH_SUCCESS:
+      _isLoggingIn = false;
+      SessionStore.emitChange();
+      break;
+
+    case ActionTypes.AUTH_FAILED:
+      _isLoggingIn = false;
+      SessionStore.emitChange();
+      break;
 
     case ActionTypes.CREATE_SESSION:
       createSession(action.user);

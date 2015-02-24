@@ -2,51 +2,62 @@
 'use strict';
 
 var React = require('react');
-var AvailableUsersStore = require('../stores/AvailableUsersStore');
-var UsersList = require('./UsersList');
 
+var SessionStore        = require('../stores/SessionStore');
+var AvailableUsersStore = require('../stores/AvailableUsersStore');
+
+var UsersList = require('./UsersList');
 
 // Login box
 var LoginScreen = React.createClass({
 
-    // Initial state
-    getInitialState: function() {
-      return {
-        available: AvailableUsersStore.getAvailable()
-      };
-    },
+  getStateFromStores: function() {
+    return {
+      isLoggingIn: SessionStore.isLoggingIn(),
+      available: AvailableUsersStore.getAvailable()
+    };
+  },
 
-    // After component rendered
-    componentDidMount: function() {
-      AvailableUsersStore.addChangeListener(this._onChange);
-    },
+  // Initial state
+  getInitialState: function() {
+    return this.getStateFromStores();
+  },
 
-    componentWillUnmount: function() {
-      AvailableUsersStore.removeChangeListener(this._onChange);
-    },
+  // After component rendered
+  componentDidMount: function() {
+    SessionStore.addChangeListener(this._onChange);
+    AvailableUsersStore.addChangeListener(this._onChange);
+  },
 
-    _onChange: function() {
-      this.setState({available: AvailableUsersStore.getAvailable()});
-    },
+  componentWillUnmount: function() {
+    SessionStore.removeChangeListener(this._onChange);
+    AvailableUsersStore.removeChangeListener(this._onChange);
+  },
 
-    /**
-    * return {object}
-    */
-    render: function() {
+  _onChange: function() {
+    if(this.isMounted()) {
+      this.setState(this.getStateFromStores());
+    }
+  },
 
-      return (
-        <div className="container-fluid">
-          <div className="row">
-            <div id="users-box" className='col-md-2 sidebar'>
-              <span className="page-header">
-                <h1 className="text-center">Welcome to Context</h1>
-              </span>
-              <UsersList users={this.state.available} />
-            </div>
+  /**
+  * return {object}
+  */
+  render: function() {
+
+    return (
+      <div className="container-fluid">
+        <div className="row">
+          <div id="users-box" className='col-md-2 sidebar'>
+            <span className="page-header">
+              <h1 className="text-center">Welcome to Context</h1>
+            </span>
+            <UsersList disabled={this.state.isLoggingIn} users={this.state.available} />
           </div>
         </div>
-      );
-    }
+      </div>
+    );
+  }
 });
 
 module.exports = LoginScreen;

@@ -1,7 +1,6 @@
 @defaultWindowPadding: 20px;
 @bgColour: #f0f0f0;
 
-
 @import 'components/taskbar.less';
 @import 'components/loginScreen.less';
 
@@ -14,21 +13,25 @@ body {
 	background-color: @bgColour;
 }
 
-.userList-enter {
+@animationSpeed: 0.5s;
+
+.users-enter {
   opacity: 0.01;
-  transition: opacity .5s ease-in;
+  transition: opacity @animationSpeed ease-in;
+	-webkit-transition: opacity @animationSpeed ease-in;
 }
 
-.userList-enter.userList-enter-active {
+.users-enter.users-enter-active {
   opacity: 1;
 }
 
-.userList-leave {
+.users-leave {
   opacity: 1;
-  transition: opacity .5s ease-in;
+  transition: opacity @animationSpeed ease-out;
+	-webkit-transition: opacity @animationSpeed ease-out;
 }
 
-.userList-leave.userList-leave-active {
+.users-leave.users-leave-active {
   opacity: 0.01;
 }
 
@@ -43,59 +46,11 @@ body {
 	background-size: cover;
 }
 
-#users {
-
-	color: #000;
-	margin: 20px 0 0 10px;
-
-	.user {
-		.userPic {
-			width: 40px;
-			height: 40px;
-			margin-top: 10px;
-		}
-
-		.userName {
-			font-size: 1.1em;
-		}
-	}
-}
-
 #loginWindow {
 	padding: @defaultWindowPadding;
 }
 
-#loading-screen {
-	position: absolute;
-	top: 0px;
-	left: 0px;
-
-	width: 100%;
-	height: 100%;
-	z-index: 30000;
-	overflow: hidden;
-
-	font-weight: 300;
-
-	background-color:  @bgColour;
-
-	.content {
-
-		bottom: 20px;
-		left: 20%;
-
-		height: 100%;
-
-		margin: 0 auto;
-
-		h1, p {
-			color: #FFFFFF;
-			text-align: center;
-		}
-	}
-
-}
-
+// Disabled element
 .disabled {
 	pointer-events: none;
 

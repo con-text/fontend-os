@@ -10,11 +10,13 @@ var UsersList = React.createClass({
 
   propTypes: {
     disabled: React.PropTypes.bool,
+    showNames: React.PropTypes.bool,
     users: React.PropTypes.array.isRequired
   },
 
   getDefaultProps: function() {
     return {
+      showNames: true,
       disabled: false
     };
   },
@@ -26,7 +28,10 @@ var UsersList = React.createClass({
 
       // Create single list element
       return (
-        <User key={i} user={user} disabled={this.props.disabled} />
+        <User key={user.uuid}
+          user={user}
+          disabled={this.props.disabled}
+          showNames={this.props.showNames} />
       );
 
     }, this);
@@ -43,11 +48,11 @@ var UsersList = React.createClass({
     } else {
       return(
         <div id="login-list" className={cssClass}>
-          <ReactCSSTransitionGroup transitionName='userList'>
-            <div className='usersList'>
+          <div className='usersList'>
+            <ReactCSSTransitionGroup transitionName='users'>
               {userNodes}
-            </div>
-          </ReactCSSTransitionGroup >
+            </ReactCSSTransitionGroup>
+          </div>
         </div>
       );
     }

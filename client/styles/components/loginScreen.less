@@ -1,3 +1,6 @@
+@profilePictureSize: 48px;
+@smallSidebarPadding: 30px;
+@sidebarColor: rgba(173, 146, 146, 0.92);
 
 .sidebar {
     position: fixed;
@@ -8,8 +11,8 @@
 }
 
 #users-box {
-  background: #ffffff;
   padding: 10px 5px;
+  background-color: @sidebarColor;
 
   .page-header {
       text-align: centre;
@@ -19,8 +22,14 @@
   .user {
 
     .img-circle {
-      width: 64px;
-      height: 64px;
+      width: @profilePictureSize;
+      height: @profilePictureSize;
+
+      display: block;
+      margin: 0 auto;
+
+      opacity: inherit;
+
     }
     padding-top: 10px;
     padding-bottom: 10px;
@@ -35,4 +44,13 @@
     background: #dde7f2;
     -webkit-transition: background 0.5s;
   }
+}
+
+.sidebar-small {
+  width: (@profilePictureSize + @smallSidebarPadding);
+}
+
+.btn-logout {
+  position: fixed;
+  bottom: 10px;
 }

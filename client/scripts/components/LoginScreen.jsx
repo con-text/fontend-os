@@ -48,7 +48,7 @@ var LoginScreen = React.createClass({
     return (
       <div className="container-fluid">
         <div className="row">
-          <div id="users-box" className='col-md-2 sidebar'>
+          <div id="users-box" className='col-md-4 sidebar'>
             <span className="page-header">
               <h1 className="text-center">Welcome to Context</h1>
             </span>

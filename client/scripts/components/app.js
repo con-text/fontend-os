@@ -1,22 +1,32 @@
 /** @jsx React.DOM */
 'use strict';
 
+// External deps
 var React = require('react');
-var LoginScreen = require('./loginScreen');
-var TaskBar = require('./taskbar/taskbar');
-var SessionStore = require('../stores/SessionStore');
-var WindowStore = require('../stores/WindowStore');
-var AvailableUsersStore = require('../stores/AvailableUsersStore');
-var SocketUtils = require('../utils/SocketUtils');
-var UsersList = require('./UsersList');
+
+// Components
+var LoginScreen = require('./LoginScreen');
+var UsersList   = require('./UsersList');
+
+// Actions
 var SessionActionCreators = require('../actions/SessionActionCreators');
 
-// Start the socket helpe
+// Stores
+var AvailableUsersStore = require('../stores/AvailableUsersStore');
+var SessionStore        = require('../stores/SessionStore');
+var WindowStore         = require('../stores/WindowStore');
+
+// Utils
+var SocketUtils = require('../utils/SocketUtils');
+
+// Start the socket helper
 SocketUtils.listenOverSocket();
+
 
 var LogOutMenu = React.createClass({
   render: function() {
-    return <button onClick={this.handleClick}>Log out</button>;
+    return <button className="btn-logout btn btn-primary btn-xs"
+      onClick={this.handleClick}>Log out</button>;
   },
 
   handleClick: function(e) {
@@ -25,6 +35,7 @@ var LogOutMenu = React.createClass({
   }
 
 });
+
 var App = React.createClass({
 
   getStateFromStores: function() {
@@ -56,15 +67,13 @@ var App = React.createClass({
       return(
         <div className="container-fluid">
           <div className="row">
-            <div id="users-box" className='col-md-2 sidebar'>
-              <UsersList users={this.state.available} />
+            <div id="users-box" className='sidebar sidebar-small'>
+              <UsersList users={this.state.available} showNames={false} />
               <hr />
-              <h3>Friends list here</h3>
+              <h6>Friends list here</h6>
               <LogOutMenu />
             </div>
-            <div className="desktop col-md-8">
-              <TaskBar />
-            </div>
+            <div className="desktop col-md-11"></div>
           </div>
         </div>
       );

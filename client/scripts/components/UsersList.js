@@ -1,6 +1,5 @@
-var React = require('react/addons');
-var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
-
+var React = require('react');
+var TimeoutTransitionGroup = require('react-components/js/timeout-transition-group');
 var AvailableUsersStore = require('../stores/AvailableUsersStore');
 
 var User = require('./User');
@@ -28,7 +27,7 @@ var UsersList = React.createClass({
 
       // Create single list element
       return (
-        <User key={user.uuid}
+        <User key={i}
           user={user}
           disabled={this.props.disabled}
           showNames={this.props.showNames} />
@@ -49,9 +48,11 @@ var UsersList = React.createClass({
       return(
         <div id="login-list" className={cssClass}>
           <div className='usersList'>
-            <ReactCSSTransitionGroup transitionName='users'>
+            <TimeoutTransitionGroup enterTimeout={2000}
+              leaveTimeout={2000}
+              transitionName='users'>
               {userNodes}
-            </ReactCSSTransitionGroup>
+            </TimeoutTransitionGroup>
           </div>
         </div>
       );

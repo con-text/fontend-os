@@ -13,12 +13,12 @@ body {
 	background-color: @bgColour;
 }
 
-@animationSpeed: 0.5s;
+@animationSpeed: 0.5s ;
 
 .users-enter {
   opacity: 0.01;
-  transition: opacity @animationSpeed ease-in;
-	-webkit-transition: opacity @animationSpeed ease-in;
+  transition: opacity 1000ms ease-in;
+	-webkit-transition: opacity 1000ms ease-in;
 }
 
 .users-enter.users-enter-active {
@@ -27,12 +27,12 @@ body {
 
 .users-leave {
   opacity: 1;
-  transition: opacity @animationSpeed ease-out;
-	-webkit-transition: opacity @animationSpeed ease-out;
+  transition: opacity 1000ms ease-in;
+	-webkit-transition: opacity 1000ms ease-in;
 }
 
 .users-leave.users-leave-active {
-  opacity: 0.01;
+  opacity: 0;
 }
 
 #app {

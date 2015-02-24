@@ -10,11 +10,13 @@
     "http-get": "^0.5.10",
     "http-post": "^0.1.1",
     "http-proxy": "^1.8.1",
+    "jquery": "^2.1.3",
     "json-socket": "*",
     "keymirror": "^0.1.1",
     "lodash": "^3.3.0",
     "object-assign": "^2.0.0",
     "react": "^0.12.2",
+    "react-components": "^0.2.0",
     "restler": "^3.2.2",
     "socket.io": "^1.3.2",
     "unirest": "^0.4.0"

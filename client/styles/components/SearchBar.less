@@ -1,14 +1,21 @@
 #searchBar {
 
+  position: relative;
+  height: 30px;
+
   input {
     margin: 0 auto;
     outline: none;
+
   }
   input[type=search] {
     -webkit-appearance: textfield;
     -webkit-box-sizing: content-box;
     font-family: inherit;
     font-size: 100%;
+
+    position: fixed;
+    z-index: 10;
   }
   input::-webkit-search-decoration,
   input::-webkit-search-cancel-button {
@@ -28,6 +35,7 @@
     -webkit-transition: all .5s;
     -moz-transition: all .5s;
     transition: all .5s;
+
   }
 
   input[type=search] {

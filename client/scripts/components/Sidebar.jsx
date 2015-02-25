@@ -7,6 +7,9 @@ var SearchBar = require('./SearchBar');
 // Stores
 var AvailableUsersStore = require('../stores/AvailableUsersStore');
 
+// Actions
+var SessionActionCreators = require('../actions/SessionActionCreators');
+
 var LogOutMenu = React.createClass({
   render: function() {
     return <button className="btn-logout btn btn-primary btn-xs"
@@ -55,7 +58,7 @@ var Sidebar = React.createClass({
       </div>
     );
   },
-  
+
   _onChange: function() {
     this.setState(this.getStateFromStores());
   }

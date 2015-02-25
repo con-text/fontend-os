@@ -49,13 +49,13 @@ var Sidebar = React.createClass({
 
         <hr />
 
-        <h6>Friends list here</h6>
+        <h6></h6>
 
         <LogOutMenu />
       </div>
     );
   },
-  
+
   _onChange: function() {
     this.setState(this.getStateFromStores());
   }

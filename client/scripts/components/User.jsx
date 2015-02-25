@@ -40,7 +40,7 @@ var User = React.createClass({
 
       nameEl =
         <div className="col-md-10">
-          <h5 className="userName col-md-3">{this.props.user.name}</h5>
+          <div className="userName col-md-3 vcenter">{this.props.user.name}</div>
         </div>;
 
     } else {

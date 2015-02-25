@@ -8,14 +8,14 @@
     bottom: 0;
     display: block;
     overflow: hidden;
+    width: 25%;
 }
 
 #sidebar,
 #users-box {
-  padding: 10px 5px;
   background-color: @sidebarColor;
-  background-opacity: 0.8;
-  transition: background-opacity .5s ease-in;
+  opacity: 0.8;
+  transition: opacity .5s ease-in;
 
   .page-header {
       text-align: center;
@@ -24,6 +24,8 @@
   }
 
   .user {
+
+    padding: 0 10px;
 
     .img-circle {
       width: @profilePictureSize;
@@ -35,6 +37,7 @@
 
     .userName {
       padding: 5px;
+      font-weight: 200;
     }
 
     vertical-align: middle;
@@ -49,8 +52,8 @@
 
 #sidebar:hover,
 #users-box:hover {
-  background-opacity: 1;
-  transition: background-opacity .5s ease-in;
+  opacity: 1;
+  transition: opacity .5s ease-in;
 }
 
 .sidebar-small {
@@ -71,13 +74,13 @@
   height: @profilePictureSize;
 }
 
-.noPadLR {
-  padding-left: 0px;
-  padding-right: 0px;
+.padLR {
+  padding-left: 20px;
+  padding-right: 20px;
 }
 
 .names {
-  font-size: 1.3em;
+  font-size: 1.1em;
 }
 
 .user {

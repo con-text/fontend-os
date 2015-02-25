@@ -1,6 +1,6 @@
 @profilePictureSize: 48px;
 @smallSidebarPadding: 30px;
-@sidebarColor: rgba(173, 146, 146, 0.92);
+@sidebarColor: rgb(173, 146, 146);
 
 .sidebar {
     position: fixed;
@@ -14,6 +14,8 @@
 #users-box {
   padding: 10px 5px;
   background-color: @sidebarColor;
+  opacity: 0.8;
+  transition: opacity .5s ease-in;
 
   .page-header {
       text-align: centre;
@@ -25,23 +27,26 @@
     .img-circle {
       width: @profilePictureSize;
       height: @profilePictureSize;
-
       display: block;
       margin: 0 auto;
+      padding: 5px;
 
     }
-    padding-top: 10px;
-    padding-bottom: 10px;
 
-    margin: 15px 10px;
     vertical-align: middle;
-    cursor:pointer;
+    cursor: pointer;
   }
 
   .user:hover {
     background: #dde7f2;
     transition: background 0.5s;
   }
+}
+
+#sidebar:hover,
+#users-box:hover {
+  opacity: 1;
+  transition: opacity .5s ease-in;
 }
 
 .sidebar-small {

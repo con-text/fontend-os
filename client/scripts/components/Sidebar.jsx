@@ -45,14 +45,10 @@ var Sidebar = React.createClass({
 
   render: function() {
     return (
+
       <div id="sidebar" className='sidebar sidebar-small row'>
         <SearchBar />
-        <hr />
         <UsersList users={this.state.available} showNames={false} />
-
-        <hr />
-
-        <h6></h6>
 
         <LogOutMenu />
       </div>

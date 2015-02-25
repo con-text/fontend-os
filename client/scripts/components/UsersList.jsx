@@ -41,7 +41,7 @@ var UsersList = React.createClass({
     if(isEmpty) {
       return (
         <div id="login-list" className={"empty " + cssClass}>
-          <p className="text-center">Turn on your auth device.</p>
+          <p className="text-center grey">Finding devices in the area.</p>
         </div>
       );
     } else {

@@ -97,7 +97,7 @@ gulp.task('watch', ['build'], function() {
 	livereload.listen();
 
 	// Watch scripts folders
-	gulp.watch(['client/scripts/*.js', 'client/scripts/**/*.js'], [
+	gulp.watch(['client/scripts/*.+(js|jsx)', 'client/scripts/**/*.+(js|jsx)'], [
 		'lint',
 		'browserify',
 		'copy-stateinterface'

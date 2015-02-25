@@ -1,3 +1,6 @@
+/** @jsx React.DOM */
+'use strict';
+
 var React = require('react');
 
 var SessionActionCreators = require('../actions/SessionActionCreators');

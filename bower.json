@@ -2,6 +2,7 @@
   "name": "context-frontend",
   "dependencies": {
     "jquery": "~2.1.3",
-    "ventus": "*"
+    "ventus": "*",
+    "observe-js": "*"
   }
 }

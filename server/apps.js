@@ -11,12 +11,15 @@ function App(manifest) {
   // Expect these to be in the manifest
   this.id = manifest.id;
   this.name = manifest.name;
-  this.mainPage = injectAPI(loadMainPage(manifest), manifest);
-
+  this.manifest = manifest;
   // Icon is optional
   if(manifest.icon) {
     this.icon = path.join(manifest.relativePath, manifest.icon);
   }
+}
+
+App.prototype.displayApp = function(uuid, objectId){
+  return injectAPI(loadMainPage(this.manifest), this.manifest, uuid, objectId);
 }
 
 module.exports = {
@@ -94,13 +97,14 @@ function readManifest(path) {
 //this will be used to inject the api that apps will use into the source of the page.
 //for now, it's simple, just adding it before hand. Later on we can explore putting in into the
 //correct secion of the dom
-function injectAPI(webSource, manifest){
+function injectAPI(webSource, manifest, uuid, objectId){
   //this port needs to not be hardcoded
   var content = "<script type='text/javascript' src='http://localhost:5000/vendor/jquery/dist/jquery.min.js'></script>";
-      content+= "<script type='text/javascript' src='https://rawgit.com/melanke/Watch.JS/master/src/watch.js'></script>";
+      content+= "<script type='text/javascript' src='http://localhost:5000/vendor/observe-js/src/observe.js'></script>";
+      content+= "<script src='/socket.io/socket.io.js'></script>";
       content+= "<script type='text/javascript' src='http://localhost:5000/js/StateInterface.js'></script>";
       //hardcoded, obviously change this
-      content+= "<script type='text/javascript'>var AS = new AppState('" + manifest.id + "', 'tester');";
+      content+= "<script type='text/javascript'>var AS = new AppState('" + manifest.id + "', '" + uuid + "', '" + objectId +"');";
       content+= "</script>";
   return content += webSource;
 }

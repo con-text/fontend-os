@@ -33,27 +33,27 @@ var User = React.createClass({
 
     if(this.props.showNames) {
       pictureEl =
-        <div className="col-md-2">
+        <div className="user-picture">
           <img className="userPic test img-circle"
             src={this.props.user.profilePicUrl} />
         </div>;
 
       nameEl =
-        <div className="col-md-10 noPadLR">
-          <div className="userName col-md-10 vcenter profileHeight noPadLR names">{this.props.user.name}</div>
+        <div className="noPadLR profileHeight">
+          <div className="userName vcenter noPadLR names profileHeight">{this.props.user.name}</div>
         </div>;
 
     } else {
 
       pictureEl =
-          <img className="userPic test img-circle"
+          <img className="userPic test img-circle "
             src={this.props.user.profilePicUrl} />;
 
       nameEl = '';
     }
 
     return (
-      <div className="user row" onClick={this.handleClick}>
+      <div className="user " onClick={this.handleClick}>
         {pictureEl}
         {nameEl}
       </div>

@@ -12,9 +12,9 @@ var Sidebar   = require('./Sidebar');
 var Desktop = React.createClass({
   render: function() {
     return (
-      <div className="container-fluid">
+      <div className="container">
         <Sidebar />
-        <div className="desktop col-md-11"></div>
+        <div className="desktop"></div>
       </div>
     );
   }

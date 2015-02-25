@@ -14,7 +14,7 @@ var SearchBar = React.createClass({
   render: function() {
     return (
       <form id="searchBar">
-        <input value={this.state.searchTerm}
+        <input type="search" value={this.state.searchTerm}
           onChange={this.handleTermChange} />
       </form>
     );

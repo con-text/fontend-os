@@ -61,3 +61,19 @@
     color: transparent;
   }
 }
+
+#searchResults {
+  position: fixed;
+  top: 50px;
+  left: 75px;
+  width: 66.8%;
+  height: 70%;
+  background: rgba(255,255,255,0.8);
+  opacity: 0;
+}
+
+#searchResults.active {
+  opacity: 1;
+  -webkit-transition: opacity 1s ease-in;
+  transition: opacity 1s ease-in;
+}

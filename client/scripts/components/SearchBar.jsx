@@ -13,16 +13,24 @@ var SearchBar = React.createClass({
 
   render: function() {
     return (
-      <form id="searchBar">
-        <input value={this.state.searchTerm}
+      <form id="searchBar" onSubmit={this.handleSubmit}>
+        <input type="search" value={this.state.searchTerm}
           onChange={this.handleTermChange} />
       </form>
     );
   },
 
   handleTermChange: function(e) {
-    var newValue = e.target.value.trim();
+    var newValue = e.target.value;
     this.setState({searchTerm: newValue});
+  },
+
+  handleSubmit: function(e) {
+    e.preventDefault();
+
+    var searchTerm = this.state.searchTerm.trim();
+
+    window.console.log("Searching for " + searchTerm);
   }
 
 });

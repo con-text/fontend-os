@@ -2,13 +2,27 @@ var React = require('react');
 
 // Components
 var UsersList = require('./UsersList');
-var SearchBar = require('./SearchBar');
 
 // Stores
 var AvailableUsersStore = require('../stores/AvailableUsersStore');
 
 // Actions
 var SessionActionCreators = require('../actions/SessionActionCreators');
+var DesktopActionCreators = require('../actions/DesktopActionCreators');
+
+// Search box visibility toggle
+var SearchToggle = React.createClass({
+
+  render: function() {
+    return (
+      <div className="search-btn" onClick={this.handleClick}></div>
+    );
+  },
+
+  handleClick: function() {
+    DesktopActionCreators.toggleSearch();
+  }
+});
 
 var LogOutMenu = React.createClass({
   render: function() {
@@ -47,9 +61,8 @@ var Sidebar = React.createClass({
     return (
 
       <div id="sidebar" className='sidebar sidebar-small row'>
-        <SearchBar />
+        <SearchToggle />
         <UsersList users={this.state.available} showNames={false} />
-
         <LogOutMenu />
       </div>
     );

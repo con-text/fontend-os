@@ -11,12 +11,16 @@ var Desktop = require('./Desktop');
 // Stores
 var SessionStore        = require('../stores/SessionStore');
 var WindowStore         = require('../stores/WindowStore');
+var DesktopStore        = require('../stores/DesktopStore');
 
 // Utils
 var SocketUtils = require('../utils/SocketUtils');
 
 // Start the socket helper
 SocketUtils.listenOverSocket();
+
+// Initialize stores
+DesktopStore.init();
 
 var App = React.createClass({
 

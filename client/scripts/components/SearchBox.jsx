@@ -3,6 +3,12 @@
 
 var React = require('react');
 
+// Actions
+var DesktopActions = require('../actions/DesktopActionCreators');
+
+// Escape key code
+var ESC_KEY_CODE = 27;
+
 var SearchBox = React.createClass({
 
   propTypes: {
@@ -30,13 +36,20 @@ var SearchBox = React.createClass({
       <div id="searchBox" style={divStyle}>
         <form className="searchBar" onSubmit={this.handleSubmit}>
           <input type="search" value={this.state.searchTerm}
-            onChange={this.handleTermChange} />
+            onChange={this.handleTermChange}
+            onKeyDown={this.handleKeyDown} />
         </form>
         <div className="searchResults" >
           <h3>Searching for {this.state.searchTerm}</h3>
         </div>
       </div>
     );
+  },
+
+  handleKeyDown: function(e) {
+    if(e.keyCode === ESC_KEY_CODE) {
+      DesktopActions.closeSearch();
+    }
   },
 
   handleTermChange: function(e) {

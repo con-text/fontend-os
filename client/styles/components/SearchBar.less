@@ -1,14 +1,25 @@
 .search-btn {
-  background: #ededed url(http://static.tumblr.com/ftv85bp/MIXmud4tx/search-icon.png) no-repeat 9px center;
+  background: #ededed url(http://static.tumblr.com/ftv85bp/MIXmud4tx/search-icon.png) no-repeat 7px center;
   border: 0;
-  padding: 9px 10px 9px 32px;
-  width: 15px;
+  padding: 15px 0;
+  width: 30px;
   content: '';
+  margin: 0 auto;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  cursor: pointer;
+  background-size: 55%;
 
   -webkit-border-radius: 10em;
   -moz-border-radius: 10em;
   border-radius: 10em;
 
+  transition: box-shadow 0.5s;
+}
+
+.search-btn:hover {
+  box-shadow: 0px 0px 5px #dde7f2;
+  transition: box-shadow 0.5s;
 }
 
 #searchBox {

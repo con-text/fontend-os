@@ -46,15 +46,14 @@ var LoginScreen = React.createClass({
   render: function() {
 
     return (
-      <div className="container-fluid">
-        <div className="row">
-          <div id="users-box" className='sidebar'>
-            <span className="page-header">
-              <h1>Welcome to Context</h1>
-            </span>
-            <UsersList disabled={this.state.isLoggingIn} users={this.state.available} />
-          </div>
+      <div className="container">
+        <div id="users-box" className='sidebar'>
+          <span className="page-header">
+            <h1>Welcome to Context</h1>
+          </span>
+          <UsersList disabled={this.state.isLoggingIn} users={this.state.available} />
         </div>
+        <div className="desktop"></div>
       </div>
     );
   }

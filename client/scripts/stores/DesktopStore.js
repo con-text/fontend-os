@@ -60,6 +60,7 @@ DesktopStore.dispatchToken = AppDispatcher.register(function(payload) {
     case ActionTypes.CLOSE_SEARCH:
       DesktopStore.closeSearch();
       DesktopStore.emitChange();
+      break;
     default:
       // No operation
       break;

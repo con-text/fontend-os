@@ -27,6 +27,26 @@ var SearchBox = React.createClass({
     };
   },
 
+  componentDidMount: function() {
+    if(this.props.boxVisible) {
+      this.focusInput();
+    }
+  },
+
+  componentWillReceiveProps: function(nextProps) {
+    if(nextProps.boxVisible) {
+      this.focusInput();
+    }
+  },
+
+  focusInput: function() {
+    if(this.refs.searchInput) {
+      setTimeout(function() {
+        this.refs.searchInput.getDOMNode().focus();
+      }.bind(this), 500);
+    }
+  },
+
   render: function() {
     var divStyle = {
       display: this.props.boxVisible ? 'block' : 'none'
@@ -35,7 +55,7 @@ var SearchBox = React.createClass({
     return (
       <div id="searchBox" style={divStyle}>
         <form className="searchBar" onSubmit={this.handleSubmit}>
-          <input type="search" value={this.state.searchTerm}
+          <input ref="searchInput" type="search" value={this.state.searchTerm}
             onChange={this.handleTermChange}
             onKeyDown={this.handleKeyDown} />
         </form>

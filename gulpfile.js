@@ -142,7 +142,7 @@ gulp.task('views', function() {
 });
 
 // Default task
-gulp.task('default', ['serve'], function() {
+gulp.task('default', ['dev'], function() {
 });
 
 gulp.task('browserify:apps', ['lint:apps'], function() {

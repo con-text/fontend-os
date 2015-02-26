@@ -3,7 +3,6 @@ function allowAppsOrigin(req, res, next) {
 
   // Check requested origin against list of of allowed
   var requestedOrigin = req.header('host').toLowerCase();
-  console.log("Requested origin: ", requestedOrigin);
 
   var origin = cors.default;
 
@@ -14,7 +13,6 @@ function allowAppsOrigin(req, res, next) {
   });
 
   // Only one origin is allowed
-  console.log("Allowing: ", origin);
   res.header('Access-Control-Allow-Origin', origin);
   res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
   res.header('Access-Control-Allow-Headers', 'X-Requested-With,Content-Type');
@@ -36,7 +34,6 @@ var config = {
 };
 
 var cors = {
-
   // List of allowed origins
   allowedOrigins: [
     config.baseApiUrl,

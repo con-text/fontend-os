@@ -23,6 +23,7 @@
   },
   "devDependencies": {
     "blanket": "^1.1.6",
+    "browser-sync": "^2.2.1",
     "browserify": "^8.1.1",
     "chai": "*",
     "connect-livereload": "^0.5.2",

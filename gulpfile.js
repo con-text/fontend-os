@@ -1,27 +1,24 @@
-var gulp = require('gulp'),
-	gutil = require('gulp-util'),
-	jshint = require('gulp-jshint'),
-	browserify = require('gulp-browserify'),
-	concat = require('gulp-concat'),
-	clean = require('gulp-clean'),
-	less = require('gulp-less'),
-	autoprefixer = require('gulp-autoprefixer'),
-	streamqueue = require('streamqueue'),
-	react = require('gulp-react'),
-	reactify = require('reactify'),
-	mocha = require('gulp-mocha'),
-	zip = require('gulp-zip'),
-	path = require('path'),
-	gulpFilter = require('gulp-filter'),
-	fs = require('fs'),
-	s3 = require("gulp-s3"),
-	del = require('del'),
-	imagemin = require('gulp-imagemin');
-
-// Live reload server depenencies
-var embedlr = require('gulp-embedlr'),
-		livereload = require('gulp-livereload'),
-    serverport = 5000;
+var gulp 				= require('gulp'),
+	gutil 				= require('gulp-util'),
+	jshint 				= require('gulp-jshint'),
+	browserify 		= require('gulp-browserify'),
+	concat 				= require('gulp-concat'),
+	clean  				= require('gulp-clean'),
+	less  				= require('gulp-less'),
+	autoprefixer  = require('gulp-autoprefixer'),
+	streamqueue  	= require('streamqueue'),
+	react  				= require('gulp-react'),
+	reactify  		= require('reactify'),
+	mocha  				= require('gulp-mocha'),
+	zip  					= require('gulp-zip'),
+	path  				= require('path'),
+	gulpFilter  	= require('gulp-filter'),
+	fs  					= require('fs'),
+	s3  					= require("gulp-s3"),
+	del  					= require('del'),
+	imagemin  		= require('gulp-imagemin'),
+	browserSync  	= require('browser-sync'),
+	reload      	= browserSync.reload;
 
 // Clean
 gulp.task('clean', function() {
@@ -94,18 +91,15 @@ gulp.task('browserify', ['browserify:client', 'browserify:apps']);
 // Watch task
 gulp.task('watch', ['build'], function() {
 
-	livereload.listen();
-
 	// Watch scripts folders
 	gulp.watch(['client/scripts/*.+(js|jsx)', 'client/scripts/**/*.+(js|jsx)'], [
 		'lint',
 		'browserify',
-		'copy-stateinterface'
-	]);
+		'copy-stateinterface', browserSync.reload]);
 
 	gulp.watch(['apps/**/*.js', 'apps/**/manifest.json', 'apps/**/index.html'], [
 		'lint',
-		'browserify:apps'
+		'browserify:apps', browserSync.reload
 	]);
 
 	// Watch views
@@ -131,7 +125,7 @@ gulp.task('styles', function() {
 		// Add autoprefixer
 		.pipe(autoprefixer())
 		.pipe(gulp.dest('dist/css/'))
-		.pipe(livereload());
+		.pipe(reload({stream: true}));
 });
 
 // Views
@@ -144,11 +138,11 @@ gulp.task('views', function() {
 	// Sub-views
 	gulp.src('./client/views/**/*')
 	.pipe(gulp.dest('dist/views/'))
-	.pipe(livereload());
+	.pipe(reload({stream: true}));
 });
 
 // Default task
-gulp.task('default', ['dev'], function() {
+gulp.task('default', ['serve'], function() {
 });
 
 gulp.task('browserify:apps', ['lint:apps'], function() {
@@ -219,36 +213,25 @@ gulp.task('push', ['package'], function(){
 	    .pipe(s3({key: aws.AWSAccessKey, secret: aws.AWSSecretAccessKey, bucket: aws.BUCKET, region: aws.AWSRegion}));
 });
 
+// Attach Browser Sync to the dev server
+gulp.task('serve', ['dev'], function() {
+	browserSync({
+		proxy: "http://localhost:5000"
+	});
+});
+
 // Devlopment server
 gulp.task('dev', ['build'], function() {
 
 	var serverConfig = {
 		destDir: "dist",
-		serverPort: serverport,
+		serverPort: 5000,
 		entryPoint: "index.html"
 	};
 
 	// Run server
-	var server = require('./server');
-
-	server.startServer(serverConfig);
+	require('./server');
 
   // Run the watch task, to keep taps on changes
-	gulp.start('watch');
-});
-
-gulp.task('dev-nobuild', function(){
-	var serverConfig = {
-		destDir: "dist",
-		serverPort: serverport,
-		entryPoint: "index.html"
-	};
-
-	// Run server
-	var server = require('./server');
-
-	server.startServer(serverConfig);
-
-	// Run the watch task, to keep taps on changes
 	gulp.start('watch');
 });

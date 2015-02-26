@@ -142,7 +142,7 @@ gulp.task('views', function() {
 });
 
 // Default task
-gulp.task('default', ['serve'], function() {
+gulp.task('default', ['dev'], function() {
 });
 
 gulp.task('browserify:apps', ['lint:apps'], function() {
@@ -216,7 +216,21 @@ gulp.task('push', ['package'], function(){
 // Attach Browser Sync to the dev server
 gulp.task('serve', ['dev'], function() {
 	browserSync({
-		proxy: "http://localhost:5000"
+		proxy: {
+			target: "localhost:5000",
+			reqHeaders: function(config) {
+				return {
+					"host":            "localhost:3000",
+					"accept-encoding": "identity",
+					"agent":           false
+				};
+			}
+		},
+		socket: {
+			namespace: function (namespace) {
+					return "localhost:3002" + namespace;
+			}
+		}
 	});
 });
 

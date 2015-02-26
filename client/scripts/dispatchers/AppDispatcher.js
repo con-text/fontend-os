@@ -2,7 +2,7 @@ var AvailableUsersConstants = require('../constants/AvailableUsersConstants');
 var Dispatcher = require('flux').Dispatcher;
 var assign = require('object-assign');
 
-var PayloadSources = AvailableUsersConstants.PayloadSources;
+var PayloadSources = require('../constants/PayloadSources');
 
 var AppDispatcher = assign(new Dispatcher(), {
 

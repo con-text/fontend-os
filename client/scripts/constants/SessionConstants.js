@@ -8,10 +8,5 @@ module.exports = {
     AUTH_FAILED: null,
     CREATE_SESSION: null,
     DESTROY_SESSION: null
-  }),
-
-  PayloadSources: keyMirror({
-    SERVER_ACTION: null,
-    VIEW_ACTION: null
   })
 };

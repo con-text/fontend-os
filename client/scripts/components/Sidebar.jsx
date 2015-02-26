@@ -15,11 +15,12 @@ var SearchToggle = React.createClass({
 
   render: function() {
     return (
-      <div className="search-btn" onClick={this.handleClick}></div>
+      <div id="search-toggle" className="search-btn" onClick={this.handleClick}></div>
     );
   },
 
-  handleClick: function() {
+  handleClick: function(e) {
+    e.preventDefault();
     DesktopActionCreators.toggleSearch();
   }
 });

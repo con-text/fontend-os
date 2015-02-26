@@ -5,6 +5,7 @@ var React = require('react');
 
 // Actions
 var SessionActionCreators = require('../actions/SessionActionCreators');
+var DesktopActionCreators = require('../actions/DesktopActionCreators');
 
 // Components
 var Sidebar   = require('./Sidebar');
@@ -35,13 +36,20 @@ var Desktop = React.createClass({
 
   render: function() {
     return (
-      <div className="container">
+      <div className="container" onClickCapture={this.handleClick}>
         <Sidebar />
         <div className="desktop">
           <SearchBox boxVisible={this.state.showSearch} />
         </div>
       </div>
     );
+  },
+
+  handleClick: function(e) {
+    if(e.target.id !== "searchBox" &&
+      $(e.target).parents("#searchBox").size() === 0) {
+      DesktopActionCreators.closeSearch();
+    }
   },
 
   _onChange: function() {

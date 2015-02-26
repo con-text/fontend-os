@@ -60,7 +60,7 @@ var SearchBox = React.createClass({
             onKeyDown={this.handleKeyDown} />
         </form>
         <div className="searchResults" >
-          <h3>Searching for {this.state.searchTerm}</h3>
+          <p>{this.state.searchTerm}</p>
         </div>
       </div>
     );

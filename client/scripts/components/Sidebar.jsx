@@ -15,7 +15,9 @@ var SearchToggle = React.createClass({
 
   render: function() {
     return (
-      <div id="search-toggle" className="search-btn" onClick={this.handleClick}></div>
+      <div id="search-toggle" className="search-btn" onClick={this.handleClick}>
+        <i className="fa fa-search smallerFind"></i>
+      </div>
     );
   },
 

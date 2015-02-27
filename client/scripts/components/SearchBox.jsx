@@ -53,17 +53,21 @@ var SearchBox = React.createClass({
     var divStyle = {
       display: this.props.boxVisible ? 'block' : 'none'
     };
+    var resultsDiv = this.state.searchTerm.trim() === '' ? '' :
+      <div className="searchResults" >
+        <p>{this.state.searchTerm}</p>
+      </div>;
 
     return (
       <div id="searchBox" style={divStyle}>
         <form className="searchBar" onSubmit={this.handleSubmit}>
+          <i className="fa fa-search fa-lg largerFind"></i>
           <input ref="searchInput" type="search" value={this.state.searchTerm}
             onChange={this.handleTermChange}
-            onKeyDown={this.handleKeyDown} />
+            onKeyDown={this.handleKeyDown}
+            placeholder="Context Search" />
         </form>
-        <div className="searchResults" >
-          <p>{this.state.searchTerm}</p>
-        </div>
+        {resultsDiv}
       </div>
     );
   },

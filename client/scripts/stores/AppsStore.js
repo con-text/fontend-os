@@ -21,6 +21,11 @@ var AppsStore = assign({}, EventEmitter.prototype, {
   init: function() {
     this._apps = [];
     this.fetchAll();
+    this.openedApp = null;
+  },
+
+  getOpened: function() {
+    return this.openedApp;
   },
 
   getApps: function() {
@@ -48,15 +53,15 @@ var AppsStore = assign({}, EventEmitter.prototype, {
       }.bind(this));
   },
 
-  createFromEl: function (id) {
+  open: function (id, params) {
 
     // Create a window from a DOM element
     var app = AppsStore.getApp(id);
 
     // Create react component from class
     var url = 'http://localhost:3001/app/tester/' + app.id;
-    var component = React.createElement('iframe', {src: url, className: "app-window"});
-    var renderedIframe = React.render(component, _windows[id].$content.get(0));
+    this.openedApp = React.createElement('iframe', {src: url, className: "app-window"});
+    this.emitChange();
   },
 
   emitChange: function() {

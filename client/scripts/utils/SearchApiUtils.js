@@ -1,6 +1,9 @@
 var baseUrl = 'http://localhost:5000';
 var _ = require('lodash');
 
+// Apps Store
+var AppsStore = require('../stores/AppsStore');
+
 module.exports = {
 
   search: function(query, options) {
@@ -13,22 +16,26 @@ module.exports = {
     var errorCallback   = options.error;
     var results = [];
 
-    // Imaginary action
-    var BrowserAction = {
-      open: function(url) {
-        console.log("Opening " + url);
-      }
-    };
-
     // Try to match URL
     var urlExp = new RegExp(/(((http|ftp|https):\/\/)|www\.)[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&:/~\+#!]*[\w\-\@?^=%&/~\+#])?/);
     if(urlExp.test(query)) {
 
+        // Find browser
+        var app;
+        var apps = AppsStore.getApps();
+
+        for(var id in apps) {
+          if(apps[id].name === "Browser") {
+            app = apps[id];
+          }
+        }
+
         results.push({
           value: "Go to: " + query,
           type: "Website",
-          action: BrowserAction.open.bind(
-            BrowserAction.open.prototype,
+          action: AppsStore.open.bind(
+            AppsStore,
+            app.id,
             query)
         });
 

@@ -20,26 +20,47 @@ SearchResultsStore.init();
 
 var SearchResultItem = React.createClass({
 
+  propTypes: {
+    selected: React.PropTypes.object,
+    result: React.PropTypes.object.isRequired,
+    mouseEnter: React.PropTypes.func,
+    mouseLeave: React.PropTypes.func
+  },
+
+  getDefaultProps: function() {
+    return {
+      selected: null,
+    };
+  },
+
   render: function() {
     var result = this.props.result;
     var divClass = this.props.selected === result ? 'active' : '';
     var icon = (result.value.indexOf("Go to:") > -1) ? 'fa fa-globe fileIcon' : 'fa fa-file-text-o fileIcon';
 
     return <li
-      onMouseEnter={this.onMouseEnter}
-      onMouseLeave={this.onMouseLeave}
+      onMouseEnter={this.handleMouseEnter}
+      onMouseLeave={this.handleMouseLeave}
+      onClick={this.handleClick}
       className={divClass}><i className={icon}></i>{result.value}</li>;
   },
 
-  onMouseEnter: function(e) {
+  handleMouseEnter: function(e) {
     if(this.props.mouseEnter) {
       this.props.mouseEnter(this.props.result);
     }
   },
 
-  onMouseLeave: function(e) {
+  handleMouseLeave: function(e) {
     if(this.props.mouseLeave) {
       this.props.mouseLeave(this.props.result);
+    }
+  },
+
+  handleClick: function(e) {
+    if(this.props.result) {
+      if(this.props.result.action)
+      this.props.result.action();
     }
   }
 });

@@ -12,13 +12,26 @@ var Sidebar   = require('./Sidebar');
 var SearchBox = require('./SearchBox');
 
 // Stores
-var DesktopStore = require('../stores/DesktopStore');
+var DesktopStore  = require('../stores/DesktopStore');
+var AppsStore     = require('../stores/AppsStore');
+var AppContainer = React.createClass({
+  render: function() {
+    var divStyle = {
+      display: this.props.app ? 'block' : 'none'
+    };
+
+    return <div className="appContainer" style={divStyle} >
+      {this.props.app}
+    </div>;
+  }
+});
 
 var Desktop = React.createClass({
 
   getStateFromStores: function() {
     return {
-      showSearch: DesktopStore.isSearchVisible()
+      showSearch: DesktopStore.isSearchVisible(),
+      currentApp: AppsStore.getOpened()
     };
   },
 
@@ -28,10 +41,12 @@ var Desktop = React.createClass({
 
   componentDidMount: function() {
     DesktopStore.addChangeListener(this._onChange);
+    AppsStore.addChangeListener(this._onChange);
   },
 
   componentWillUnmount: function() {
     DesktopStore.removeChangeListener(this._onChange);
+    AppsStore.removeChangeListener(this._onChange);
   },
 
   render: function() {
@@ -40,6 +55,7 @@ var Desktop = React.createClass({
         <Sidebar />
         <div className="desktop">
           <SearchBox boxVisible={this.state.showSearch} />
+          <AppContainer app={this.state.currentApp} />
         </div>
       </div>
     );

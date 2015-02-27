@@ -29,8 +29,8 @@ var SearchToggle = React.createClass({
 
 var LogOutMenu = React.createClass({
   render: function() {
-    return <button className="btn-logout btn btn-primary btn-xs"
-      onClick={this.handleClick}>Log out</button>;
+    return <button className="btn-logout btn btn-primary btn-xs logout"
+      onClick={this.handleClick}><i className="fa fa-sign-out leaveIcon"></i>Leave</button>;
   },
 
   handleClick: function(e) {

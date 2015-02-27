@@ -59,14 +59,28 @@
 
   .searchResults {
     overflow-wrap: break-word;
-    padding: 10px 20px;
+    padding: 10px 10px;
+    transition: background 0.25s;
   }
 
   .searchResults {
 
-    li.active {
-      background-color: yellow;
+    li {
+      padding: 20px 10px;
+      list-style-type: none;
+      font-weight: 200;
     }
+
+    li.active {
+      background: #dde7f2;
+      transition: background 0.25s;
+    }
+
+  }
+
+  .fileIcon {
+    padding-right: 15px;
+    color: #777478;
   }
 }
 

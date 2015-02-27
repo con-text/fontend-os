@@ -27,7 +27,7 @@ var SearchResultItem = React.createClass({
     return <li
       onMouseEnter={this.onMouseEnter}
       onMouseLeave={this.onMouseLeave}
-      className={divClass}>{result.value}</li>;
+      className={divClass}><i className="fa fa-file-text-o fileIcon"></i>{result.value}</li>;
   },
 
   onMouseEnter: function(e) {
@@ -93,6 +93,7 @@ var SearchBox = React.createClass({
 
   renderResults: function() {
 
+
     var results = this.state.searchResults.map(function(result, i) {
       return <SearchResultItem key={i}
         result={result}
@@ -122,7 +123,7 @@ var SearchBox = React.createClass({
       return '';
     }
 
-    return  <div>SEARCHING...</div>;
+    return  <div>...</div>;
   },
 
   renderForm: function() {

@@ -23,11 +23,12 @@ var SearchResultItem = React.createClass({
   render: function() {
     var result = this.props.result;
     var divClass = this.props.selected === result ? 'active' : '';
+    var icon = (result.value.indexOf("Go to:") > -1) ? 'fa fa-globe fileIcon' : 'fa fa-file-text-o fileIcon';
 
     return <li
       onMouseEnter={this.onMouseEnter}
       onMouseLeave={this.onMouseLeave}
-      className={divClass}><i className="fa fa-file-text-o fileIcon"></i>{result.value}</li>;
+      className={divClass}><i className={icon}></i>{result.value}</li>;
   },
 
   onMouseEnter: function(e) {

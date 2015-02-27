@@ -18,6 +18,31 @@ var DOWN_KEY = 40;
 // Initialize the results store
 SearchResultsStore.init();
 
+var SearchResultItem = React.createClass({
+
+  render: function() {
+    var result = this.props.result;
+    var divClass = this.props.selected === result ? 'active' : '';
+
+    return <li
+      onMouseEnter={this.onMouseEnter}
+      onMouseLeave={this.onMouseLeave}
+      className={divClass}>{result.value}</li>;
+  },
+
+  onMouseEnter: function(e) {
+    if(this.props.mouseEnter) {
+      this.props.mouseEnter(this.props.result);
+    }
+  },
+
+  onMouseLeave: function(e) {
+    if(this.props.mouseLeave) {
+      this.props.mouseLeave(this.props.result);
+    }
+  }
+});
+
 var SearchBox = React.createClass({
 
   propTypes: {
@@ -68,9 +93,12 @@ var SearchBox = React.createClass({
 
   renderResults: function() {
 
-    var results = this.state.searchResults.map(function(result) {
-      var divClass = this.state.selected === result ? 'active' : '';
-      return <li className={divClass}>{result.value}</li>;
+    var results = this.state.searchResults.map(function(result, i) {
+      return <SearchResultItem key={i}
+        result={result}
+        selected={this.state.selected}
+        mouseEnter={this.onMouseEnter}
+        mouseLeave={this.onMouseLeave} />
     }, this);
 
     return !this.state.hasResults ?
@@ -78,6 +106,14 @@ var SearchBox = React.createClass({
       <div className="searchResults">
         <ul>{results}</ul>
       </div>;
+  },
+
+  onMouseEnter: function(model) {
+    this.setState({selected: model});
+  },
+
+  onMouseLeave: function(model) {
+    this.setState({selected: null});
   },
 
   renderLoading: function() {
@@ -160,13 +196,24 @@ var SearchBox = React.createClass({
 
   handleTermChange: function(e) {
     var newValue = e.target.value;
+    var oldValue = this.state.searchTerm;
+
     this.setState({searchTerm: newValue});
+
+    if(newValue !== oldValue) {
+      SearchActions.search(newValue);
+    }
   },
 
   handleSubmit: function(e) {
     e.preventDefault();
-    var searchTerm = this.state.searchTerm.trim();
-    SearchActions.search(searchTerm);
+
+    if(this.state.selected) {
+
+      if(this.state.selected.action)
+        this.state.selected.action();
+
+    }
   },
 
   _onChange: function() {

@@ -10,7 +10,7 @@ var Desktop = require('./Desktop');
 
 // Stores
 var SessionStore        = require('../stores/SessionStore');
-var WindowStore         = require('../stores/WindowStore');
+var AppsStore           = require('../stores/AppsStore');
 var DesktopStore        = require('../stores/DesktopStore');
 
 // Utils
@@ -20,6 +20,7 @@ var SocketUtils = require('../utils/SocketUtils');
 SocketUtils.listenOverSocket();
 
 // Initialize stores
+AppsStore.init();
 DesktopStore.init();
 
 var App = React.createClass({
@@ -36,12 +37,12 @@ var App = React.createClass({
 
   componentDidMount: function() {
     SessionStore.addChangeListener(this._onChange);
-    WindowStore.addChangeListener(this._onChange);
+    AppsStore.addChangeListener(this._onChange);
   },
 
   componentWillUnmount: function() {
     SessionStore.removeChangeListener(this._onChange);
-    WindowStore.removeChangeListener(this._onChange);
+    AppsStore.removeChangeListener(this._onChange);
   },
 
   render: function() {
@@ -60,8 +61,6 @@ var App = React.createClass({
   _onChange: function() {
     this.setState(this.getStateFromStores());
   }
-
-
 });
 
 module.exports = App;

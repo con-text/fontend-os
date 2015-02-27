@@ -70,7 +70,7 @@ var SearchBox = React.createClass({
 
     var results = this.state.searchResults.map(function(result) {
       var divClass = this.state.selected === result ? 'active' : '';
-      return <li className={divClass}>{result.value}</li>;
+      return <li className={divClass}><i className="fa fa-file-text-o fileIcon"></i>{result.value}</li>;
     }, this);
 
     return !this.state.hasResults ?
@@ -86,7 +86,7 @@ var SearchBox = React.createClass({
       return '';
     }
 
-    return  <div>SEARCHING...</div>;
+    return  <div>...</div>;
   },
 
   renderForm: function() {

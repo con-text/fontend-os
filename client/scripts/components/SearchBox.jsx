@@ -5,6 +5,8 @@ var React = require('react');
 
 // Actions
 var DesktopActions = require('../actions/DesktopActionCreators');
+var SearchActions = require('../actions/SearchActionCreators');
+var SearchResultsStore = require('../stores/SearchResultsStore');
 
 // Escape key code
 var ESC_KEY_CODE = 27;
@@ -79,8 +81,8 @@ var SearchBox = React.createClass({
 
   handleSubmit: function(e) {
     e.preventDefault();
-
     var searchTerm = this.state.searchTerm.trim();
+    SearchActions.search(searchTerm);
   }
 });
 

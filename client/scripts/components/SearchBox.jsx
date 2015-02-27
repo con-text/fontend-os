@@ -123,7 +123,7 @@ var SearchBox = React.createClass({
       return '';
     }
 
-    return  <div>...</div>;
+    return  <div className="loading"></div>;
   },
 
   renderForm: function() {

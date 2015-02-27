@@ -9,25 +9,25 @@ var SearchActions = require('../actions/SearchActionCreators');
 var EventEmitter = require('events').EventEmitter;
 var assign = require('object-assign');
 
-var _ = require('lodash');
 var CHANGE_EVENT = 'change';
 
 var SearchResultsStore = assign({}, EventEmitter.prototype, {
 
   init: function() {
-    this._isSearchVisible = false;
+    this._isSearching = false;
+    this._results = [];
   },
 
-  isSearchVisible: function() {
-    return this._isSearchVisible;
+  isSearching: function() {
+    return this._isSearching;
   },
 
-  toggleSearchVisible: function() {
-    this._isSearchVisible = !this._isSearchVisible;
+  getResults: function() {
+    return this._results;
   },
 
-  closeSearch: function() {
-    this._isSearchVisible = false;
+  hasResults: function() {
+    return this._results.length > 0;
   },
 
   emitChange: function() {
@@ -47,7 +47,6 @@ var SearchResultsStore = assign({}, EventEmitter.prototype, {
   removeChangeListener: function(callback) {
     this.removeListener(CHANGE_EVENT, callback);
   }
-
 });
 
 // Register with the dispatcher
@@ -58,16 +57,22 @@ SearchResultsStore.dispatchToken = AppDispatcher.register(function(payload) {
 
     case ActionTypes.SEARCH:
       var query = action.query;
-      
-      setTimeout(function() {
-        SearchActions.searchFinished(["Result 1", "Result 2"]);
-      }, 100);
+      SearchResultsStore._results = [];
+      SearchResultsStore._isSearching = true;
+      SearchResultsStore.emitChange();
+      break;
 
-      break;
     case ActionTypes.SEARCH_FINISHED:
-      var results = action.results;
-      console.log("Results", results);
+      SearchResultsStore._isSearching = false;
+      SearchResultsStore._results = action.results;
+      SearchResultsStore.emitChange();
       break;
+
+    case ActionTypes.SEARCH_RESET:
+      SearchResultsStore.init();
+      SearchResultsStore.emitChange();
+      break;
+
     default:
       // No operation
       break;

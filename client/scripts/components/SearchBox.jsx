@@ -2,14 +2,21 @@
 'use strict';
 
 var React = require('react');
+var _ = require('lodash');
 
 // Actions
 var DesktopActions = require('../actions/DesktopActionCreators');
 var SearchActions = require('../actions/SearchActionCreators');
 var SearchResultsStore = require('../stores/SearchResultsStore');
 
+
 // Escape key code
 var ESC_KEY_CODE = 27;
+var UP_KEY = 38;
+var DOWN_KEY = 40;
+
+// Initialize the results store
+SearchResultsStore.init();
 
 var SearchBox = React.createClass({
 
@@ -25,7 +32,11 @@ var SearchBox = React.createClass({
 
   getInitialState: function() {
     return {
-      searchTerm: ''
+      searchTerm: '',
+      isSearching: SearchResultsStore.isSearching(),
+      searchResults: SearchResultsStore.getResults(),
+      hasResults: SearchResultsStore.hasResults(),
+      selected: null,
     };
   },
 
@@ -33,6 +44,12 @@ var SearchBox = React.createClass({
     if(this.props.boxVisible) {
       this.focusInput();
     }
+
+    SearchResultsStore.addChangeListener(this._onChange);
+  },
+
+  componentWillUnmount: function() {
+    SearchResultsStore.removeChangeListener(this._onChange);
   },
 
   componentWillReceiveProps: function(nextProps) {
@@ -49,32 +66,95 @@ var SearchBox = React.createClass({
     }
   },
 
+  renderResults: function() {
+
+    var results = this.state.searchResults.map(function(result) {
+      var divClass = this.state.selected === result ? 'active' : '';
+      return <li className={divClass}>{result.value}</li>;
+    }, this);
+
+    return !this.state.hasResults ?
+      '' :
+      <div className="searchResults">
+        <ul>{results}</ul>
+      </div>;
+  },
+
+  renderLoading: function() {
+
+    if(!this.state.isSearching) {
+      return '';
+    }
+
+    return  <div>SEARCHING...</div>;
+  },
+
+  renderForm: function() {
+    return (
+      <form className="searchBar" onSubmit={this.handleSubmit}>
+        <i className="fa fa-search fa-lg largerFind"></i>
+        <input ref="searchInput" type="search" value={this.state.searchTerm}
+          onChange={this.handleTermChange}
+          onKeyDown={this.handleKeyDown}
+          placeholder="Context Search" />
+      </form>
+    );
+  },
+
   render: function() {
     var divStyle = {
       display: this.props.boxVisible ? 'block' : 'none'
     };
-    var resultsDiv = this.state.searchTerm.trim() === '' ? '' :
-      <div className="searchResults" >
-        <p>{this.state.searchTerm}</p>
-      </div>;
 
     return (
       <div id="searchBox" style={divStyle}>
-        <form className="searchBar" onSubmit={this.handleSubmit}>
-          <i className="fa fa-search fa-lg largerFind"></i>
-          <input ref="searchInput" type="search" value={this.state.searchTerm}
-            onChange={this.handleTermChange}
-            onKeyDown={this.handleKeyDown}
-            placeholder="Context Search" />
-        </form>
-        {resultsDiv}
+        {this.renderForm()}
+        {this.renderLoading()}
+        {this.renderResults()}
       </div>
     );
   },
 
   handleKeyDown: function(e) {
+    var index;
+
     if(e.keyCode === ESC_KEY_CODE) {
       DesktopActions.closeSearch();
+    } else if(e.keyCode === DOWN_KEY && this.state.hasResults) {
+
+      if(this.state.selected) {
+
+        // Get current index
+        index = _.indexOf(this.state.searchResults, this.state.selected);
+
+        // Move to next element
+        if(index + 1 >= this.state.searchResults.length) {
+          this.setState({selected: this.state.searchResults[0]});
+        } else {
+          this.setState({selected: this.state.searchResults[index + 1]});
+        }
+
+      } else {
+        this.setState({selected: _.first(this.state.searchResults)});
+      }
+
+    } else if(e.keyCode === UP_KEY && this.state.hasResults) {
+
+      if(this.state.selected) {
+
+        // Get current index
+        index = _.indexOf(this.state.searchResults, this.state.selected);
+
+        // Move to next element
+        if(index - 1 < 0) {
+          this.setState({selected: _.last(this.state.searchResults)});
+        } else {
+          this.setState({selected: this.state.searchResults[index - 1]});
+        }
+
+      } else {
+        this.setState({selected: _.last(this.state.searchResults)});
+      }
     }
   },
 
@@ -87,6 +167,14 @@ var SearchBox = React.createClass({
     e.preventDefault();
     var searchTerm = this.state.searchTerm.trim();
     SearchActions.search(searchTerm);
+  },
+
+  _onChange: function() {
+    this.setState({
+      isSearching: SearchResultsStore.isSearching(),
+      searchResults: SearchResultsStore.getResults(),
+      hasResults: SearchResultsStore.hasResults()
+    });
   }
 });
 

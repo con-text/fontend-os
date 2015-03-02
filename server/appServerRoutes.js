@@ -72,14 +72,17 @@ module.exports = {
 			if(exists){
 				//not too bothered about the user info at this point
 				if(realApp.found){
-					res.send(applicationList[realApp.index].mainPage);
+					console.log("App found");
+					res.send(applicationList[realApp.index].displayApp(uuid));
 				}
 				else{
+					console.log("App doesn't exist");
 					res.send("App doesn't exist");
 				}
 
 			}
 			else{
+				console.log("User doesn't exist");
 				res.json({message: "User doesn't exist"});
 			}
 		});

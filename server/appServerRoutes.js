@@ -113,7 +113,6 @@ module.exports = {
 				unirest.get("http://contexte.herokuapp.com/app/syncState/"+uuid+"/"+appId)
 				.end(function(result){
 					if(!result.error){
-						console.log("results", result.body.message.state);
 						res.json(result.body.message.state);
 					}
 					else{
@@ -137,11 +136,8 @@ module.exports = {
 			if(exists){
 				//not too bothered about the user info at this point
 				//look up the object and get the appId
-				console.log("USER EXISTS");
 				fetchObject(uuid, objectId, function(exists, result){
-					console.log("CHECKING IF OBJECT EXISTS");
 					if(exists){
-						console.log("OBJECT EXISTS", result);
 						var realApp = appExists(result.appId);
 						if(realApp.found){
 							res.send(applicationList[realApp.index].displayApp(uuid, objectId));

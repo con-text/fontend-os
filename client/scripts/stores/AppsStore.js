@@ -14,6 +14,9 @@ var DesktopActions = require('../actions/DesktopActionCreators');
 var AppsConstants = require('../constants/AppsConstants');
 var ActionTypes = AppsConstants.ActionTypes;
 
+// Stores
+var SessionStore = require('../stores/SessionStore');
+
 // Utils
 var AppsApiUtils = require('../utils/AppsApiUtils');
 
@@ -62,8 +65,10 @@ var AppsStore = assign({}, EventEmitter.prototype, {
     // Create a window from a DOM element
     var app = AppsStore.getApp(id);
 
+    var uuid = SessionStore.getCurrentUser().uuid;
+
     // Create react component from class
-    var url = 'http://localhost:3001/object/tester/' + '54f4664ce4b0429a73893e5c';
+    var url = 'http://localhost:3001/app/'+ uuid +'/' + app.id;
 
     if(params) {
       url += '?' + querystring.stringify(params);

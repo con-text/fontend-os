@@ -4,6 +4,7 @@ var _ = require('lodash');
 // Apps Store
 var AppsStore = require('../stores/AppsStore');
 var AppsActionCreator = require('../actions/AppsActionCreators');
+var StateInterface = require('./StateInterface');
 
 module.exports = {
 
@@ -16,47 +17,51 @@ module.exports = {
     var successCallback = options.success;
     var errorCallback   = options.error;
     var results = [];
+    var app;
+    var apps = AppsStore.getApps();
+    var browserObjectId;
+    var id;
 
     // Try to match URL
     var urlExp = new RegExp(/(((http|ftp|https):\/\/)|www\.)[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&:/~\+#!]*[\w\-\@?^=%&/~\+#])?/);
     if(urlExp.test(query)) {
 
-        // Find browser
-        var app;
-        var apps = AppsStore.getApps();
-
-        for(var id in apps) {
-          if(apps[id].name === "Browser") {
-            app = apps[id];
-          }
+      // Find browser
+      for(id in apps) {
+        if(apps[id].name === "Browser") {
+          app = apps[id];
         }
-
-        results.push({
-          value: "Go to: " + query,
-          type: "Website",
-          action: AppsActionCreator.open.bind(
-            AppsActionCreator,
-            app.id,
-            {url: query})
-        });
-
       }
 
-    setTimeout(function() {
+      results.push({
+        value: "Go to: " + query,
+        type: "Website",
+        action: AppsActionCreator.open.bind(
+          AppsActionCreator,
+          app.id,
+          query)
+      });
 
-      if(query !== '') {
-        results.push({
-          value: "Calculator",
-          type: "App"
-        },
-        {
-          value: "Some definition form the dictionary",
-          type: "Definition"
-        });
+    }
+
+    if("calculator".indexOf(query.toLowerCase()) !== -1) {
+
+      for(id in apps) {
+        if(apps[id].name === "Calculator") {
+          app = apps[id];
+        }
       }
 
-      successCallback(results, query);
+      results.push({
+        value: "Open calculator",
+        type: "App",
+        action: AppsActionCreator.open.bind(
+          AppsActionCreator,
+          app.id,
+          query)
+      });
+    }
 
-    }, 100);
+    successCallback(results, query);
   }
 };

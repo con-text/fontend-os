@@ -280,4 +280,8 @@ AppState.prototype.deleteValueFromArray = function(obj,arr,prop){
 	delete this.observerArray[arr.join("_")];
 	delete obj[prop];
 	return true;
+};
+
+if(typeof exports !== 'undefined') {
+	exports.AppState = AppState;
 }

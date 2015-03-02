@@ -63,7 +63,7 @@ var AppsStore = assign({}, EventEmitter.prototype, {
     var app = AppsStore.getApp(id);
 
     // Create react component from class
-    var url = 'http://localhost:3001/app/tester/' + app.id;
+    var url = 'http://localhost:3001/object/tester/' + '54f4664ce4b0429a73893e5c';
 
     if(params) {
       url += '?' + querystring.stringify(params);
@@ -109,7 +109,7 @@ AppDispatcher.register(function(payload) {
       AppsStore.emitChange();
 
       // Close search box if opened
-      DesktopActions.closeSearch();
+      //DesktopActions.closeSearch();
 
       break;
     case ActionTypes.CLOSE_APPS:

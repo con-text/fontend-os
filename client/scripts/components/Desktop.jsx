@@ -6,6 +6,7 @@ var React = require('react');
 // Actions
 var SessionActionCreators = require('../actions/SessionActionCreators');
 var DesktopActionCreators = require('../actions/DesktopActionCreators');
+var AppsActionCreators    = require('../actions/AppsActionCreators');
 
 // Components
 var Sidebar   = require('./Sidebar');
@@ -14,6 +15,8 @@ var SearchBox = require('./SearchBox');
 // Stores
 var DesktopStore  = require('../stores/DesktopStore');
 var AppsStore     = require('../stores/AppsStore');
+
+// App container
 var AppContainer = React.createClass({
   render: function() {
     var divStyle = {
@@ -21,8 +24,18 @@ var AppContainer = React.createClass({
     };
 
     return <div className="appContainer" style={divStyle} >
-      {this.props.app}
+      <div className="appToolbar">
+        <div role="button" onClick={this.handleCloseClick}>Close</div>
+      </div>
+      <div className="appInnerContainer">
+        {this.props.app}
+      </div>
     </div>;
+  },
+
+  handleCloseClick: function(e) {
+    e.preventDefault();
+    AppsActionCreators.close();
   }
 });
 

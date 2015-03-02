@@ -7,15 +7,13 @@ var querystring   = require('querystring');
 // Application dispatcher
 var AppDispatcher = require('../dispatchers/AppDispatcher');
 
-// Action creators
-var DesktopActions = require('../actions/DesktopActionCreators');
-
 // Constants
 var AppsConstants = require('../constants/AppsConstants');
 var ActionTypes = AppsConstants.ActionTypes;
 
 // Stores
 var SessionStore = require('../stores/SessionStore');
+var DesktopStore = require('../stores/DesktopStore');
 
 // Utils
 var AppsApiUtils = require('../utils/AppsApiUtils');
@@ -114,7 +112,7 @@ AppDispatcher.register(function(payload) {
       AppsStore.emitChange();
 
       // Close search box if opened
-      //DesktopActions.closeSearch();
+      DesktopStore.closeSearch();
 
       break;
     case ActionTypes.CLOSE_APPS:

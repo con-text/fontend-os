@@ -21,10 +21,12 @@ var DesktopStore = assign({}, EventEmitter.prototype, {
 
   toggleSearchVisible: function() {
     this._isSearchVisible = !this._isSearchVisible;
+    DesktopStore.emitChange();
   },
 
   closeSearch: function() {
     this._isSearchVisible = false;
+    DesktopStore.emitChange();
   },
 
   emitChange: function() {
@@ -55,11 +57,9 @@ DesktopStore.dispatchToken = AppDispatcher.register(function(payload) {
 
     case ActionTypes.TOGGLE_SEARCH:
       DesktopStore.toggleSearchVisible();
-      DesktopStore.emitChange();
       break;
     case ActionTypes.CLOSE_SEARCH:
       DesktopStore.closeSearch();
-      DesktopStore.emitChange();
       break;
     default:
       // No operation

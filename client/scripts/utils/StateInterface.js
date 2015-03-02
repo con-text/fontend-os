@@ -40,6 +40,7 @@ function AppState(appId, userId, objectId, dependencies){
 			return function(data){
 				console.log("Got", data);
 				AS.dealWithChange(data);
+				AS.emit('syncedState', data);
 			};
 	})(this));
 	// this.socket.on('disconnect', function(){});

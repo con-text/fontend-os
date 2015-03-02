@@ -1,5 +1,6 @@
 var AppDispatcher = require('../dispatchers/AppDispatcher');
 
+// Constants
 var SessionConstants = require('../constants/SessionConstants');
 var AvailableUsersConstants = require('../constants/AvailableUsersConstants');
 var ActionTypes = SessionConstants.ActionTypes;
@@ -7,7 +8,13 @@ var ActionTypes = SessionConstants.ActionTypes;
 var EventEmitter = require('events').EventEmitter;
 var assign = require('object-assign');
 
+// Stores
 var AvailableUsersStore = require('./AvailableUsersStore');
+
+// Actions
+var AppsActions = require('../actions/AppsActionCreators');
+
+// Libraries
 var _ = require('lodash');
 var CHANGE_EVENT = 'change';
 
@@ -120,6 +127,7 @@ SessionStore.dispatchToken = AppDispatcher.register(function(payload) {
     case ActionTypes.DESTROY_SESSION:
       destroySession();
       SessionStore.emitChange();
+      AppsActions.close();
       break;
 
     case AvailableUsersConstants.ActionTypes.USERS_UPDATED:

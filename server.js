@@ -7,7 +7,7 @@ var path = require('path');
 var fs = require('fs');
 var ble = require('./bleservice');
 var configFile = require('./config/config');
-
+var spawn = require('child_process').spawn;
 // Unix socket to BLE
 var socket;
 
@@ -53,6 +53,11 @@ function startServer(server, port) {
 		}
 	});
 
+	// Start app server
+	var child = spawn('node', ['appServer.js'], {
+		stdio: 'inherit'
+	});
+
 	// On ctrl-c exit
 	process.on( 'SIGINT', function() {
 		console.log( "\nShutting down - SIGINT (Ctrl-C)" );
@@ -62,6 +67,9 @@ function startServer(server, port) {
 
 	 	// some other closing procedures go here
 		process.exit();
+
+		// Close app server
+		child.kill('SIGINT');
 	});
 }
 

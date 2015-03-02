@@ -3,6 +3,7 @@ var _ = require('lodash');
 
 // Apps Store
 var AppsStore = require('../stores/AppsStore');
+var AppsActionCreator = require('../actions/AppsActionCreators');
 
 module.exports = {
 
@@ -33,10 +34,10 @@ module.exports = {
         results.push({
           value: "Go to: " + query,
           type: "Website",
-          action: AppsStore.open.bind(
-            AppsStore,
+          action: AppsActionCreator.open.bind(
+            AppsActionCreator,
             app.id,
-            query)
+            {url: query})
         });
 
       }

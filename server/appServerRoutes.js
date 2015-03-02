@@ -45,6 +45,8 @@ module.exports = {
 		// var id = req.body.id;
 		var realApp = appExists(appId);
 
+		//TODO: Use AS to pass it to the app
+		console.log(req.query);
 
 		userExists(uuid, function(exists, result){
 			if(exists){

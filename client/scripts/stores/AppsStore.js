@@ -2,9 +2,13 @@
 var EventEmitter  = require('events').EventEmitter;
 var assign        = require('object-assign');
 var React         = require('react');
+var querystring   = require('querystring');
 
 // Application dispatcher
 var AppDispatcher = require('../dispatchers/AppDispatcher');
+
+// Action creators
+var DesktopActions = require('../actions/DesktopActionCreators');
 
 // Constants
 var AppsConstants = require('../constants/AppsConstants');
@@ -60,8 +64,17 @@ var AppsStore = assign({}, EventEmitter.prototype, {
 
     // Create react component from class
     var url = 'http://localhost:3001/app/tester/' + app.id;
+
+    if(params) {
+      url += '?' + querystring.stringify(params);
+    }
+
     this.openedApp = React.createElement('iframe', {src: url, className: "app-window"});
     this.emitChange();
+  },
+
+  close: function() {
+    this.openedApp = null;
   },
 
   emitChange: function() {
@@ -91,11 +104,16 @@ AppDispatcher.register(function(payload) {
   var title;
 
   switch(action.type) {
-    case ActionTypes.CREATE_WINDOW_FROM_ELEMENT:
-      createFromEl(action.title, action.el);
+    case ActionTypes.LAUNCH_APP:
+      AppsStore.open(action.appId, action.params);
       AppsStore.emitChange();
+
+      // Close search box if opened
+      DesktopActions.closeSearch();
+
       break;
-    case ActionTypes.DESTROY_WINDOW:
+    case ActionTypes.CLOSE_APPS:
+      AppsStore.close();
       AppsStore.emitChange();
       break;
     default:

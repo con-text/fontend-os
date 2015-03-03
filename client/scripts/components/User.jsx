@@ -11,13 +11,15 @@ var User = React.createClass({
   propTypes: {
     disabled: React.PropTypes.bool,
     showNames: React.PropTypes.bool,
-    user: React.PropTypes.object.isRequired
+    user: React.PropTypes.object.isRequired,
+    loggedIn: React.PropTypes.bool
   },
 
   getDefaultProps: function() {
     return {
       disabled: false,
-      showNames: true
+      showNames: true,
+      loggedIn: false
     };
   },
 
@@ -30,7 +32,7 @@ var User = React.createClass({
 
   render: function() {
     var pictureEl, nameEl;
-
+    var loggedInClass = this.props.loggedIn? " logged-in" : "";
     if(this.props.showNames) {
       pictureEl =
         <div className="user-picture">
@@ -53,7 +55,7 @@ var User = React.createClass({
     }
 
     return (
-      <div className="user " onClick={this.handleClick}>
+      <div className={"user" + loggedInClass} onClick={this.handleClick} title={this.props.user.name}>
         {pictureEl}
         {nameEl}
       </div>

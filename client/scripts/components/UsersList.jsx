@@ -1,8 +1,14 @@
 var React = require('react');
 var TimeoutTransitionGroup = require('react-components/js/timeout-transition-group');
-var AvailableUsersStore = require('../stores/AvailableUsersStore');
 
+// Stores
+var AvailableUsersStore = require('../stores/AvailableUsersStore');
+var SessionStore        = require('../stores/SessionStore');
+
+// Components
 var User = require('./User');
+
+var _ = require('lodash');
 
 // List of users
 var UsersList = React.createClass({
@@ -22,15 +28,35 @@ var UsersList = React.createClass({
 
   render: function() {
 
-    // Get all user nodes
-    var userNodes = this.props.users.map(function (user, i) {
+    // Sort users by name
+    var sortedUsers = _.sortBy(this.props.users, 'name');
+
+    // Make sure that active user is first
+    var active = SessionStore.getCurrentUser();
+    if(active)
+    {
+      var index = _.findIndex(sortedUsers, active);
+      var userToOrder = sortedUsers.splice(index, 1);
+      sortedUsers.splice(0, 0, userToOrder[0]);
+    }
+
+    var userNodes = sortedUsers.map(function (user, i) {
+
+      // Is currently logged in
+      var isActive;
+
+      if(active) {
+          isActive = _.isEqual(user.uuid, active.uuid);
+      }
 
       // Create single list element
       return (
         <User key={i}
           user={user}
           disabled={this.props.disabled}
-          showNames={this.props.showNames} />
+          showNames={this.props.showNames}
+          loggedIn={isActive}
+           />
       );
 
     }, this);

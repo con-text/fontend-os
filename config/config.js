@@ -1,3 +1,6 @@
+var cookieParser = require('cookie-parser')
+var session      = require('express-session');
+
 // CORS handler for apps server
 function allowAppsOrigin(req, res, next) {
 
@@ -25,11 +28,29 @@ var config = {
   distDir: 'dist',
   appsDir: 'dist/apps',
   appsServerHost: 'http://localhost:3001',
+  sessionConfig: {
+    secret: '1d720742d6f82e179',
+    store: null
+  },
 
-  configure: function(app, express) {
+  configure: function(app, express, io, sessionStore) {
     // Set static folder
     app.use(express.static("./" + this.distDir));
     app.use(allowAppsOrigin);
+
+    // Use cookie parser
+    app.use(cookieParser());
+
+    // Use session
+    this.sessionConfig.store = sessionStore;
+    var sessionMiddleware = session(this.sessionConfig);
+
+    // Share session with socket io
+    io.use(function(socket, next){
+      sessionMiddleware(socket.request, socket.request.res, next);
+    });
+
+    app.use(sessionMiddleware);
   }
 };
 

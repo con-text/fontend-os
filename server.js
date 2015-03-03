@@ -8,8 +8,11 @@ var fs = require('fs');
 var ble = require('./bleservice');
 var configFile = require('./config/config');
 var spawn = require('child_process').spawn;
+var session = require('express-session');
+
 // Unix socket to BLE
 var socket;
+var sessionStore = new session.MemoryStore();
 
 function configAndStartServer(config) {
 
@@ -19,10 +22,10 @@ function configAndStartServer(config) {
 	var entryPoint = params.entryPoint || "index.html";
 
 	// Run config
-	configFile.configure(app, express);
+	configFile.configure(app, express, io, sessionStore);
 
 	// Initialize connection to BLE
-	socket = ble.connectToBleService(io);
+	socket = ble.connectToBleService(app, io, sessionStore);
 
 	// Load other routes
 	fs.readdirSync("./server").forEach(function(file) {

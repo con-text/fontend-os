@@ -10,7 +10,7 @@ function tryAuthenticate(user, options) {
   // Assume now we authenticate everyone
   var authSuccess = true;
 
-  $.get(baseUrl + '/user/' + user.uuid + '/profile')
+  $.get(baseUrl + '/users/' + user.uuid + '/profile')
   .done(function(data){
 
     if(options.success) {
@@ -28,11 +28,12 @@ function tryAuthenticate(user, options) {
   });
 }
 
+
 function sendToBuzzer(user) {
 
-  $.get(baseUrl + '/user/' + user.uuid + '/buzz')
+  $.get(baseUrl + '/users/' + user.uuid + '/buzz')
     .done(function(data) {
-      
+
     });
 }
 
@@ -44,5 +45,13 @@ module.exports = {
 
   sendToWearble: function(user) {
     sendToBuzzer(user);
+  },
+
+  destroySession: function(callback) {
+    $.ajax({
+      url: baseUrl + '/session/',
+      type: 'DELETE',
+      success: callback
+    });
   }
 };

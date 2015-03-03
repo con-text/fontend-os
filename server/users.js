@@ -1,5 +1,6 @@
 var rest = require('restler');
 var config = require('./../config/config');
+var authenticated = require('./authenticated');
 
 function getUserProfile(userId, cbk, errCbk) {
 
@@ -10,6 +11,7 @@ function getUserProfile(userId, cbk, errCbk) {
   rest.get(baseUrl + '/users/' + userId)
   .on('success', function(data, response) {
     cbk(data.message);
+
   })
   .on('error', function(err, response) {
     console.error("Fail", err, response);
@@ -20,7 +22,11 @@ function getUserProfile(userId, cbk, errCbk) {
 module.exports.getUserProfile = getUserProfile;
 
 module.exports.routeHandler = function(app, bleSocket) {
-  app.get('/user/:userId/profile', function(req, res) {
+
+  /**
+  * Pass user profile to the client-side
+  */
+  app.get('/users/:userId/profile', function(req, res) {
 
     var userId = req.params.userId;
 
@@ -32,12 +38,28 @@ module.exports.routeHandler = function(app, bleSocket) {
 
   });
 
-  app.get('/user/:userId/buzz', function(req, res) {
+  /**
+  * Send the buzz to the ble socket, wait for user confirmation
+  */
+  app.get('/users/:userId/buzz', function(req, res) {
+
     // Write data to the socket
     bleSocket.sendMessage({
       request: 'buzz',
-      data: req.params.userId
+      data: req.params.userId,
+      sid: req.sessionID
     });
+
+    res.sendStatus(200);
+  });
+
+  /**
+  * Client logs out, destroy the session
+  */
+  app.delete('/session', authenticated, function(req, res) {
+
+    // Write data to the socket
+    req.session.user = null;
     res.sendStatus(200);
   });
 };

@@ -47,7 +47,7 @@ socketClient.on('syncedState', function(msg){
 				continue;
 			}
 			if(key != msg.socketId){
-				console.log("Sending to ")
+				console.log("Sending to ");
 				clients[key].emit('syncedState', msg);
 			}
 			else{

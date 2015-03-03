@@ -10,6 +10,7 @@ var assign = require('object-assign');
 
 // Stores
 var AvailableUsersStore = require('./AvailableUsersStore');
+var AppsStore = require('../stores/AppsStore');
 
 // Actions
 var AppsActions = require('../actions/AppsActionCreators');
@@ -126,8 +127,9 @@ SessionStore.dispatchToken = AppDispatcher.register(function(payload) {
 
     case ActionTypes.DESTROY_SESSION:
       destroySession();
+      AppsStore.close();
+      AppsStore.emitChange();
       SessionStore.emitChange();
-      AppsActions.close();
       break;
 
     case AvailableUsersConstants.ActionTypes.USERS_UPDATED:

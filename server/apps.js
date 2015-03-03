@@ -1,5 +1,8 @@
 var fs = require('fs');
 var path = require('path');
+var unirest = require('unirest');
+var config = require('../config/config');
+var authenticated = require('./authenticated');
 
 function loadMainPage(manifest){
   var mainFilePath = path.join(manifest.absolutePath, "index.html");
@@ -20,7 +23,7 @@ function App(manifest) {
 
 App.prototype.displayApp = function(uuid, objectId){
   return injectAPI(loadMainPage(this.manifest), this.manifest, uuid, objectId);
-}
+};
 
 module.exports = {
 
@@ -37,9 +40,7 @@ module.exports = {
     }, this);
     return apps;
   },
-
-
-
+  
   getManifests: function() {
 
     var manifests = [];
@@ -82,6 +83,32 @@ module.exports = {
     app.get('/apps', function(req, res) {
       var apps = self.getApps();
       res.json(apps);
+    });
+
+    /**
+    * Sends request with app id to signal new app opened
+    */
+    app.post('/apps/:id', authenticated, function(req, res) {
+
+      var appId = req.params.id;
+
+      unirest.delete(config.baseApiUrl + '/users/' + userId + '/apps', {
+        id: appId
+      });
+    });
+
+    /**
+    * Signal that user closed the app
+    */
+    app.delete('/apps/:id', authenticated, function(req, res) {
+
+      var appId = req.params.id;
+      var userId = res.session.user.id;
+
+      unirest.delete(config.baseApiUrl + 'users'+ userId +'/apps', {
+        id: appId
+      });
+
     });
   }
 };

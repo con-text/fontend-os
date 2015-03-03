@@ -10,13 +10,13 @@ var messageCodes = keyMirror({
 
 var socketPath = '/tmp/ble.sock';
 
-function processMessage(message, io) {
+function processMessage(app, message, io, sessionStore) {
 
   // Grab the message code and take action
   if(message.code === messageCodes.activePeripherals) {
     handleActivePeripheralsMessage(io, message.data.clients);
   } else if(message.code == messageCodes.loginStatus) {
-    handleLoginStatusMessage(io, message.data);
+    handleLoginStatusMessage(app, io, sessionStore, message.data);
   } else {
     // Don't know this message code
     console.error("Unknown message code");
@@ -49,11 +49,39 @@ function handleActivePeripheralsMessage(io, users) {
   });
 }
 
-function handleLoginStatusMessage(io, data) {
-    io.emit('loginStatus', data);
+function handleLoginStatusMessage(app, io, sessionStore, data) {
+
+  var userId = data.userId;
+  var sid = data.sid;
+
+  // Stop propagating session id here
+  data.sid = undefined;
+
+  // Create express session
+  if(data.result === 'success') {
+
+    // Initiate the session
+    sessionStore.get(sid, function(err, session) {
+      session.user = {
+        id: userId
+      };
+      sessionStore.set(sid, session);
+      io.emit('loginStatus', data);
+    });
+
+  }
+  else {
+
+    sessionStore.get(sid, function(err, session) {
+      session.user = null;
+
+      io.emit('loginStatus', data);
+    });
+
+  }
 }
 
-module.exports.connectToBleService = function(io) {
+module.exports.connectToBleService = function(app, io, sessionStore) {
 
   // Use UNIX socket
   var socket = new JsonSocket(new net.Socket());
@@ -62,7 +90,7 @@ module.exports.connectToBleService = function(io) {
     console.log("Started listening to BLE service on " + socketPath);
 
     // Process message
-    socket.on('message', function(msg) { processMessage(msg, io); });
+    socket.on('message', function(msg) { processMessage(app, msg, io, sessionStore); });
 
   });
 

@@ -44,7 +44,7 @@ module.exports = {
 
     }
 
-    if("calculator".indexOf(query.toLowerCase()) !== -1) {
+    if("calculator".indexOf(query.toLowerCase()) !== -1 && query !== '') {
 
       for(id in apps) {
         if(apps[id].name === "Calculator") {

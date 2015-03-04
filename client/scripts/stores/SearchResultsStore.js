@@ -65,7 +65,6 @@ SearchResultsStore.dispatchToken = AppDispatcher.register(function(payload) {
     case ActionTypes.SEARCH_FINISHED:
       SearchResultsStore._isSearching = false;
       SearchResultsStore._results = action.results;
-      console.log("Searching finished", action.results);
       SearchResultsStore.emitChange();
       break;
 

@@ -5,14 +5,35 @@ var React = require('react');
 
 var SessionActionCreators = require('../actions/SessionActionCreators');
 
+// Drag and drop
+var DragDropMixin = require('react-dnd').DragDropMixin;
+var ItemTypes = require('./DragItemTypes');
+
+
 // Single list element
 var User = React.createClass({
+
+  mixins: [DragDropMixin],
 
   propTypes: {
     disabled: React.PropTypes.bool,
     showNames: React.PropTypes.bool,
     user: React.PropTypes.object.isRequired,
     loggedIn: React.PropTypes.bool
+  },
+
+  statics: {
+    configureDragDrop: function(register) {
+      register(ItemTypes.USER, {
+        dragSource: {
+          beginDrag: function(component) {
+            return {
+              item: component.props.user
+            };
+          }
+        }
+      });
+    }
   },
 
   getDefaultProps: function() {
@@ -49,13 +70,15 @@ var User = React.createClass({
 
       pictureEl =
           <img className="userPic test img-circle "
-            src={this.props.user.profilePicUrl} />;
+            src={this.props.user.profilePicUrl}
+             />;
 
       nameEl = '';
     }
 
     return (
-      <div className={"user" + loggedInClass} onClick={this.handleClick} title={this.props.user.name}>
+      <div className={"user" + loggedInClass} onClick={this.handleClick} title={this.props.user.name}
+        {...this.dragSourceFor(ItemTypes.USER)}>
         {pictureEl}
         {nameEl}
       </div>

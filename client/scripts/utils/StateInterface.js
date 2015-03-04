@@ -1,4 +1,4 @@
-var EventEmitter = require('events').EventEmitter;
+var events = require('events');
 
 function AppState(appId, userId, objectId, dependencies){
 
@@ -6,7 +6,6 @@ function AppState(appId, userId, objectId, dependencies){
 	this.userId = userId;
 	this.objectId = objectId;
 	this.dependencies = dependencies;
-	this.loadFullState();
 	this.handlers = {};
 	this.eventEmitter = new events.EventEmitter();
 	this.socket = io('http://localhost:3001');
@@ -30,7 +29,7 @@ function AppState(appId, userId, objectId, dependencies){
 			// console.log("Got into closure",this);
 			return function(){
 				console.log("Connected to socket", AS);
-				AS.socket.emit('getInitial', {uuid: AS.userId, objectId: AS.objectId})
+				AS.socket.emit('getInitial', {uuid: AS.userId, objectId: AS.objectId});
 			};
 	})(this));
 
@@ -83,7 +82,7 @@ AppState.prototype.dealWithChange = function(changeInfo){
 			this.deleteValueFromArray(this._state, changeInfo.path, changeInfo.property);
 		break;
 	}
-}
+};
 
 AppState.prototype.fillState = function(data){
 	if(this.dependencies){
@@ -137,8 +136,10 @@ AppState.prototype.addObserver = function(obj){
 					var addedKeys = Object.keys(added);
 					var removedKeys = Object.keys(removed);
 					var property;
+					var toClosePath;
 
-					for(var i = 0; i < addedKeys.length; i++) {
+					var i;
+					for(i = 0; i < addedKeys.length; i++) {
 
 						property = addedKeys[i];
 						//new property added, check if it's an object, if so, add a listener
@@ -156,10 +157,9 @@ AppState.prototype.addObserver = function(obj){
 								path: getToRoot(objectBeingObserved), property: property, value: added[property]});
 
 
-					};
+					}
 
-
-					for(var i = 0; i<removedKeys.length; i++) {
+					for(i = 0; i<removedKeys.length; i++) {
 						property = removedKeys[property];
 						console.log("Removed", property, getOldValueFn(property));
 						// property; // a property which has been been removed from obj
@@ -167,7 +167,7 @@ AppState.prototype.addObserver = function(obj){
 
 						if(typeof getOldValueFn(property) === "object"){
 							console.log("Closing observer");
-							var toClosePath = getToRoot(objectBeingObserved).join("_");
+							toClosePath = getToRoot(objectBeingObserved).join("_");
 							AS.observerArray[toClosePath].close();
 							delete AS.observerArray[toClosePath];
 						}
@@ -175,11 +175,11 @@ AppState.prototype.addObserver = function(obj){
 						AS.socket.emit('stateChange',
 								{uuid: AS.userId, objectId: AS.objectId, action: 'removed',
 								path: getToRoot(objectBeingObserved), property: property});
-					};
+					}
 
 
 
-					for(var i = 0; i<changedKeys.length; i++){
+					for(i = 0; i<changedKeys.length; i++){
 						property = changedKeys[i];
 						console.log("Changed", property, changed[property], getOldValueFn(property));
 						if(typeof changed[property] !== getOldValueFn(property)){
@@ -191,7 +191,7 @@ AppState.prototype.addObserver = function(obj){
 							}
 							else if(typeof getOldValueFn(property) === "object"){
 								console.log("Closing observer");
-								var toClosePath = getToRoot(objectBeingObserved).join("_");
+								toClosePath = getToRoot(objectBeingObserved).join("_");
 								AS.observerArray[toClosePath].close();
 								delete AS.observerArray[toClosePath];
 							}
@@ -202,9 +202,9 @@ AppState.prototype.addObserver = function(obj){
 					}
 
 
-				}
+				};
 			})(obj, this));
-}
+};
 
 function getToRoot(obj){
 	var fullPath = [];
@@ -245,7 +245,7 @@ AppState.prototype.watchDeepObject = function(obj){
 			// console.log("parent",obj,"key",key);
 		}
 	}
-}
+};
 
 AppState.prototype.updateValueFromArray = function(obj,arr,prop,value){
 	//loop through until we're at the right object
@@ -266,7 +266,7 @@ AppState.prototype.updateValueFromArray = function(obj,arr,prop,value){
 
 	this.observerArray[arr.join("_")].discardChanges();
 	return true;
-}
+};
 
 AppState.prototype.deleteValueFromArray = function(obj,arr,prop){
 	for(var i = 0; i<arr.length; i++){
@@ -283,6 +283,4 @@ AppState.prototype.deleteValueFromArray = function(obj,arr,prop){
 	return true;
 };
 
-if(typeof exports !== 'undefined') {
-	exports.AppState = AppState;
-}
+module.exports = AppState;

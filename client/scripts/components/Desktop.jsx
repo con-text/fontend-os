@@ -16,14 +16,31 @@ var SearchBox = require('./SearchBox');
 var DesktopStore  = require('../stores/DesktopStore');
 var AppsStore     = require('../stores/AppsStore');
 
+// Drag and drop
+var DragDropMixin = require('react-dnd').DragDropMixin;
+var ItemTypes = require('./DragItemTypes');
+
 // App container
 var AppContainer = React.createClass({
+  mixins: [DragDropMixin],
+
+  statics: {
+    configureDragDrop: function(register) {
+      register(ItemTypes.USER, {
+        dropTarget: function(component, user) {
+          console.log("DROP!", component, user);
+        }
+      });
+    }
+  },
+
   render: function() {
     var divStyle = {
-      display: this.props.app ? 'block' : 'none'
+      display: this.props.app ? 'block' : 'block'
     };
 
-    return <div className="appContainer" style={divStyle} >
+    return <div className="appContainer" style={divStyle}
+      {...this.dropTargetFor(ItemTypes.USER)} >
       <div className="appToolbar">
         <div role="button" onClick={this.handleCloseClick}>Close</div>
       </div>

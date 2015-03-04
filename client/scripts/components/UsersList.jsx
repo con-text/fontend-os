@@ -10,8 +10,10 @@ var User = require('./User');
 
 var _ = require('lodash');
 
+
 // List of users
 var UsersList = React.createClass({
+
 
   propTypes: {
     disabled: React.PropTypes.bool,

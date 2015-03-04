@@ -76,8 +76,14 @@ gulp.task('browserify:client',  function() {
 
 //copy the state interface api into the dist folder without concatenating it
 gulp.task('copy-stateinterface', function(){
-	return gulp.src('client/scripts/utils/StateInterface.js')
-	.pipe(gulp.dest("dist/js"));
+	return gulp.src('client/scripts/utils/StateInterface.js', { read: false })
+		.pipe(browserify({
+			insertGlobals: true,
+			debug: true,
+			standalone: 'AppState'
+		}))
+		.pipe(concat("StateInterface.js"))
+		.pipe(gulp.dest("dist/js"));
 });
 
 // Copy bower components

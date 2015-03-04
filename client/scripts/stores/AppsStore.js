@@ -12,8 +12,8 @@ var AppsConstants = require('../constants/AppsConstants');
 var ActionTypes = AppsConstants.ActionTypes;
 
 // Stores
+var DesktopStore = require('./DesktopStore');
 var SessionStore = require('../stores/SessionStore');
-var DesktopStore = require('../stores/DesktopStore');
 
 // Utils
 var AppsApiUtils = require('../utils/AppsApiUtils');
@@ -108,7 +108,7 @@ AppDispatcher.register(function(payload) {
 
   switch(action.type) {
     case ActionTypes.LAUNCH_APP:
-      AppsStore.open(action.appId, action.params);
+      AppsStore.open(action.appId, action.params, action.store);
       AppsStore.emitChange();
 
       // Close search box if opened

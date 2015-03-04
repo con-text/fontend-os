@@ -3,6 +3,10 @@
 
 var React = require('react');
 
+// Drag and drop
+var DragDropMixin = require('react-dnd').DragDropMixin;
+var ItemTypes = require('./DragItemTypes');
+
 var SessionActionCreators = require('../actions/SessionActionCreators');
 
 // Drag and drop
@@ -24,9 +28,11 @@ var User = React.createClass({
 
   statics: {
     configureDragDrop: function(register) {
+
       register(ItemTypes.USER, {
         dragSource: {
           beginDrag: function(component) {
+            console.log("Begin drag, going to drag:", component.props.user);
             return {
               item: component.props.user
             };

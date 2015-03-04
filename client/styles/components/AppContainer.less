@@ -4,13 +4,50 @@
   right: 2.5%;
 
   margin: 15px 10px;
-  height: 100%;
+  top: 5%;
+  bottom: 5%;
   overflow: hidden;
 
-  background: rgba(255,255,255, 0.95);
+  /* From: http://www.alessioatzeni.com/mac-osx-lion-css3/# */
+  background: -webkit-linear-gradient(#CDCDCD, #CDCDCD 25px, #EDEDED, #EDEDED 23px);
 
-  .close-btn {
-    cursor: pointer;
+  box-shadow: inset 0 1px 0
+    rgba(255,255,255,.6), 0 22px 70px 4px
+    rgba(0,0,0,0.56), 0 0 0 1px rgba(0, 0, 0, 0.3);
+
+  border-radius: 6px;
+
+  iframe {
+    border-width: 0;
+  }
+  .titleBar {
+
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    -webkit-user-select: none;
+
+    .title {
+      flex: 1;
+      text-shadow: 0 1px 1px #e7e7e7;
+      text-align: center;
+      text-transform: capitalize;
+      &:hover {
+        cursor: default;
+      }
+    }
+
+    .buttons {
+      left-margin: auto;
+
+      .close-btn {
+        margin-right: 5px;
+
+        &:hover {
+          cursor: pointer;
+        }
+      }
+    }
   }
 }
 
@@ -19,15 +56,10 @@
   height: 100%;
   left: 0;
   right: 0;
-  margin: 10px auto;
+  margin: 0 auto;
 }
 
 .app-window {
   width: 100%;
   height: 100%;
-}
-
-div.appToolbar {
-  display: flex;
-  justify-content: flex-end;
 }

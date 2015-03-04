@@ -74,7 +74,8 @@ var AppsStore = assign({}, EventEmitter.prototype, {
       url += '?' + querystring.stringify(params);
     }
 
-    this.openedApp = React.createElement('iframe', {src: url, className: "app-window"});
+    this.openedApp = app;
+    this.openedApp.element = React.createElement('iframe', {src: url, className: "app-window"});
     this.emitChange();
   },
 
@@ -110,7 +111,7 @@ AppDispatcher.register(function(payload) {
 
   switch(action.type) {
     case ActionTypes.LAUNCH_APP:
-      AppsStore.open(action.appId, action.params, action.store);
+      AppsStore.open(action.app.id, action.params, action.store);
       AppsStore.emitChange();
 
       // Close search box if opened

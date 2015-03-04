@@ -5,7 +5,6 @@ var React = require('react');
 var DragDropMixin = require('react-dnd').DragDropMixin;
 var ItemTypes = require('./DragItemTypes');
 
-
 // Actions
 var SessionActionCreators = require('../actions/SessionActionCreators');
 var AppsActionCreators    = require('../actions/AppsActionCreators');
@@ -55,9 +54,14 @@ var AppContainer = React.createClass({
 
     return <div className="appContainer" style={divStyle}
       {...this.dropTargetFor(ItemTypes.USER)}>
-      <div className="appToolbar">
-        <div role="button" onClick={this.handleCloseClick}>
-          <i className="fa fa-times-circle"></i>
+      <div className="titleBar">
+        <div className="title">
+          {this.props.app && this.props.app.name}
+        </div>
+        <div className="buttons">
+          <div role="button" onClick={this.handleCloseClick}>
+            <i className="fa fa-times-circle close-btn"></i>
+          </div>
         </div>
       </div>
 
@@ -66,7 +70,7 @@ var AppContainer = React.createClass({
       </div>
 
       <div className="appInnerContainer" style={innerDivStyle}>
-        {this.props.app}
+        {this.props.app && this.props.app.element}
       </div>
     </div>;
   },

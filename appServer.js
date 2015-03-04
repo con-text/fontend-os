@@ -2,7 +2,8 @@ var express = require('express');
 var app = express();
 var bodyParser = require('body-parser');
 var routes = require('./server/appServerRoutes.js');
-var socketClient = require('socket.io-client')('http://contexte.herokuapp.com');
+var socketClient = require('socket.io-client')('http://localhost:3000');
+// var socketClient = require('socket.io-client')('http://contexte.herokuapp.com');
 
 app.use(bodyParser.urlencoded({ extended: false }));
 
@@ -10,7 +11,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 app.get('/', routes.root);
-app.get('/app/:uuid/:appId', routes.getApp);
+app.get('/app/:uuid/:appId/:objectId', routes.getApp);
 app.get('/object/:uuid/:objectId', routes.getObject);
 // app.get('/syncState/:uuid/:appId', routes.syncGet);
 // app.post('/syncState/:uuid/:appId', routes.syncPost);
@@ -68,6 +69,7 @@ io.on('connection', function(socket){
 
 	socketClient.on('gotInitialFromBackend', function(msg){
 		console.log("gotInitialFromBackend", msg);
+		// console.log("clients", Object.keys(clients));
 		clients[msg.socketId].emit('fillData', msg.state);
 		// socket.emit('fillData', msg.state);
 	});

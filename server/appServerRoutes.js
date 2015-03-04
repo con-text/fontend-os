@@ -2,8 +2,8 @@ var applications = require('./apps.js');
 var applicationList = applications.getApps();
 var unirest = require('unirest');
 
-var baseUrl = "http://contexte.herokuapp.com/";
-// var baseUrl = "http://localhost:3000/";
+// var baseUrl = "http://contexte.herokuapp.com/";
+var baseUrl = "http://localhost:3000/";
 
 var appExists = function(id){
 	var found = false;
@@ -20,6 +20,21 @@ var appExists = function(id){
 
 function userExists(uuid, callback){
 	unirest.get(baseUrl+"users/"+uuid)
+	.end(function(result){
+		console.log(result.error);
+		if(result.statusType !== 2){
+			//user probably doesn't exist, can change this depending on header
+			callback(false, result.error);
+		}
+		else{
+			//not too bothered about the user info at this point
+			callback(true, result.body.message);
+		}
+	});
+}
+
+function userStateExists(uuid, appId, objectId, callback){
+	unirest.get(baseUrl+"users/"+uuid+"/apps/"+appId+"/states/"+objectId)
 	.end(function(result){
 		console.log(result.error);
 		if(result.statusType !== 2){
@@ -62,18 +77,19 @@ module.exports = {
 		console.log(req.params);
 		var uuid = req.params.uuid;
 		var appId = req.params.appId;
+		var objectId = req.params.objectId;
 		// var id = req.body.id;
 		var realApp = appExists(appId);
 
 		//TODO: Use AS to pass it to the app
 		console.log(req.query);
 
-		userExists(uuid, function(exists, result){
+		userStateExists(uuid, appId, objectId, function(exists, result){
 			if(exists){
 				//not too bothered about the user info at this point
 				if(realApp.found){
-					console.log("App found");
-					res.send(applicationList[realApp.index].displayApp(uuid));
+					console.log("App found",uuid, objectId);
+					res.send(applicationList[realApp.index].displayApp(uuid, objectId));
 				}
 				else{
 					console.log("App doesn't exist");

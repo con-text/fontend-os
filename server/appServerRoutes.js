@@ -2,8 +2,8 @@ var applications = require('./apps.js');
 var applicationList = applications.getApps();
 var unirest = require('unirest');
 
-// var baseUrl = "http://contexte.herokuapp.com/";
-var baseUrl = "http://localhost:3000/";
+var baseUrl = "http://contexte.herokuapp.com/";
+// var baseUrl = "http://localhost:3000/";
 
 var appExists = function(id){
 	var found = false;

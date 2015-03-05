@@ -6,6 +6,7 @@
 @import 'components/loginScreen.less';
 @import 'components/SearchBar.less';
 @import 'components/AppContainer.less';
+@import 'components/Notifications.less';
 
 html, body {
 	overflow: hidden;
@@ -51,6 +52,8 @@ h1 {
 .users-leave.users-leave-active {
 	opacity: 0.01;
 	height: 0;
+	padding: 0;
+	margin: 0;
 }
 
 #app {
@@ -113,4 +116,8 @@ h1 {
 .leaveIcon {
   color: #777478;
   padding-right: 5px;
+}
+
+.button:hover {
+	cursor: pointer;
 }

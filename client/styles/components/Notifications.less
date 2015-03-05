@@ -1,0 +1,23 @@
+#notification-area {
+  position: absolute;
+  right: 0;
+
+  // Bring on top to handle click events
+  z-index: 99;
+
+  .notification {
+    background: white;
+    width: 300px;
+    padding: 10px 20px;
+    margin: 10px;
+    border-radius: 5px;
+
+    justify-content: space-between;
+    display: flex;
+    flex-direction: row;
+
+    .text {
+      font-size: 0.8em;
+    }
+  }
+}

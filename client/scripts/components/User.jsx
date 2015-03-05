@@ -32,7 +32,6 @@ var User = React.createClass({
       register(ItemTypes.USER, {
         dragSource: {
           beginDrag: function(component) {
-            console.log("Begin drag, going to drag:", component.props.user);
             return {
               item: component.props.user
             };

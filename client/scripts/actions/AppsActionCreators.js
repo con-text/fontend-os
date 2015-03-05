@@ -7,14 +7,14 @@ module.exports = {
   /** Action opening a window with the app
   * specified by app id
   */
-  open: function(appId, param) {
+  open: function(app, param) {
 
-    //var AS = new StateInterface.AppState(objectId, "tester", browserObjectId);
-    //AS._state.param = param;
+    console.log("App", app);
+    console.log("ID", app.id);
 
     AppDispatcher.handleViewAction({
       type: ActionTypes.LAUNCH_APP,
-      appId: appId,
+      app: app,
       params: param
     });
   },

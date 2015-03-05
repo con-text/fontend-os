@@ -38,7 +38,7 @@ module.exports = {
         type: "Website",
         action: AppsActionCreator.open.bind(
           AppsActionCreator,
-          app.id,
+          app,
           query)
       });
 
@@ -57,7 +57,7 @@ module.exports = {
         type: "App",
         action: AppsActionCreator.open.bind(
           AppsActionCreator,
-          app.id,
+          app,
           query)
       });
     }

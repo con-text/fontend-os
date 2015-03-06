@@ -4,10 +4,15 @@ var React = require('react');
 var DragDropMixin = require('react-dnd').DragDropMixin;
 var ItemTypes = require('./DragItemTypes');
 
+// Stores
+var SessionStore = require('../stores/SessionStore');
+
 // Actions
 var SessionActionCreators = require('../actions/SessionActionCreators');
 var AppsActionCreators    = require('../actions/AppsActionCreators');
 var NotificationActionCreators = require('../actions/NotificationActionCreators');
+
+var _ = require('lodash');
 
 var itemDropTarget = {
   acceptDrop: function(component, item) {
@@ -15,8 +20,13 @@ var itemDropTarget = {
     var user = item;
     NotificationActionCreators
       .createTextNotification("You a sharing this with " + user.name);
+  },
+
+  canDrop: function(component, item) {
+    return !_.isEqual(item, component.state.currentUser);
   }
 };
+
 // App container
 var AppContainer = React.createClass({
   mixins: [DragDropMixin],
@@ -28,6 +38,24 @@ var AppContainer = React.createClass({
         dropTarget: itemDropTarget
       });
     }
+  },
+
+  getInitialState: function() {
+    return {
+      currentUser: SessionStore.getCurrentUser()
+    };
+  },
+
+  componentDidMount: function() {
+    SessionStore.addChangeListener(this._onChange);
+  },
+
+  componentWillUnmount: function() {
+    SessionStore.removeChangeListener(this._onChange);
+  },
+
+  _onChange: function() {
+    this.setState({currentUser: SessionStore.getCurrentUser()});
   },
 
   render: function() {

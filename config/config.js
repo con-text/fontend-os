@@ -1,12 +1,12 @@
-var cookieParser = require('cookie-parser')
+var cookieParser = require('cookie-parser');
 var session      = require('express-session');
+var bodyParser   = require('body-parser');
 
 // CORS handler for apps server
 function allowAppsOrigin(req, res, next) {
 
   // Check requested origin against list of of allowed
   var requestedOrigin = req.header('host').toLowerCase();
-
   var origin = cors.default;
 
   cors.allowedOrigins.forEach(function(allowedOrigin) {
@@ -16,7 +16,7 @@ function allowAppsOrigin(req, res, next) {
   });
 
   // Only one origin is allowed
-  res.header('Access-Control-Allow-Origin', origin);
+  res.header('Access-Control-Allow-Origin', "*");
   res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
   res.header('Access-Control-Allow-Headers', 'X-Requested-With,Content-Type');
 
@@ -41,6 +41,10 @@ var config = {
     // Use cookie parser
     app.use(cookieParser());
 
+    // Parse body in POST requests
+    app.use(bodyParser.urlencoded({ extended: false }));
+    app.use(bodyParser.json());
+
     // Use session
     this.sessionConfig.store = sessionStore;
     var sessionMiddleware = session(this.sessionConfig);
@@ -51,7 +55,9 @@ var config = {
     });
 
     app.use(sessionMiddleware);
-  }
+  },
+
+  allowAppsOrigin: allowAppsOrigin
 };
 
 var cors = {
@@ -60,7 +66,8 @@ var cors = {
     config.baseApiUrl,
     config.appsServerHost,
     "http://localhost:3000",
-    "http://localhost:5000"
+    "http://localhost:5000",
+    "http://localhost:3001"
   ],
   default: config.baseApiUrl
 };

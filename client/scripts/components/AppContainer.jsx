@@ -12,14 +12,19 @@ var SessionActionCreators = require('../actions/SessionActionCreators');
 var AppsActionCreators    = require('../actions/AppsActionCreators');
 var NotificationActionCreators = require('../actions/NotificationActionCreators');
 
+var AppsApiUtils = require('../utils/AppsApiUtils');
+
 var _ = require('lodash');
 
 var itemDropTarget = {
   acceptDrop: function(component, item) {
-    // Do something with image! For example
+    var app = component.props.app;
     var user = item;
-    NotificationActionCreators
-      .createTextNotification("You a sharing this with " + user.name);
+    console.log("Adding to app " + app.id  + " user " + item.id);
+    AppsApiUtils.addCollaborator(app, user, function() {
+      NotificationActionCreators
+        .createTextNotification("You a sharing this with " + user.name);
+    });
   },
 
   canDrop: function(component, item) {

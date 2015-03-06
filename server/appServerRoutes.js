@@ -51,7 +51,13 @@ function getState(uuid, appId, objectId, callback){
 	});
 }
 
-
+/**
+* Create a new state object or get a very first state of the app
+*
+* {uuid} - User id
+* {appId} - App id
+* {callback}
+*/
 function getOrCreateObject(uuid, appId, callback) {
 	unirest.get(baseUrl + '/users/' + uuid + '/apps/' + appId)
 	.end(function(response) {
@@ -104,6 +110,16 @@ module.exports = {
 			appIds.push(m.id);
 		});
 	  res.json(appIds);
+	},
+
+	getOrCreateState: function(req, res) {
+		getOrCreateObject(req.params.uuid, req.params.appId, function(err, stateId){
+			if(err) {
+				return res.status(500).send("Couldn't get new state, wat111");
+			}
+
+			res.json({stateId: stateId});
+		});
 	},
 
 	getApp: function(req,res){

@@ -4,7 +4,9 @@ var bodyParser = require('body-parser');
 var routes = require('./server/appServerRoutes.js');
 // var socketClient = require('socket.io-client')('http://localhost:3000');
 var socketClient = require('socket.io-client')('http://contexte.herokuapp.com');
+var config = require('./config/config');
 
+app.use(config.allowAppsOrigin);
 app.use(bodyParser.urlencoded({ extended: false }));
 
 // parse application/json
@@ -12,7 +14,8 @@ app.use(bodyParser.json());
 
 app.get('/', routes.root);
 app.get('/app/:uuid/:appId', routes.getApp);
-app.get('/app/:uuid/:appId/:objectId', routes.getAppWithObject);
+app.get('/app/:uuid/:appId/states/:objectId', routes.getAppWithObject);
+app.get('/users/:uuid/apps/:appId/states', routes.getOrCreateState);
 app.get('/object/:uuid/:objectId', routes.getObject);
 // app.get('/syncState/:uuid/:appId', routes.syncGet);
 // app.post('/syncState/:uuid/:appId', routes.syncPost);

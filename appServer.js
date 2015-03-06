@@ -11,7 +11,8 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 app.get('/', routes.root);
-app.get('/app/:uuid/:appId/:objectId', routes.getApp);
+app.get('/app/:uuid/:appId', routes.getApp);
+app.get('/app/:uuid/:appId/:objectId', routes.getAppWithObject);
 app.get('/object/:uuid/:objectId', routes.getObject);
 // app.get('/syncState/:uuid/:appId', routes.syncGet);
 // app.post('/syncState/:uuid/:appId', routes.syncPost);

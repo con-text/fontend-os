@@ -65,10 +65,8 @@ var AppsStore = assign({}, EventEmitter.prototype, {
 
     var uuid = SessionStore.getCurrentUser().uuid;
 
-    var objectId = "54ee2009e4b0e85464a3e7e3";
-
     // Create react component from class
-    var url = 'http://localhost:3001/app/'+ uuid +'/' + app.id + '/' + objectId;
+    var url = 'http://localhost:3001/app/'+ uuid +'/' + app.id;
 
     if(params) {
       url += '?' + querystring.stringify(params);

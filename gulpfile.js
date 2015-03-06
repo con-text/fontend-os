@@ -1,7 +1,9 @@
 var gulp 				= require('gulp'),
 	gutil 				= require('gulp-util'),
 	jshint 				= require('gulp-jshint'),
-	browserify 		= require('gulp-browserify'),
+	browserify 		= require('browserify'),
+	source 				= require('vinyl-source-stream'),
+	buffer 				= require('vinyl-buffer'),
 	concat 				= require('gulp-concat'),
 	clean  				= require('gulp-clean'),
 	less  				= require('gulp-less'),
@@ -19,6 +21,12 @@ var gulp 				= require('gulp'),
 	imagemin  		= require('gulp-imagemin'),
 	browserSync  	= require('browser-sync'),
 	reload      	= browserSync.reload;
+
+// Custom error handler
+function handleError(err) {
+	console.error(err.toString());
+	this.emit('end');
+}
 
 // Clean
 gulp.task('clean', function() {
@@ -60,29 +68,40 @@ gulp.task('lint', ['lint:tests', 'lint:server', 'lint:client', 'lint:apps']);
 
 // Browserify task
 gulp.task('browserify:client',  function() {
-	// Main entry point
-	return gulp.src(['client/scripts/main.js'])
-	.pipe(browserify({
+
+	var opts = {
 		insertGlobals: true,
-		debug: true,
-		transform: ['reactify'],
-		extensions: ['.js', '.jsx']
-	}))
-	// Concatinate into one file
-	.pipe(concat("bundle.js"))
-	// Output to destination directory
-	.pipe(gulp.dest("dist/js"));
+		extensions: ['.js', '.jsx'],
+		debug: true
+	};
+
+	var entry = path.join(__dirname, 'client/scripts/main.js');
+	return browserify(entry, opts)
+		.transform(reactify)
+		.bundle()
+		.pipe(source('bundle.js'))
+		.pipe(buffer())
+		// Output to destination directory
+		.pipe(gulp.dest("dist/js"))
+		.on('error', handleError);
 });
 
 //copy the state interface api into the dist folder without concatenating it
 gulp.task('copy-stateinterface', function(){
-	return gulp.src(['client/scripts/utils/StateInterface.js'], { read: false })
-		.pipe(browserify({
-			insertGlobals: true,
-			debug: true,
-			standalone: 'AppState'
-		}))
-		.pipe(concat("StateInterface.js"))
+
+
+	var opts = {
+		insertGlobals: true,
+		debug: true,
+		standalone: 'AppState'
+	};
+
+	var entry = path.join(__dirname, 'client/scripts/utils/StateInterface.js');
+	return browserify(entry, opts)
+		.bundle()
+		.pipe(source('StateInterface.js'))
+		.pipe(buffer())
+
 		.pipe(gulp.dest("dist/js"));
 });
 
@@ -136,6 +155,7 @@ gulp.task('styles', function() {
 		// Add autoprefixer
 		.pipe(autoprefixer())
 		.pipe(gulp.dest('dist/css/'))
+		.on('error', handleError)
 		.pipe(reload({stream: true}));
 });
 

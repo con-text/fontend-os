@@ -1,6 +1,5 @@
 var React = require('react');
 
-
 // Drag and drop
 var DragDropMixin = require('react-dnd').DragDropMixin;
 var ItemTypes = require('./DragItemTypes');
@@ -8,11 +7,14 @@ var ItemTypes = require('./DragItemTypes');
 // Actions
 var SessionActionCreators = require('../actions/SessionActionCreators');
 var AppsActionCreators    = require('../actions/AppsActionCreators');
+var NotificationActionCreators = require('../actions/NotificationActionCreators');
 
 var itemDropTarget = {
   acceptDrop: function(component, item) {
-    // Do something with image! For example,
-    console.log("Dropped a ", item);
+    // Do something with image! For example
+    var user = item;
+    NotificationActionCreators
+      .createTextNotification("You a sharing this with " + user.name);
   }
 };
 // App container

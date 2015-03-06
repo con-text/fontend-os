@@ -10,6 +10,7 @@ var DesktopActionCreators = require('../actions/DesktopActionCreators');
 var Sidebar   = require('./Sidebar');
 var SearchBox = require('./SearchBox');
 var AppContainer = require('./AppContainer');
+var NotificationArea = require('./NotificationArea');
 
 // Stores
 var DesktopStore  = require('../stores/DesktopStore');
@@ -40,6 +41,7 @@ var Desktop = React.createClass({
   render: function() {
     return (
       <div className="container" onClickCapture={this.handleClick}>
+        <NotificationArea />
         <Sidebar />
         <div className="desktop">
           <SearchBox boxVisible={this.state.showSearch} />

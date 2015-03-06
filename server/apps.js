@@ -128,10 +128,12 @@ function injectAPI(webSource, manifest, uuid, objectId){
   //this port needs to not be hardcoded
   var content = "<script type='text/javascript' src='http://localhost:5000/vendor/jquery/dist/jquery.min.js'></script>";
       content+= "<script type='text/javascript' src='http://localhost:5000/vendor/observe-js/src/observe.js'></script>";
+      content+= "<script type='text/javascript' src='http://localhost:5000/js/DifMatchPatch.js'></script>";
+      content+= "<script type='text/javascript' src='http://localhost:5000/js/OperationalTransformation.js'></script>";
       content+= "<script src='/socket.io/socket.io.js'></script>";
       content+= "<script type='text/javascript' src='http://localhost:5000/js/StateInterface.js'></script>";
       //hardcoded, obviously change this
       content+= "<script type='text/javascript'>var AS = new AppState('" + manifest.id + "', '" + uuid + "', '" + objectId +"');";
-      content+= "</script>";
+      content+= "var dmp = new diff_match_patch();</script>";
   return content += webSource;
 }

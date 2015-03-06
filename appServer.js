@@ -2,8 +2,8 @@ var express = require('express');
 var app = express();
 var bodyParser = require('body-parser');
 var routes = require('./server/appServerRoutes.js');
-// var socketClient = require('socket.io-client')('http://localhost:3000');
-var socketClient = require('socket.io-client')('http://contexte.herokuapp.com');
+var socketClient = require('socket.io-client')('http://localhost:3000');
+// var socketClient = require('socket.io-client')('http://contexte.herokuapp.com');
 
 app.use(bodyParser.urlencoded({ extended: false }));
 

@@ -76,13 +76,18 @@ gulp.task('browserify:client',  function() {
 
 //copy the state interface api into the dist folder without concatenating it
 gulp.task('copy-stateinterface', function(){
-	return gulp.src('client/scripts/utils/StateInterface.js', { read: false })
+	return gulp.src(['client/scripts/utils/StateInterface.js'], { read: false })
 		.pipe(browserify({
 			insertGlobals: true,
 			debug: true,
 			standalone: 'AppState'
 		}))
 		.pipe(concat("StateInterface.js"))
+		.pipe(gulp.dest("dist/js"));
+});
+
+gulp.task('bundle-stateinterface-helpers', function(){
+	return gulp.src([ 'client/scripts/utils/DifMatchPatch.js','client/scripts/utils/OperationalTransformation.js'])
 		.pipe(gulp.dest("dist/js"));
 });
 
@@ -181,7 +186,7 @@ gulp.task('test', ['build'], function() {
 });
 
 gulp.task('build', ['copy-bower', 'lint', 'browserify', 'views', 'styles',
-	'images', 'copy-stateinterface']);
+	'images', 'copy-stateinterface', 'bundle-stateinterface-helpers']);
 
 // Prepare the package
 gulp.task('package', ['build'], function(){

@@ -18,7 +18,7 @@ function AppState(appId, userId, objectId, dependencies){
 				console.log(data);
 				if(!data)
 					data = {};
-				console.log("Got",data,"in",AS);
+				// console.log("Got",data,"in",AS);
 				AS.fillState(data);
 				AS.emit("load");
 			};
@@ -28,7 +28,7 @@ function AppState(appId, userId, objectId, dependencies){
 	this.socket.on('connect', (function(AS){
 			// console.log("Got into closure",this);
 			return function(){
-				console.log("Connected to socket", AS);
+				// console.log("Connected to socket", AS);
 				AS.socket.emit('getInitial', {uuid: AS.userId, objectId: AS.objectId});
 			};
 	})(this));
@@ -37,7 +37,8 @@ function AppState(appId, userId, objectId, dependencies){
 	this.socket.on('syncedState', (function(AS){
 			// console.log("Got into closure",this);
 			return function(data){
-				console.log("Got", data);
+				// console.log("Got", data);
+
 				AS.dealWithChange(data);
 				AS.emit('syncedState', data);
 			};
@@ -46,16 +47,6 @@ function AppState(appId, userId, objectId, dependencies){
 }
 
 AppState.prototype.addWatcher = function(){
-	// console.log("ADDWATCHER CONTEXT", this);
-	// watch(this._state, (function(state){
-	// 	return function(d){
-	// 		console.log("found change", state._state.prevCalcs.length);
-	// 		//need to change this to not faff around with uuid etc
-	// 		state.socket.emit('stateChange', {uuid: state.userId, objectId: state.objectId, state: state._state});
-	// 		// $.post( "/syncState/"+state.userId+"/"+state.appId, {state: JSON.stringify(state._state)} );
-	// 	};
-	// })(this), 4, true);
-	console.log("Adding a deep watch object", this._state);
 	this.watchDeepObject(this._state);
 };
 
@@ -106,7 +97,7 @@ AppState.prototype.fillState = function(data){
 			}
 		});
 	}
-	console.log("GOT",data);
+	// console.log("GOT",data);
 	this._state = data;
 	this._state._parent = false;
 	this._state._parentProp = false;
@@ -114,7 +105,7 @@ AppState.prototype.fillState = function(data){
 };
 
 AppState.prototype.addObserver = function(obj){
-	console.log("Adding observer", obj);
+	// console.log("Adding observer", obj);
 	var obsObj;
 	if(!this.observerArray.root){
 		//first time setting an observer
@@ -129,9 +120,8 @@ AppState.prototype.addObserver = function(obj){
 	obsObj.open(
 		(function(objectBeingObserved, AS){
 			return function handleChanges(added, removed, changed, getOldValueFn) {
-					console.log("############");
-					console.log(AS);
-					console.log("############");
+
+
 					var changedKeys = Object.keys(changed);
 					var addedKeys = Object.keys(added);
 					var removedKeys = Object.keys(removed);
@@ -143,7 +133,7 @@ AppState.prototype.addObserver = function(obj){
 
 						property = addedKeys[i];
 						//new property added, check if it's an object, if so, add a listener
-						console.log("Added", property, added[property]);
+
 						if(typeof added[property] === "object"){
 							// give it parent and parentprop values then add the observer
 							//this is used to traverse the tree upwards
@@ -161,12 +151,10 @@ AppState.prototype.addObserver = function(obj){
 
 					for(i = 0; i<removedKeys.length; i++) {
 						property = removedKeys[property];
-						console.log("Removed", property, getOldValueFn(property));
-						// property; // a property which has been been removed from obj
-						// getOldValueFn(property); // its old value
+
 
 						if(typeof getOldValueFn(property) === "object"){
-							console.log("Closing observer");
+
 							toClosePath = getToRoot(objectBeingObserved).join("_");
 							AS.observerArray[toClosePath].close();
 							delete AS.observerArray[toClosePath];
@@ -181,7 +169,7 @@ AppState.prototype.addObserver = function(obj){
 
 					for(i = 0; i<changedKeys.length; i++){
 						property = changedKeys[i];
-						console.log("Changed", property, changed[property], getOldValueFn(property));
+						// console.log("Changed", property, changed[property], getOldValueFn(property));
 						if(typeof changed[property] !== getOldValueFn(property)){
 							//type has changed, check for new object
 							if(typeof changed[property] === "object"){
@@ -196,9 +184,15 @@ AppState.prototype.addObserver = function(obj){
 								delete AS.observerArray[toClosePath];
 							}
 						}
-						AS.socket.emit('stateChange',
-								{uuid: AS.userId, objectId: AS.objectId, action: 'changed',
-								path: getToRoot(objectBeingObserved), property: property, value: changed[property]});
+						var changeObject = {uuid: AS.userId, objectId: AS.objectId, action: 'changed',
+								path: getToRoot(objectBeingObserved), property: property, value: changed[property]};
+						if(typeof changed[property] === "string"){
+							//use changes instead of entire string
+							var OTChanges = getOperations(getOldValueFn(property), changed[property]);
+							console.log(OTChanges);
+							changeObject.OTChanges = OTChanges;
+						}
+						AS.socket.emit('stateChange', changeObject);
 					}
 
 
@@ -216,21 +210,9 @@ function getToRoot(obj){
 }
 
 AppState.prototype.watchDeepObject = function(obj){
-	// console.log(Object.keys(obj));
-	console.log("doing a deep watch");
+
 	this.addObserver(obj);
-	// Object.keys(obj).forEach(function(key){
-	// 	// console.log("Hitting key",key,"for object",obj.name);
-	// 	if(key === "_parentProp" || key === "_parent"){
-	// 		return;
-	// 	}
-	// 	if(typeof obj[key] === "object" && obj.constructor !== Array){
-	// 		obj[key]._parentProp = key;
-	// 		obj[key]._parent = obj;
-	// 		this.watchDeepObject(obj[key]);
-	// 		// console.log("parent",obj,"key",key);
-	// 	}
-	// });
+
 	var keys = Object.keys(obj);
 	var key;
 	for(var i = 0; i<keys.length; i++){
@@ -263,7 +245,7 @@ AppState.prototype.updateValueFromArray = function(obj,arr,prop,value){
 		value._parentProp = prop;
 		this.addObserver(value);
 	}
-
+	// console.log(this.observerArray,arr);
 	this.observerArray[arr.join("_")].discardChanges();
 	return true;
 };
@@ -281,6 +263,48 @@ AppState.prototype.deleteValueFromArray = function(obj,arr,prop){
 	delete this.observerArray[arr.join("_")];
 	delete obj[prop];
 	return true;
+};
+
+function getOperations(startText, endText, id){
+
+	console.log("SE", "'"+startText+"'", "'"+endText+"'", id);
+	var diff 		= dmp.diff_main(startText, endText);
+	var actions = [];
+	var cursor = 0;
+	diff.forEach(function(change){
+		if(change[0] === 0){
+			//no change here
+			cursor += change[1].length;
+		}
+		else if(change[0] === 1){
+			//insertion
+			actions.push({cursor: cursor, action: 1, text: change[1]});
+			cursor += change[1].length;
+		}
+		else if(change[0] === -1){
+			//deletion
+			actions.push({cursor: cursor, action: -1, text: change[1]});
+		}
+		else{
+			console.log("Invalid change param");
+		}
+	});
+
+	return actions;
+}
+
+function applyChange(startText, changes){
+	var text = startText;
+	changes.forEach(function(change){
+		console.log("Applying","'"+change.text+"'", "to",text, change.cursor);
+		if(change.action === 1){
+			text = new ot.TextOperation().retain(change.cursor).insert(change.text).retain(text.length - change.cursor).apply(text);
+		}
+		else if(change.action === -1){
+			text = new ot.TextOperation().retain(change.cursor).delete(change.text).retain(text.length - change.text.length - change.cursor).apply(text);
+		}
+	});
+	return text;
 };
 
 module.exports = AppState;

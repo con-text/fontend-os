@@ -41,7 +41,9 @@ gulp.task('lint:apps', function() {
 });
 
 gulp.task('lint:client', function() {
-	return gulp.src(['./client/scripts/**/*.js', './client/scripts/main.js'])
+	return gulp.src(['./client/scripts/**/*.js', './client/scripts/main.js',
+	'!./client/scripts/utils/DifMatchPatch.js',
+	'!./client/scripts/utils/OperationalTransformation.js'])
 		.pipe(react())
 		.pipe(jshint())
 		.pipe(jshint.reporter('jshint-stylish'));

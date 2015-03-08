@@ -6,11 +6,10 @@ function getUserProfile(userId, cbk, errCbk) {
 
   // Base API
   var baseUrl = config.baseApiUrl;
-
   // Call the service
   rest.get(baseUrl + '/users/' + userId)
   .on('success', function(data, response) {
-    cbk(data.message);
+    cbk(data);
 
   })
   .on('error', function(err, response) {

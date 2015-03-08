@@ -65,18 +65,48 @@ var AppsStore = assign({}, EventEmitter.prototype, {
 
     var uuid = SessionStore.getCurrentUser().uuid;
 
-    var objectId = "54ee2009e4b0e85464a3e7e3";
+    // What is my current state?
+    var stateId = null;         // TODO: This can be provided from the search box
+    var url;
 
-    // Create react component from class
-    var url = 'http://localhost:3001/app/'+ uuid +'/' + app.id + '/' + objectId;
+    if(!stateId) {
+      // Ask app server for default or new
+      url = 'http://localhost:3001/users/'+ uuid +'/apps/' + app.id + '/states';
+      $.ajax({
+        url: url,
+        success: function(data) {
 
-    if(params) {
-      url += '?' + querystring.stringify(params);
+          stateId = data.stateId;
+          app.stateId = stateId;
+          // Create react component from class
+          url = 'http://localhost:3001/app/'+ uuid +'/' + app.id + '/states/' + stateId;
+
+          if(params) {
+            url += '?' + querystring.stringify(params);
+          }
+
+          this.openedApp = app;
+          this.openedApp.element = React.createElement('iframe', {src: url, className: "app-window"});
+          this.emitChange();
+          return;
+        }.bind(this),
+        type: 'GET'
+      });
+
+    } else {
+
+      app.stateId = stateId;
+      // Create react component from class
+      url = 'http://localhost:3001/app/'+ uuid +'/' + app.id + '/states/' + stateId;
+
+      if(params) {
+        url += '?' + querystring.stringify(params);
+      }
+
+      this.openedApp = app;
+      this.openedApp.element = React.createElement('iframe', {src: url, className: "app-window"});
+      this.emitChange();
     }
-
-    this.openedApp = app;
-    this.openedApp.element = React.createElement('iframe', {src: url, className: "app-window"});
-    this.emitChange();
   },
 
   close: function() {

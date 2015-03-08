@@ -1,4 +1,5 @@
 {
   "browserify": true,
-  "jquery": true
+  "jquery": true,
+  "-W030": true
 }

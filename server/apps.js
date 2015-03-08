@@ -40,7 +40,7 @@ module.exports = {
     }, this);
     return apps;
   },
-  
+
   getManifests: function() {
 
     var manifests = [];
@@ -88,24 +88,49 @@ module.exports = {
     /**
     * Sends request with app id to signal new app opened
     */
+    //TODO: Complete
     app.post('/apps/:id', authenticated, function(req, res) {
 
       var appId = req.params.id;
-
-      unirest.delete(config.baseApiUrl + '/users/' + userId + '/apps', {
+      var userId = req.session.user.id;
+      unirest.post(config.baseApiUrl + '/users/' + userId + '/apps', {
         id: appId
+      });
+    });
+
+    /**
+    * Sends request with app id to signal new app opened
+    */
+    app.post('/apps/:id/collaborators', authenticated, function(req, res) {
+
+      var appId = req.params.id;
+      var userId = req.session.user.id;
+      var userToShare = req.body.user;
+      var stateId = req.body.stateId;
+
+      unirest.post(config.baseApiUrl + '/users/' + userId + '/apps/' +
+          appId + '/states/' + stateId +
+        '/collaborators/')
+      .header('Accept', 'application/json')
+      .send({userId: userToShare.uuid})
+      .end(function(response) {
+        if(response.error) {
+          res.status(response.code).json(response.error);
+        } else {
+          res.sendStatus(200);
+        }
       });
     });
 
     /**
     * Signal that user closed the app
     */
+    //TODO: Complete!
     app.delete('/apps/:id', authenticated, function(req, res) {
 
       var appId = req.params.id;
-      var userId = res.session.user.id;
-
-      unirest.delete(config.baseApiUrl + 'users'+ userId +'/apps', {
+      var userId = req.session.user.id;
+      unirest.delete(config.baseApiUrl + '/users/'+ userId +'/apps', {
         id: appId
       });
 

@@ -9,9 +9,6 @@ module.exports = {
   */
   open: function(app, param) {
 
-    console.log("App", app);
-    console.log("ID", app.id);
-
     AppDispatcher.handleViewAction({
       type: ActionTypes.LAUNCH_APP,
       app: app,
@@ -26,5 +23,7 @@ module.exports = {
     AppDispatcher.handleViewAction({
       type: ActionTypes.CLOSE_APPS,
     });
-  }
+  },
+
+
 };

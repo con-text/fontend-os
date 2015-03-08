@@ -34,6 +34,7 @@ function userExists(uuid, callback){
 }
 
 function userStateExists(uuid, appId, objectId, callback){
+	console.log("fetching",baseUrl+"users/"+uuid+"/apps/"+appId+"/states/"+objectId);
 	unirest.get(baseUrl+"users/"+uuid+"/apps/"+appId+"/states/"+objectId)
 	.end(function(result){
 		console.log(result.error);
@@ -98,8 +99,8 @@ module.exports = {
 
 			}
 			else{
-				console.log("User doesn't exist");
-				res.json({message: "User doesn't exist"});
+				console.log("State doesn't exist");
+				res.json({message: "State doesn't exist"});
 			}
 		});
 	},
@@ -110,7 +111,7 @@ module.exports = {
 		userExists(uuid, function(exists, result){
 			if(exists){
 				//change to https
-				unirest.post("http://contexte.herokuapp.com/app/syncState/"+uuid+"/"+appId)
+				unirest.post(baseUrl + "app/syncState/"+uuid+"/"+appId)
 				.header('Accept', 'application/json')
 				.send(req.body)
 				.end(function(response){
@@ -129,7 +130,7 @@ module.exports = {
 		userExists(uuid, function(exists,result){
 			if(exists){
 				//get the values, change to https soon
-				unirest.get("http://contexte.herokuapp.com/app/syncState/"+uuid+"/"+appId)
+				unirest.get(baseUrl + "app/syncState/"+uuid+"/"+appId)
 				.end(function(result){
 					if(!result.error){
 						res.json(result.body.message.state);

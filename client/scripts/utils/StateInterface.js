@@ -67,7 +67,7 @@ AppState.prototype.dealWithChange = function(changeInfo){
 	switch(changeInfo.action){
 		case "added":
 		case "changed":
-			this.updateValueFromArray(this._state, changeInfo.path, changeInfo.property, changeInfo.value);
+			this.updateValueFromArray(this._state, changeInfo.path, changeInfo.property, changeInfo.value, changeInfo.OT);
 		break;
 		case "removed":
 			this.deleteValueFromArray(this._state, changeInfo.path, changeInfo.property);
@@ -229,7 +229,7 @@ AppState.prototype.watchDeepObject = function(obj){
 	}
 };
 
-AppState.prototype.updateValueFromArray = function(obj,arr,prop,value){
+AppState.prototype.updateValueFromArray = function(obj,arr,prop,value,transformations){
 	//loop through until we're at the right object
 	for(var i = 0; i<arr.length; i++){
 		obj = obj[arr[i]];
@@ -237,6 +237,11 @@ AppState.prototype.updateValueFromArray = function(obj,arr,prop,value){
 			return false;
 		}
 	}
+
+	if(transformations){
+		value = applyChange(obj[prop], transformations);
+	}
+	
 	//set the value and discard the changes
 	obj[prop] = value;
 
@@ -305,6 +310,6 @@ function applyChange(startText, changes){
 		}
 	});
 	return text;
-};
+}
 
 module.exports = AppState;

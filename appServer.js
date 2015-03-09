@@ -48,19 +48,13 @@ var io = require('socket.io')(server);
 var clients = {};
 
 socketClient.on('syncedState', function(msg){
-	console.log("Got syncedState event", msg);
 	for(var key in clients){
 		if(clients.hasOwnProperty(key)){
-			console.log("loooping through clients", clients[key].objectId, msg.objectId);
 			if(msg.objectId != clients[key].objectId){
 				continue;
 			}
 			if(key != msg.socketId){
-				console.log("Sending to ");
 				clients[key].emit('syncedState', msg);
-			}
-			else{
-				console.log("Not sending to original sender");
 			}
 		}
 	}

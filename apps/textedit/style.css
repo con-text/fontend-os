@@ -1,0 +1,8 @@
+.texteditor {
+  width: 100%;
+  height: 100%;
+}
+
+textarea.texteditor {
+  font-size: 14em;
+}

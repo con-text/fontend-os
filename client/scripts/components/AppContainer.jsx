@@ -20,7 +20,7 @@ var itemDropTarget = {
   acceptDrop: function(component, item) {
     var app = component.props.app;
     var user = item;
-    console.log("Adding to app " + app.id  + " user " + item.id);
+
     AppsApiUtils.addCollaborator(app, user, function() {
       NotificationActionCreators
         .createTextNotification("You a sharing this with " + user.name);

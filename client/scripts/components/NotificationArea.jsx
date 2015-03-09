@@ -47,7 +47,9 @@ var NotificationArea = React.createClass({
   */
   render: function() {
     var notifications = this.state.notifications.map(function(notification) {
-      return <NotificationItem key={notification.id} notification={notification} />;
+      return <NotificationItem key={notification.id}
+        notification={notification}
+        action={notification.action} />;
     });
 
     return (

@@ -4,16 +4,25 @@ var React = require('react');
 var NotificationAction = require('../actions/NotificationActionCreators');
 
 var NotificationItem = React.createClass({
+  propTypes: {
+    notification: React.PropTypes.object.isRequired,
+    action: React.PropTypes.func
+  },
+
   render: function() {
+    var actionButton = this.props.action ?
+      <span onClick={this.handleAction}>
+        <i className="fa fa-check button"></i>
+      </span> :
+      '';
+
     return (
       <div className="notification">
 
         <span className="text">{this.props.notification.text}</span>
 
         <div className="buttons">
-          <span onClick={this.handleAction}>
-            <i className="fa fa-check button"></i>
-          </span>
+          {actionButton}
           <span onClick={this.handleClose}>
             <i className="fa fa-close button"></i>
           </span>
@@ -23,9 +32,11 @@ var NotificationItem = React.createClass({
   },
 
   handleAction: function() {
-      if(this.props.action) {
-        this.props.action();
-      }
+    if(this.props.action) {
+      this.props.action();
+    }
+
+    NotificationAction.dismiss(this.props.notification);
   },
 
   handleClose: function() {

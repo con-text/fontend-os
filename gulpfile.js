@@ -187,6 +187,9 @@ gulp.task('browserify:apps', ['lint:apps'], function() {
 		.pipe(react())
 		.pipe(gulp.dest(outputDir));
 
+	gulp.src(['apps/**/*.css'])
+		.pipe(gulp.dest(outputDir));
+
 	// Copy manifests
 	gulp.src(['apps/**/manifest.json'])
 		.pipe(gulp.dest(outputDir));

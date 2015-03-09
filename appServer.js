@@ -2,7 +2,6 @@ var express = require('express');
 var app = express();
 var bodyParser = require('body-parser');
 var routes = require('./server/appServerRoutes.js');
-// var socketClient = require('socket.io-client')('http://localhost:3000');
 var socketClient = require('socket.io-client')('http://contexte.herokuapp.com');
 var config = require('./config/config');
 
@@ -17,11 +16,17 @@ app.get('/app/:uuid/:appId', routes.getApp);
 app.get('/app/:uuid/:appId/states/:objectId', routes.getAppWithObject);
 app.get('/users/:uuid/apps/:appId/states', routes.getOrCreateState);
 app.get('/object/:uuid/:objectId', routes.getObject);
+
+// Allow to serve assets, like css or images
+app.get('/apps/:appName/:asset', function(req, res) {
+  var appName = req.params.appName;
+  var fileName = req.params.asset;
+
+  res.sendFile(fileName, { root: './dist/apps/'+ appName + '/' });
+});
+
 // app.get('/syncState/:uuid/:appId', routes.syncGet);
 // app.post('/syncState/:uuid/:appId', routes.syncPost);
-
-
-
 
 var server = app.listen(3001, function () {
 
@@ -35,10 +40,9 @@ var server = app.listen(3001, function () {
 socketClient.on('connect', function(){
 	console.log("Connected to backend socketClient");
 });
+
 socketClient.on('event', function(data){});
 socketClient.on('disconnect', function(){});
-
-
 
 var io = require('socket.io')(server);
 var clients = {};
@@ -62,25 +66,16 @@ socketClient.on('syncedState', function(msg){
 	}
 });
 
-
-
-//need to define something using
+// Need to define something using
 io.on('connection', function(socket){
 
 	clients[socket.id] = socket;
-	// console.log('a user connected to the socket server', clients);
-	// socketClient.emit('getInitialFromBackend', {uuid: msg.uuid, app: msg.app});
 
 	socketClient.on('gotInitialFromBackend', function(msg){
-		console.log("gotInitialFromBackend", msg);
-		// console.log("clients", Object.keys(clients));
 		clients[msg.socketId].emit('fillData', msg.state);
-		// socket.emit('fillData', msg.state);
 	});
 
-
 	socket.on('stateChange', function(msg){
-		console.log("Got", msg, "from user in stateChange");
 		socketClient.emit('stateChange',
 			{	uuid: msg.uuid, objectId: msg.objectId, action:msg.action,
 				path: msg.path, property: msg.property, value: msg.value, socketId: socket.id});
@@ -89,15 +84,12 @@ io.on('connection', function(socket){
 	socket.on('getInitial', function(msg){
 		var packet = {uuid: msg.uuid, objectId: msg.objectId, socketId: socket.id};
 		clients[socket.id].objectId = msg.objectId;
-		console.log("Got",msg,"from socket","sending",packet);
 		socketClient.emit('getInitialFromBackend', packet);
 	});
 
-    socket.on('disconnect', function() {
-        if(!!clients[socket.id]){
-        	delete clients[socket.id];
-        	console.log("Removed",socket.id,"from clients list");
-        }
-    });
-
+  socket.on('disconnect', function() {
+      if(!!clients[socket.id]){
+      	delete clients[socket.id];
+      }
+  });
 });

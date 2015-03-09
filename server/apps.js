@@ -67,6 +67,11 @@ module.exports = {
             var manifest = readManifest(filePath);
             manifest.absolutePath = currentFolder;
             manifest.relativePath = relativeFolderPath;
+
+            if(manifest.style) {
+              manifest.style = manifest.relativePath + "/" + manifest.style;
+            }
+
             manifests.push(manifest);
           }
 
@@ -160,5 +165,10 @@ function injectAPI(webSource, manifest, uuid, objectId){
       //hardcoded, obviously change this
       content+= "<script type='text/javascript'>var AS = new AppState('" + manifest.id + "', '" + uuid + "', '" + objectId +"');";
       content+= "var dmp = new diff_match_patch();</script>";
+
+    if(manifest.style) {
+      content += "<link href='"+ manifest.style + "' rel='stylesheet' />";
+    }
+
   return content += webSource;
 }

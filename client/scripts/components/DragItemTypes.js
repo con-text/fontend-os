@@ -1,5 +1,6 @@
 'use strict';
 
 module.exports = {
-  USER: 'user'
+  USER: 'user',
+  WINDOW: 'appWindow'
 };

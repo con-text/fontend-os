@@ -2,6 +2,11 @@
 'use strict';
 
 var React = require('react');
+var reactDnd = require('react-dnd');
+
+var DragDropMixin = reactDnd.DragDropMixin;
+var DragLayerMixin = reactDnd.DragLayerMixin;
+var ItemTypes = require('./DragItemTypes');
 
 // Actions
 var DesktopActionCreators = require('../actions/DesktopActionCreators');
@@ -19,10 +24,32 @@ var DesktopStore  = require('../stores/DesktopStore');
 var AppsStore     = require('../stores/AppsStore');
 
 var Desktop = React.createClass({
+  mixins: [DragDropMixin, DragLayerMixin],
+
+  statics: {
+    configureDragDrop: function(register, context) {
+      register(ItemTypes.WINDOW, {
+        dropTarget: {
+          acceptDrop: function(component, item) {
+            var delta = context.getCurrentOffsetDelta();
+            var left = item.x + delta.x;
+            var top = item.y + delta.y;
+            component.setState({
+              x: left,
+              y: top
+            });
+          }
+        }
+      });
+    }
+  },
+
   getStateFromStores: function() {
     return {
       showSearch: DesktopStore.isSearchVisible(),
-      currentApp: AppsStore.getOpened()
+      currentApp: AppsStore.getOpened(),
+      x: 0,
+      y: 0
     };
   },
 
@@ -41,14 +68,18 @@ var Desktop = React.createClass({
   },
 
   render: function() {
+
+
     return (
       <div className="container" onClickCapture={this.handleClick}>
         <NotificationArea />
         <Sidebar />
         <span className="button" onClick={this.notify}>CLICK ME</span>
-        <div className="desktop">
+        <div className="desktop" {...this.dropTargetFor(ItemTypes.WINDOW)}>
           <SearchBox boxVisible={this.state.showSearch} />
-          <AppContainer app={this.state.currentApp} />
+          <AppContainer app={this.state.currentApp}
+            x={this.state.x}
+            y={this.state.x} />
         </div>
     </div>
     );

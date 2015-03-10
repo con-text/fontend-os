@@ -1,7 +1,9 @@
 var React = require('react');
 
 // Drag and drop
-var DragDropMixin = require('react-dnd').DragDropMixin;
+var reactDnd = require('react-dnd');
+var DragDropMixin = reactDnd.DragDropMixin;
+var DropEffects = reactDnd.DropEffects;
 var ItemTypes = require('./DragItemTypes');
 
 // Stores
@@ -16,11 +18,21 @@ var AppsApiUtils = require('../utils/AppsApiUtils');
 
 var _ = require('lodash');
 
+
+var TRANSPARENT_PIXEL_SRC = 'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==';
+var emptyImg = document.createElement('img');
+
+emptyImg.src = TRANSPARENT_PIXEL_SRC;
+
+function getEmptyImage() {
+  return emptyImg;
+}
+
 var itemDropTarget = {
   acceptDrop: function(component, item) {
     var app = component.props.app;
     var user = item;
-    console.log("Adding to app " + app.id  + " user " + item.id);
+
     AppsApiUtils.addCollaborator(app, user, function() {
       NotificationActionCreators
         .createTextNotification("You a sharing this with " + user.name);
@@ -38,9 +50,19 @@ var AppContainer = React.createClass({
 
   statics: {
     configureDragDrop: function(register) {
-
       register(ItemTypes.USER, {
         dropTarget: itemDropTarget
+      });
+
+      register(ItemTypes.WINDOW, {
+        dragSource: {
+          beginDrag: function(component) {
+            return {
+              item: component.props,
+              effectAllowed: DropEffects.MOVE
+            };
+          }
+        }
       });
     }
   },
@@ -65,30 +87,36 @@ var AppContainer = React.createClass({
 
   render: function() {
 
-    var dragState = this.getDropState(ItemTypes.USER);
+    var dropState = this.getDropState(ItemTypes.USER);
     var backgroundColor = 'white';
 
+    var dragStateWindow = this.getDragState(ItemTypes.WINDOW);
+
     var divStyle = {
-      display: this.props.app ? 'block' : 'none'
+      display: this.props.app && !dragStateWindow.isDragging ? 'block' : 'none',
+      left: this.props.x,
+      top: this.props.y
     };
 
-    if(dragState.isHovering) {
+    if(dropState.isHovering) {
       divStyle.background = 'gray';
 
-    } else if(dragState.isDragging) {
+    } else if(dropState.isDragging) {
       divStyle.opacity = 0.8;
     }
 
     var innerDivStyle = {
-      display: dragState.isDragging ? 'none' : 'block'
+      display: dropState.isDragging ? 'none' : 'block'
     };
 
     var dragOverlayDivStyle = {
-      display: dragState.isDragging ? 'block' : 'none'
+      display: dropState.isDragging ? 'block' : 'none'
     };
 
     return <div className="appContainer" style={divStyle}
-      {...this.dropTargetFor(ItemTypes.USER)}>
+      {...this.dropTargetFor(ItemTypes.USER)}
+      {...this.dragSourceFor(ItemTypes.WINDOW)}
+      >
       <div className="titleBar">
         <div className="title">
           {this.props.app && this.props.app.name}

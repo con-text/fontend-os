@@ -20,7 +20,7 @@ function getUserProfile(userId, cbk, errCbk) {
 
 module.exports.getUserProfile = getUserProfile;
 
-module.exports.routeHandler = function(app, bleSocket) {
+module.exports.routeHandler = function(app, io, bleSocket) {
 
   /**
   * Pass user profile to the client-side
@@ -59,6 +59,12 @@ module.exports.routeHandler = function(app, bleSocket) {
 
     // Write data to the socket
     req.session.user = null;
+
+    io.emit('loginStatus', {
+      result: "logout",
+      userId: null
+    });
+
     res.sendStatus(200);
   });
 };

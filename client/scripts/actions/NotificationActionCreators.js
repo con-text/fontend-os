@@ -7,12 +7,13 @@ var ActionTypes = NotificationConstants.ActionTypes;
 
 var NotificationActionCreators = {
 
-  createTextNotification: function(text) {
+  createTextNotification: function(text, action) {
     AppDispatcher.handleViewAction({
       type: ActionTypes.SHOW,
       notification: {
         text: text,
-        id: uuid.v1()
+        id: uuid.v1(),
+        action: action
       }
     });
   },

@@ -3,6 +3,7 @@ var AvailableUsersActionCreators = require('../actions/AvailableUsersActionCreat
 
 // Initialize socket.io
 var socket = io();
+var appServerSocket = io('http://localhost:3001');
 
 module.exports = {
 
@@ -18,8 +19,19 @@ module.exports = {
         SessionActionCreators.finishAuthSuccess(data.userId);
       } else if (data.result === 'fail') {
         SessionActionCreators.finishAuthFailed(data.userId);
+      }
+
+      if(data.userId) {
+
+        // Pass it back to apps server
+        appServerSocket.emit('initRoom', {
+          uuid: data.userId
+        });
+
       } else {
-        console.error("Unexpected message type: " + data);
+
+        // Pass it back to apps server
+        appServerSocket.emit('leaveRoom');
       }
     });
   }

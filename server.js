@@ -11,7 +11,7 @@ var spawn = require('child_process').spawn;
 var session = require('express-session');
 
 // Unix socket to BLE
-var socket;
+var bleSocket;
 var sessionStore = new session.MemoryStore();
 
 function configAndStartServer(config) {
@@ -25,7 +25,7 @@ function configAndStartServer(config) {
 	configFile.configure(app, express, io, sessionStore);
 
 	// Initialize connection to BLE
-	socket = ble.connectToBleService(app, io, sessionStore);
+	bleSocket = ble.connectToBleService(app, io, sessionStore);
 
 	// Load other routes
 	fs.readdirSync("./server").forEach(function(file) {
@@ -33,7 +33,7 @@ function configAndStartServer(config) {
 
 		// If the required module can add any route handlers, let it do so
 		if(component.routeHandler) {
-			component.routeHandler(app, socket);
+			component.routeHandler(app, io, bleSocket);
 		}
 	});
 
@@ -65,8 +65,8 @@ function startServer(server, port) {
 	process.on( 'SIGINT', function() {
 		console.log( "\nShutting down - SIGINT (Ctrl-C)" );
 
-	 	// Close BLE service socket
-		socket.end();
+	 	// Close BLE service bleSocket
+		bleSocket.end();
 
 	 	// some other closing procedures go here
 		process.exit();

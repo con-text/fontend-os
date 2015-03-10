@@ -60,6 +60,22 @@ module.exports = {
           app,
           query)
       });
+    } else if("documents".indexOf(query.toLowerCase()) !== -1 && query !== '') {
+
+      for(id in apps) {
+        if(apps[id].name === "Documents") {
+          app = apps[id];
+        }
+      }
+
+      results.push({
+        value: "Open document editor",
+        type: "App",
+        action: AppsActionCreator.open.bind(
+          AppsActionCreator,
+          app,
+          query)
+      });
     }
 
     successCallback(results, query);

@@ -24,7 +24,7 @@ var DesktopStore  = require('../stores/DesktopStore');
 var AppsStore     = require('../stores/AppsStore');
 
 var Desktop = React.createClass({
-  mixins: [DragDropMixin, DragLayerMixin],
+  mixins: [DragDropMixin],
 
   statics: {
     configureDragDrop: function(register, context) {
@@ -79,7 +79,7 @@ var Desktop = React.createClass({
           <SearchBox boxVisible={this.state.showSearch} />
           <AppContainer app={this.state.currentApp}
             x={this.state.x}
-            y={this.state.x} />
+            y={this.state.y} />
         </div>
     </div>
     );

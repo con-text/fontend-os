@@ -59,8 +59,7 @@ var AppContainer = React.createClass({
           beginDrag: function(component) {
             return {
               item: component.props,
-              effectAllowed: DropEffects.MOVE,
-              dragPreview: getEmptyImage()
+              effectAllowed: DropEffects.MOVE
             };
           }
         }
@@ -93,12 +92,8 @@ var AppContainer = React.createClass({
 
     var dragStateWindow = this.getDragState(ItemTypes.WINDOW);
 
-    if(dragStateWindow.isDragging) {
-      backgroundColor = 'transparent';
-    }
-
     var divStyle = {
-      display: this.props.app ? 'block' : 'none',
+      display: this.props.app && !dragStateWindow.isDragging ? 'block' : 'none',
       left: this.props.x,
       top: this.props.y
     };

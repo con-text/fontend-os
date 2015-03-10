@@ -24,7 +24,7 @@ function allowAppsOrigin(req, res, next) {
 }
 
 var config = {
-  baseApiUrl: 'http://contexte.herokuapp.com',
+  baseApiUrl: 'http://localhost:3000',
   distDir: 'dist',
   appsDir: 'dist/apps',
   appsServerHost: 'http://localhost:3001',

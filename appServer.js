@@ -86,4 +86,12 @@ io.on('connection', function(socket){
       	delete clients[socket.id];
       }
   });
+
+  socket.on('initRoom', function(data) {
+    console.log("Init room", data);
+  });
+
+  socket.on('leaveRoom', function() {
+    console.log("Leave room");
+  });
 });

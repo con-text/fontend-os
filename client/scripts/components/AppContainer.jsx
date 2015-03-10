@@ -18,16 +18,6 @@ var AppsApiUtils = require('../utils/AppsApiUtils');
 
 var _ = require('lodash');
 
-
-var TRANSPARENT_PIXEL_SRC = 'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==';
-var emptyImg = document.createElement('img');
-
-emptyImg.src = TRANSPARENT_PIXEL_SRC;
-
-function getEmptyImage() {
-  return emptyImg;
-}
-
 var itemDropTarget = {
   acceptDrop: function(component, item) {
     var app = component.props.app;

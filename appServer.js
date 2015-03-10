@@ -5,6 +5,8 @@ var routes = require('./server/appServerRoutes.js');
 var config = require('./config/config');
 var socketClient = require('socket.io-client')(config.baseApiUrl);
 // var socketClient = require('socket.io-client')('http://contexte.herokuapp.com');
+var redisConfig = require('./config/redis');
+
 
 app.use(config.allowAppsOrigin);
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -37,6 +39,11 @@ var server = app.listen(3001, function () {
   console.log('Example app listening at http://%s:%s', host, port);
 
 });
+var io = require('socket.io')(server);
+var clients = {};
+
+// Configure redis
+var redisClient = redisConfig.configureRedisSubscriber(io);
 
 var io = require('socket.io')(server);
 

@@ -1,3 +1,28 @@
 .address-bar {
-  background-color: red;
+  padding-bottom: 6px;
+}
+
+.address-bar input {
+  padding: 5px;
+  width: 70%;
+  font-size: 15px;
+}
+
+.address-bar button {
+  padding: 3px 5px;
+  vertical-align: 11%;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  color: graytext;
+  transition: color 0.5s;
+}
+
+.address-bar button:hover {
+  color: #3b3b3b;
+  transition: color 0.5s;
+}
+
+iframe {
+  border: none;
 }

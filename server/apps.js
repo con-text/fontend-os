@@ -82,7 +82,7 @@ module.exports = {
     return manifests;
   },
 
-  routeHandler: function(app) {
+  routeHandler: function(app, io, ble, redis) {
 
     var self = this;
     app.get('/apps', function(req, res) {
@@ -125,6 +125,16 @@ module.exports = {
           res.sendStatus(200);
         }
       });
+
+      var notification = {
+        appId: appId,
+        userId: userId,
+        userToShare: userToShare,
+        stateId: stateId
+      };
+
+      redis.publish('notif', JSON.stringify(notification));
+      console.log("Published " +JSON.stringify(notification));
     });
 
     /**

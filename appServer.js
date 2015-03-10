@@ -4,6 +4,7 @@ var bodyParser = require('body-parser');
 var routes = require('./server/appServerRoutes.js');
 var socketClient = require('socket.io-client')('http://contexte.herokuapp.com');
 var config = require('./config/config');
+var redisConfig = require('./config/redis');
 
 app.use(config.allowAppsOrigin);
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -36,6 +37,11 @@ var server = app.listen(3001, function () {
   console.log('Example app listening at http://%s:%s', host, port);
 
 });
+var io = require('socket.io')(server);
+var clients = {};
+
+// Configure redis
+var redisClient = redisConfig.configureRedisSubscriber(io);
 
 socketClient.on('connect', function(){
 	console.log("Connected to backend socketClient");
@@ -44,8 +50,6 @@ socketClient.on('connect', function(){
 socketClient.on('event', function(data){});
 socketClient.on('disconnect', function(){});
 
-var io = require('socket.io')(server);
-var clients = {};
 
 socketClient.on('syncedState', function(msg){
 	for(var key in clients){

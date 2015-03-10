@@ -9,6 +9,7 @@ var ble = require('./bleservice');
 var configFile = require('./config/config');
 var spawn = require('child_process').spawn;
 var session = require('express-session');
+var redisConfig = require('./config/redis');
 
 // Unix socket to BLE
 var bleSocket;
@@ -27,13 +28,15 @@ function configAndStartServer(config) {
 	// Initialize connection to BLE
 	bleSocket = ble.connectToBleService(app, io, sessionStore);
 
+	var redisClient = redisConfig.configureRedisPublisher();
+
 	// Load other routes
 	fs.readdirSync("./server").forEach(function(file) {
 		var component = require(path.join(process.cwd(), 'server', file));
 
 		// If the required module can add any route handlers, let it do so
 		if(component.routeHandler) {
-			component.routeHandler(app, io, bleSocket);
+			component.routeHandler(app, io, bleSocket, redisClient);
 		}
 	});
 

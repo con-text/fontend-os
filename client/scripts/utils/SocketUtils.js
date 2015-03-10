@@ -1,6 +1,7 @@
 var SessionActionCreators        = require('../actions/SessionActionCreators');
 var AvailableUsersActionCreators = require('../actions/AvailableUsersActionCreators');
-
+var AppsActionCreators           = require('../actions/AppsActionCreators');
+var NotificationActions          = require('../actions/NotificationActionCreators');
 // Initialize socket.io
 var socket = io();
 var appServerSocket = io('http://localhost:3001');
@@ -33,6 +34,21 @@ module.exports = {
         // Pass it back to apps server
         appServerSocket.emit('leaveRoom');
       }
+    });
+
+    appServerSocket.on('notification', function(notification) {
+
+      var app = {
+        id: notification.appId
+      };
+
+      // Create notification about sharing
+      NotificationActions.createTextNotification("You will share this app.",
+
+        // Bind action to open the app to the notification
+        AppsActionCreators.open.bind(AppsActionCreators,app)
+      );
+
     });
   }
 };

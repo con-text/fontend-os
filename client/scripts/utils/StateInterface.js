@@ -241,7 +241,7 @@ AppState.prototype.updateValueFromArray = function(obj,arr,prop,value,transforma
 	if(transformations){
 		value = applyChange(obj[prop], transformations);
 	}
-	
+
 	//set the value and discard the changes
 	obj[prop] = value;
 

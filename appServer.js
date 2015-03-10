@@ -59,7 +59,7 @@ socketClient.on('disconnect', function(){
 socketClient.on('syncedState', function(msg){
 	//got syncedState from the server, send to the saved object
     if(currentObjects[msg.objectId]){
-        currentObjects[msg.socketId].emit('syncedState', msg);
+        currentObjects[msg.objectId].emit('syncedState', msg);
     }
     else{
         console.log("Object doesn't exist in currentObjects");
@@ -70,17 +70,27 @@ function socketCanRun(){
     return (!!currentUser);
 }
 
+socketClient.on('sendInitialFromBackend', function(msg){
+
+    if(!msg.objectId || !msg.state){
+        console.log("Message from backend is missing object id or state", msg.objectId, msg.state);
+        return;
+    }
+    if(!currentObjects[msg.objectId]){
+        console.log("The entry for object", msg.objectId,"doesn't exist");
+        return;
+    }
+    console.log("Filling for object", msg.objectId);
+    currentObjects[msg.objectId].emit('fillData', msg.state);
+});
+
+
 // Need to define something using
 io.on('connection', function(socket){
 
-	socketClient.on('gotInitialFromBackend', function(msg){
 
-        if(!msg.objectId || !msg.state){
-            console.log("Message from backend is missing object id or state");
-            return;
-        }
-		clients[msg.objectId].emit('fillData', msg.state);
-	});
+
+
 
 	socket.on('stateChange', function(msg){
 		socketClient.emit('stateChange',
@@ -96,13 +106,15 @@ io.on('connection', function(socket){
         }
         //create the mappings between objectid and socketid
         //the socketIdToObject will be used on disconnect
+        console.log("Creating entry for",msg.objectId);
+
+        var packet = {uuid: msg.uuid, objectId: msg.objectId, socketId: socket.id};
+		socketClient.emit('requestInitialFromBackend', packet);
+
+
         currentObjects[msg.objectId] = socket;
         socketIdToObject[socket.id] = msg.objectId;
 
-
-		var packet = {uuid: msg.uuid, objectId: msg.objectId, socketId: socket.id};
-
-		socketClient.emit('getInitialFromBackend', packet);
 	});
 
   socket.on('disconnect', function() {

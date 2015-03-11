@@ -47,10 +47,8 @@ var SessionActionCreators = {
   },
 
   destroySession: function () {
-    ApiUtils.destroySession(function() {
-      AppDispatcher.handleServerAction({
-        type: ActionTypes.DESTROY_SESSION
-      });
+    AppDispatcher.handleServerAction({
+      type: ActionTypes.DESTROY_SESSION
     });
   }
 };

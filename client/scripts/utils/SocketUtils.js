@@ -18,22 +18,21 @@ module.exports = {
     socket.on('loginStatus', function(data) {
       if(data.result === 'success') {
         SessionActionCreators.finishAuthSuccess(data.userId);
-      } else if (data.result === 'fail') {
-        SessionActionCreators.finishAuthFailed(data.userId);
-      }
-
-      if(data.userId) {
 
         // Pass it back to apps server
         appServerSocket.emit('initRoom', {
           uuid: data.userId
         });
 
-      } else {
-
+      } else if (data.result === 'fail') {
+        SessionActionCreators.finishAuthFailed(data.userId);
+      } else if (data.result === 'logout') {
         // Pass it back to apps server
         appServerSocket.emit('leaveRoom');
+        return;
       }
+
+
     });
 
     appServerSocket.on('notification', function(notification) {

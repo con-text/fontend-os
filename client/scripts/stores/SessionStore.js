@@ -21,6 +21,9 @@ var CHANGE_EVENT = 'change';
 var _session = null;
 var _isLoggingIn = false;
 
+// API Utils
+var SessionApiUtils = require('../utils/SessionApiUtils');
+
 function createSession(user) {
 
   var availableUsers = AvailableUsersStore.getAvailable();
@@ -38,7 +41,11 @@ function createSession(user) {
 }
 
 function destroySession(user) {
-  _session = null;
+  // Tell the server that session is gone
+  SessionApiUtils.destroySession(function() {
+    _session = null;
+    SessionStore.emitChange();
+  });
 }
 
 function checkIfSessionIsValid() {
@@ -64,7 +71,6 @@ function checkIfSessionIsValid() {
   // Validate current session against the list of available users
   if(_session && !foundUser) {
     destroySession();
-    SessionStore.emitChange();
   }
 }
 
@@ -126,7 +132,6 @@ SessionStore.dispatchToken = AppDispatcher.register(function(payload) {
 
     case ActionTypes.DESTROY_SESSION:
       destroySession();
-      SessionStore.emitChange();
       break;
 
     case AvailableUsersConstants.ActionTypes.USERS_UPDATED:

@@ -39,14 +39,14 @@ var server = app.listen(3001, function () {
   console.log('Example app listening at http://%s:%s', host, port);
 
 });
+
+// Create socket server
 var io = require('socket.io')(server);
-var clients = {};
 
 // Configure redis
 var redisClient = redisConfig.configureRedisSubscriber(io);
 
-var io = require('socket.io')(server);
-
+var clients = {};
 var currentUser;
 var socketIdToObject = {};
 var currentObjects = {};

@@ -1,5 +1,3 @@
-var SessionActionCreators = require('./../actions/SessionActionCreators');
-
 // TODO: Should use HTTPS?
 var baseUrl = 'http://localhost:5000';
 

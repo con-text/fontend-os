@@ -42,7 +42,7 @@ module.exports = {
       };
 
       // Create notification about sharing
-      NotificationActions.createTextNotification("You will share this app.",
+      NotificationActions.createTextNotification("You now share this app with",
 
         // Bind action to open the app to the notification
         AppsActionCreators.open.bind(AppsActionCreators,app)

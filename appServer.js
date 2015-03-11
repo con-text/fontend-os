@@ -3,10 +3,7 @@ var app = express();
 var bodyParser = require('body-parser');
 var routes = require('./server/appServerRoutes.js');
 var config = require('./config/config');
-var socketClient = require('socket.io-client')(config.baseApiUrl);
-// var socketClient = require('socket.io-client')('http://contexte.herokuapp.com');
-var redisConfig = require('./config/redis');
-
+var backendSocket = require('socket.io-client')(config.baseApiUrl);
 
 app.use(config.allowAppsOrigin);
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -43,27 +40,22 @@ var server = app.listen(3001, function () {
 // Create socket server
 var io = require('socket.io')(server);
 
-// Configure redis
-var redisClient = redisConfig.configureRedisSubscriber(io);
-
 var clients = {};
 var currentUser;
 var socketIdToObject = {};
 var currentObjects = {};
 
-socketClient.on('connect', function(){
-	console.log("Connected to backend socketClient");
+backendSocket.on('connect', function(){
+	console.log("Connected to backend backendSocket");
 });
 
-
-socketClient.on('disconnect', function(){
+backendSocket.on('disconnect', function(){
     //backend disconects, wipe the connection so that
     console.log("Backend has disconnected");
     currentUser = null;
 });
 
-
-socketClient.on('syncedState', function(msg){
+backendSocket.on('syncedState', function(msg){
 	//got syncedState from the server, send to the saved object
     if(currentObjects[msg.objectId]){
         currentObjects[msg.objectId].emit('syncedState', msg);
@@ -73,11 +65,13 @@ socketClient.on('syncedState', function(msg){
     }
 });
 
+
+
 function socketCanRun(){
     return (!!currentUser);
 }
 
-socketClient.on('sendInitialFromBackend', function(msg){
+backendSocket.on('sendInitialFromBackend', function(msg){
 
     if(!msg.objectId || !msg.state){
         console.log("Message from backend is missing object id or state", msg.objectId, msg.state);
@@ -94,16 +88,15 @@ socketClient.on('sendInitialFromBackend', function(msg){
 
 // Need to define something using
 io.on('connection', function(socket){
-
-
-
-
-
 	socket.on('stateChange', function(msg){
-		socketClient.emit('stateChange',
+		backendSocket.emit('stateChange',
 			{	uuid: msg.uuid, objectId: msg.objectId, action:msg.action,
 				path: msg.path, property: msg.property, value: msg.value});
 	});
+
+  backendSocket.on('notification', function(notification) {
+    socket.emit('notification', notification);
+  });
 
 	socket.on('getInitial', function(msg){
         //new object has joined the room, check that it doesn't already exist
@@ -116,7 +109,7 @@ io.on('connection', function(socket){
         console.log("Creating entry for",msg.objectId);
 
         var packet = {uuid: msg.uuid, objectId: msg.objectId, socketId: socket.id};
-		socketClient.emit('requestInitialFromBackend', packet);
+		backendSocket.emit('requestInitialFromBackend', packet);
 
 
         currentObjects[msg.objectId] = socket;
@@ -139,7 +132,7 @@ io.on('connection', function(socket){
       //uuid to a socket object
       if(data.uuid){
           console.log("Joining",data.uuid);
-          socketClient.emit('initRoom', {uuid: data.uuid});
+          backendSocket.emit('initRoom', {uuid: data.uuid});
           currentUser = data.uuid;
       }
       else{
@@ -148,7 +141,7 @@ io.on('connection', function(socket){
   });
 
   socket.on('leaveRoom', function() {
-      socketClient.emit('leaveRoom', {uuid: currentUser});
+      backendSocket.emit('leaveRoom', {uuid: currentUser});
       console.log("Leave room");
   });
 });

@@ -129,7 +129,7 @@ module.exports = {
       var notification = {
         appId: appId,
         userId: userId,
-        userToShare: userToShare,
+        userToShareId: userToShare.uuid,
         stateId: stateId
       };
 

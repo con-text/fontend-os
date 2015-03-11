@@ -24,7 +24,9 @@ function allowAppsOrigin(req, res, next) {
 }
 
 var config = {
-  baseApiUrl: 'http://localhost:3000',
+  baseApiUrl: process.env.DEVELOPMENT ?
+    'http://localhost:3000' :
+    'http://contexte.herokuapp.com',
   distDir: 'dist',
   appsDir: 'dist/apps',
   appsServerHost: 'http://localhost:3001',
@@ -45,7 +47,7 @@ var config = {
     app.use(bodyParser.urlencoded({ extended: false }));
     app.use(bodyParser.json());
 
-    // Use session
+    // Use session with mem store
     this.sessionConfig.store = sessionStore;
     var sessionMiddleware = session(this.sessionConfig);
 

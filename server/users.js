@@ -13,8 +13,18 @@ function getUserProfile(userId, cbk, errCbk) {
 
   })
   .on('error', function(err, response) {
+
     console.error("Fail", err, response);
-    errCbk({code: response.code});
+
+    var statusCode = response ? resposne.statusCode : 500;
+
+    if(errCbk) {
+      errCbk({
+        code: statusCode,
+        message: 'Failed to retreive user profile'
+      });
+    }
+
   });
 }
 

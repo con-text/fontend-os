@@ -84,11 +84,16 @@
   },
   "homepage": "https://github.com/con-text/fontend-os",
   "window": {
-    "fullscreen": true,
+    "fullscreen": false,
     "width": 800,
-    "height": 640
+    "height": 640,
+    "toolbar": false
   },
   "node-remote": "*localhost:5000",
-  "chromium-args": "--child-clean-exit",
-  "single-instance": true
+  "chromium-args": "--child-clean-exit --disable-web-security --allow-running-insecure-content",
+  "single-instance": true,
+  "webkit": {
+    "plugin": true
+  },
+  "user-agent": "Mozilla/5.0 (iPad; U; CPU OS 3_2_1 like Mac OS X; en-us) AppleWebKit/531.21.10 (KHTML, like Gecko) Mobile/7B405"
 }

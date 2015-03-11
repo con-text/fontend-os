@@ -49,7 +49,7 @@ var LoginScreen = React.createClass({
       <div className="container">
         <div id="users-box" className='sidebar'>
           <span className="page-header">
-            <h1>Welcome to Context</h1>
+            <h1>Welcome to Nimble</h1>
           </span>
           <UsersList disabled={this.state.isLoggingIn} users={this.state.available} />
         </div>

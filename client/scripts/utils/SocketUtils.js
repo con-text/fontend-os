@@ -41,11 +41,15 @@ module.exports = {
         id: notification.appId
       };
 
+      var params = {
+        objectId: notification.objectId
+      };
+
       // Create notification about sharing
       NotificationActions.createTextNotification("You now share this app with",
-
+        
         // Bind action to open the app to the notification
-        AppsActionCreators.open.bind(AppsActionCreators,app)
+        AppsActionCreators.open.bind(AppsActionCreators, app,params)
       );
 
     });

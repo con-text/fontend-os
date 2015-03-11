@@ -65,8 +65,11 @@ var AppsStore = assign({}, EventEmitter.prototype, {
 
     var uuid = SessionStore.getCurrentUser().uuid;
 
+    params = params || {};
     // What is my current state?
-    var stateId = null;         // TODO: This can be provided from the search box
+
+    // TODO: This can be provided from the search box
+    var stateId = params.objectId;
     var url;
 
     if(!stateId) {
@@ -81,8 +84,8 @@ var AppsStore = assign({}, EventEmitter.prototype, {
           // Create react component from class
           url = 'http://localhost:3001/app/'+ uuid +'/' + app.id + '/states/' + stateId;
 
-          if(params) {
-            url += '?' + querystring.stringify(params);
+          if(params.args) {
+            url += '?' + querystring.stringify(params.args);
           }
 
           this.openedApp = app;
@@ -99,8 +102,8 @@ var AppsStore = assign({}, EventEmitter.prototype, {
       // Create react component from class
       url = 'http://localhost:3001/app/'+ uuid +'/' + app.id + '/states/' + stateId;
 
-      if(params) {
-        url += '?' + querystring.stringify(params);
+      if(params.args) {
+        url += '?' + querystring.stringify(params.args);
       }
 
       this.openedApp = app;

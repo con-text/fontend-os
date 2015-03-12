@@ -40,3 +40,4 @@ build/
 bower_components/
 awsconfig.json
 *.rdb
+setenv.sh

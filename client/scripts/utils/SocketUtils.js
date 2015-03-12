@@ -42,14 +42,16 @@ module.exports = {
       };
 
       var params = {
-        objectId: notification.objectId
+        objectId: notification.stateId
       };
+
+      console.log("Going to open object id: " + params.objectId);
 
       // Create notification about sharing
       NotificationActions.createTextNotification("You now share this app with",
-        
+
         // Bind action to open the app to the notification
-        AppsActionCreators.open.bind(AppsActionCreators, app,params)
+        AppsActionCreators.open.bind(AppsActionCreators, app, params)
       );
 
     });

@@ -5,6 +5,27 @@ var _ = require('lodash');
 var AppsStore = require('../stores/AppsStore');
 var AppsActionCreator = require('../actions/AppsActionCreators');
 var StateInterface = require('./StateInterface');
+var AppsApiUtils = require('./AppsApiUtils');
+
+/**
+* Find app given its name
+*/
+function findAppByName(appName) {
+
+  appName = appName || '';
+
+  var apps = AppsStore.getApps();
+  var app;
+
+  // Find browser
+  for(var id in apps) {
+    if(apps[id].name.toLowerCase() === appName.toLowerCase()) {
+      app = apps[id];
+    }
+  }
+
+  return app;
+}
 
 module.exports = {
 
@@ -22,16 +43,19 @@ module.exports = {
     var browserObjectId;
     var id;
 
+    // Params for app
+    var params = {};
+
     // Try to match URL
     var urlExp = new RegExp(/(((http|ftp|https):\/\/)|www\.)[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&:/~\+#!]*[\w\-\@?^=%&/~\+#])?/);
     if(urlExp.test(query)) {
 
-      // Find browser
-      for(id in apps) {
-        if(apps[id].name === "Browser") {
-          app = apps[id];
-        }
-      }
+      app = findAppByName("Browser");
+
+      // Pass argument to the app
+      params.args = {
+        query: query
+      };
 
       results.push({
         value: "Go to: " + query,
@@ -39,18 +63,14 @@ module.exports = {
         action: AppsActionCreator.open.bind(
           AppsActionCreator,
           app,
-          query)
+          params)
       });
 
     }
 
     if("calculator".indexOf(query.toLowerCase()) !== -1 && query !== '') {
 
-      for(id in apps) {
-        if(apps[id].name === "Calculator") {
-          app = apps[id];
-        }
-      }
+      app = findAppByName("Calculator");
 
       results.push({
         value: "Open calculator",
@@ -58,15 +78,13 @@ module.exports = {
         action: AppsActionCreator.open.bind(
           AppsActionCreator,
           app,
-          query)
+          params)
       });
-    } else if("documents".indexOf(query.toLowerCase()) !== -1 && query !== '') {
+    }
 
-      for(id in apps) {
-        if(apps[id].name === "Documents") {
-          app = apps[id];
-        }
-      }
+    if("documents".indexOf(query.toLowerCase()) !== -1 && query !== '') {
+
+      app = findAppByName("Documents");
 
       results.push({
         value: "Open document editor",
@@ -74,10 +92,33 @@ module.exports = {
         action: AppsActionCreator.open.bind(
           AppsActionCreator,
           app,
-          query)
+          params)
       });
+
+      // Find documents
+      AppsApiUtils.getStates(app.id, function(states) {
+        states.forEach(function(state) {
+
+          var appParams = _.clone(params);
+          // Assign state id
+          appParams.objectId = state._id;
+
+          results.push({
+            value: "Open document " + state._id,
+            type: "App",
+            action: AppsActionCreator.open.bind(
+              AppsActionCreator,
+              app,
+              appParams)
+          });
+        });
+
+        successCallback(results, query);
+
+      });
+    } else {
+      successCallback(results, query);
     }
 
-    successCallback(results, query);
   }
 };

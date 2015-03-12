@@ -87,6 +87,28 @@ function getOrCreateObject(uuid, appId, callback) {
 	});
 }
 
+/**
+* Create a new state object
+* {uuid} - User id
+* {appId} - App id
+* {callback}
+*/
+function createObject(uuid, appId, callback) {
+	// We need to create a state
+	unirest.post(baseUrl + '/users/' + uuid + '/apps/' + appId)
+	.header('Accept', 'application/json')
+	.end(function(response) {
+
+		if(response.error) {
+			callback && callback(response.error);
+			return;
+		}
+
+		var newState = response.body;
+		callback && callback(null, newState._id);
+	});
+}
+
 function fetchObject(uuid, objectId, callback){
 	var url = baseUrl + "/objects/" + uuid+"/"+objectId;
 
@@ -113,8 +135,8 @@ module.exports = {
 	  res.json(appIds);
 	},
 
-	getOrCreateState: function(req, res) {
-		getOrCreateObject(req.params.uuid, req.params.appId, function(err, stateId){
+	createState: function(req, res) {
+		createObject(req.params.uuid, req.params.appId, function(err, stateId){
 			if(err) {
 				return res.status(500).send("Couldn't get new state, wat111");
 			}
@@ -159,7 +181,7 @@ module.exports = {
 	},
 
 	getAppWithObject: function(req,res){
-		console.log(req.params);
+
 		var uuid = req.params.uuid;
 		var appId = req.params.appId;
 		var objectId = req.params.objectId;

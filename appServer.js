@@ -14,7 +14,7 @@ app.use(bodyParser.json());
 app.get('/', routes.root);
 app.get('/app/:uuid/:appId', routes.getApp);
 app.get('/app/:uuid/:appId/states/:objectId', routes.getAppWithObject);
-app.get('/users/:uuid/apps/:appId/states', routes.getOrCreateState);
+app.post('/users/:uuid/apps/:appId/states', routes.createState);
 app.get('/object/:uuid/:objectId', routes.getObject);
 
 // Allow to serve assets, like css or images

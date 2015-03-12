@@ -27,6 +27,33 @@ function findAppByName(appName) {
   return app;
 }
 
+function findStates(results, app, params) {
+
+  var deferred = new $.Deferred();
+  // Find documents
+  AppsApiUtils.getStates(app.id, function(states) {
+    states.forEach(function(state) {
+
+      var appParams = _.clone(params);
+      // Assign state id
+      appParams.objectId = state._id;
+
+      results.push({
+        value: "\tOpen " + state._id,
+        type: "App",
+        action: AppsActionCreator.open.bind(
+          AppsActionCreator,
+          app,
+          appParams)
+      });
+    });
+
+    deferred.resolve();
+  });
+
+  return deferred;
+}
+
 module.exports = {
 
   search: function(query, options) {
@@ -45,6 +72,7 @@ module.exports = {
 
     // Params for app
     var params = {};
+    var deferred = [];
 
     // Try to match URL
     var urlExp = new RegExp(/(((http|ftp|https):\/\/)|www\.)[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&:/~\+#!]*[\w\-\@?^=%&/~\+#])?/);
@@ -66,6 +94,8 @@ module.exports = {
           params)
       });
 
+      deferred.push(findStates(results, app, params));
+
     }
 
     if("calculator".indexOf(query.toLowerCase()) !== -1 && query !== '') {
@@ -80,6 +110,8 @@ module.exports = {
           app,
           params)
       });
+
+      deferred.push(findStates(results, app, params));
     }
 
     if("documents".indexOf(query.toLowerCase()) !== -1 && query !== '') {
@@ -95,30 +127,11 @@ module.exports = {
           params)
       });
 
-      // Find documents
-      AppsApiUtils.getStates(app.id, function(states) {
-        states.forEach(function(state) {
-
-          var appParams = _.clone(params);
-          // Assign state id
-          appParams.objectId = state._id;
-
-          results.push({
-            value: "Open document " + state._id,
-            type: "App",
-            action: AppsActionCreator.open.bind(
-              AppsActionCreator,
-              app,
-              appParams)
-          });
-        });
-
-        successCallback(results, query);
-
-      });
-    } else {
-      successCallback(results, query);
+      deferred.push(findStates(results, app, params));
     }
 
+    $.when(deferred).done(function() {
+      successCallback(results, query);
+    });
   }
 };

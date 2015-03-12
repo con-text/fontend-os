@@ -38,10 +38,12 @@
         container: '#toolbar'
       });
 
-      textEditor.on("text-change", function() {
-        AS._state.textValue = textEditor.getText();
-        AS._state.htmlValue = textEditor.getHTML();
-        console.log(AS._state);
+      textEditor.on("text-change", function(delta, source) {
+
+        if(source === "user") {
+          AS._state.textValue = textEditor.getText();
+          AS._state.htmlValue = textEditor.getHTML();
+        }
       });
 
       AS.on('syncedState', receiveTextData);

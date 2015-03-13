@@ -78,34 +78,27 @@ var Desktop = React.createClass({
   render: function() {
 
     var containers = this.state.currentApps.map(function(app) {
-      return <AppContainer key={app.id} app={app}
-        x={this.state.pos[app.id].x} y={this.state.pos[app.id].y} />;
+
+      if(!this.state.pos[app.id]) {
+        this.state.pos[app.id] = {x: 0, y: 0};
+      }
+
+      return <AppContainer key={app.id}
+        app={app}
+        x={this.state.pos[app.id].x}
+        y={this.state.pos[app.id].y} />;
     }, this);
 
     return (
       <div className="container" onClickCapture={this.handleClick}>
         <NotificationArea />
         <Sidebar />
-        <span className="button" onClick={this.notify}>CLICK ME</span>
         <div className="desktop" {...this.dropTargetFor(ItemTypes.WINDOW)}>
           <SearchBox boxVisible={this.state.showSearch} />
           {containers}
         </div>
     </div>
     );
-  },
-
-  notify: function(e) {
-    // Request should specify who is sharing what app
-    var app = {
-      id: "89447cef-0ee6-4805-942b-bc790e89dce1"
-    };
-
-    // Create notification about sharing
-    NotificationActions.createTextNotification("You will share this app.",
-      AppsActions.open.bind(
-        AppsActions,
-        app));
   },
 
   handleClick: function(e) {

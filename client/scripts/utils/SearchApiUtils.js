@@ -153,7 +153,6 @@ module.exports = {
     var params = {};
     var deferred = [];
 
-
     checkForWebsite(query, results);
     checkForAppWithStates("Calculator", deferred, query, params);
     checkForAppWithStates("Documents", deferred, query, params);

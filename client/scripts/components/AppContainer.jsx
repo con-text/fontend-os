@@ -132,7 +132,7 @@ var AppContainer = React.createClass({
 
   handleCloseClick: function(e) {
     e.preventDefault();
-    AppsActionCreators.close();
+    AppsActionCreators.close(this.props.app);
   }
 });
 

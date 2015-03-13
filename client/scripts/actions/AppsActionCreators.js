@@ -19,9 +19,10 @@ module.exports = {
   /**
   * Closes all apps
   */
-  close: function() {
+  close: function(app) {
     AppDispatcher.handleViewAction({
       type: ActionTypes.CLOSE_APPS,
+      app: app
     });
   },
 

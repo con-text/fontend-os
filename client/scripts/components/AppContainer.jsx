@@ -72,7 +72,9 @@ var AppContainer = React.createClass({
   },
 
   _onChange: function() {
-    this.setState({currentUser: SessionStore.getCurrentUser()});
+    if(this.isMounted()) {
+      this.setState({currentUser: SessionStore.getCurrentUser()});
+    }
   },
 
   render: function() {

@@ -145,6 +145,16 @@ module.exports = {
 		});
 	},
 
+	getDefaultState: function(req, res) {
+		getOrCreateObject(req.params.uuid, req.params.appId, function(err, stateId){
+			if(err) {
+				return res.status(500).send("Couldn't get new state, wat111");
+			}
+
+			res.json({stateId: stateId});
+		});
+	},
+
 	getApp: function(req,res){
 
 		var uuid = req.params.uuid;

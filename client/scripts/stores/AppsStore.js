@@ -75,7 +75,14 @@ var AppsStore = assign({}, EventEmitter.prototype, {
     // TODO: Move some of that code to AppsApiUtils
     if(!stateId) {
       // Ask app server for new state
+
       url = 'http://localhost:3001/users/'+ uuid +'/apps/' + app.id + '/states';
+
+      // Create new state or use default if available
+      if(params.useDefault) {
+        url += '/default';
+      }
+
       $.ajax({
         url: url,
         success: function(data) {
@@ -94,7 +101,7 @@ var AppsStore = assign({}, EventEmitter.prototype, {
           this.emitChange();
           return;
         }.bind(this),
-        type: 'POST'
+        type: params.useDefault ? 'GET' : 'POST'
       });
 
     } else {

@@ -75,6 +75,17 @@ function checkForWebsite(query, results) {
 }
 
 /**
+* Extract timestamp from MongoDB _id
+*
+* Source: http://stackoverflow.com/a/6453709/1260006
+*
+*/
+function mongoIdToTimestamp(id) {
+  var timestamp = id.toString().substring(0, 8);
+  return new Date( parseInt( timestamp, 16 ) * 1000 );
+}
+
+/**
 * Find all states of an app
 */
 function findStates(app, params) {
@@ -102,8 +113,11 @@ function findStates(app, params) {
       // Assign state id
       appParams.objectId = state._id;
 
+      // Extract timestamp
+      var timestamp = mongoIdToTimestamp(state._id);
+
       results.push({
-        value: "\tOpen " + state._id,
+        value: "\tOpen " + app.name.toLowerCase() + " from " + timestamp,
         type: "App",
         action: AppsActionCreator.open.bind(
           AppsActionCreator,

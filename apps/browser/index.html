@@ -23,6 +23,7 @@
 			var frame = this.refs.frame.getDOMNode();
 			frame.setAttribute('nwdisable', '');
 			frame.setAttribute('nwfaketop', '');
+			frame.setAttribute('allowFullScreen', '');
 			frame.addEventListener("DOMAttrModified", this.handleFrameLoad);
 		},
 
@@ -91,7 +92,7 @@
 				!(_.startsWith(url, "http://") && _.startsWith(url, "https://"))) {
 				url = "http://" + url;
 			}
-			
+
 			if(url !== '') {
 				frame.setAttribute('src', url);
 				this.setState({history: this.state.history.concat([url])});

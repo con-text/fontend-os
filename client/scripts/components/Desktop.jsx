@@ -77,7 +77,10 @@ var Desktop = React.createClass({
 
   render: function() {
 
+    var dropState = this.getDropState(ItemTypes.WINDOW);
     var containers = this.state.currentApps.map(function(app) {
+
+
 
       if(!this.state.pos[app.id]) {
         this.state.pos[app.id] = {x: 0, y: 0};
@@ -85,20 +88,34 @@ var Desktop = React.createClass({
 
       return <AppContainer key={app.id}
         app={app}
+
+        onClick={this.bringToFront}
         x={this.state.pos[app.id].x}
         y={this.state.pos[app.id].y} />;
     }, this);
+
+    var divStyle = {
+      zIndex: 1
+    };
+
+    if(dropState.isDragging) {
+      divStyle.zIndex = 2222;
+    }
 
     return (
       <div className="container" onClickCapture={this.handleClick}>
         <NotificationArea />
         <Sidebar />
-        <div className="desktop" {...this.dropTargetFor(ItemTypes.WINDOW)}>
+        <div className="desktop" style={divStyle} {...this.dropTargetFor(ItemTypes.WINDOW)}>
           <SearchBox boxVisible={this.state.showSearch} />
           {containers}
         </div>
     </div>
     );
+  },
+
+  bringToFront: function(e) {
+    console.log('to front', e.target);
   },
 
   handleClick: function(e) {

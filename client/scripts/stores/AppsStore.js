@@ -100,7 +100,8 @@ var AppsStore = assign({}, EventEmitter.prototype, {
           }
 
           this.openedApps.push(app);
-          this.openedApps[this.openedApps.length-1].element = React.createElement('iframe', {src: url, className: "app-window"});
+          this.openedApps[this.openedApps.length-1].element = React.createElement('iframe', {src: url, className: "app-window",
+            allowFullScreen: ''});
           this.emitChange();
           return;
         }.bind(this),
@@ -118,7 +119,8 @@ var AppsStore = assign({}, EventEmitter.prototype, {
       }
 
       this.openedApps.push(app);
-      this.openedApps[this.openedApps.length-1].element = React.createElement('iframe', {src: url, className: "app-window"});
+      this.openedApps[this.openedApps.length-1].element = React.createElement('iframe', {src: url, className: "app-window",
+        allowFullScreen: ''});
       this.emitChange();
     }
   },

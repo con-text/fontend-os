@@ -61,6 +61,7 @@ backendSocket.on('disconnect', function(){
 backendSocket.on('syncedState', function(msg){
 	//got syncedState from the server, send to the saved object
     if(currentObjects[msg.objectId]){
+      console.log("SEnding syncstate to",msg.objectId);
         currentObjects[msg.objectId].emit('syncedState', msg);
     }
     else{
@@ -93,8 +94,7 @@ backendSocket.on('sendInitialFromBackend', function(msg){
 io.on('connection', function(socket){
 	socket.on('stateChange', function(msg){
 		backendSocket.emit('stateChange',
-			{	uuid: msg.uuid, objectId: msg.objectId, action:msg.action,
-				path: msg.path, property: msg.property, value: msg.value});
+			msg);
 	});
 
   backendSocket.on('notification', function(notification) {

@@ -158,6 +158,11 @@ module.exports = {
       .send({userId: userToShare.uuid})
       .end(function(response) {
         if(response.error) {
+
+            //undefined response code was causing the server to crash
+            if(!response.code){
+                response.code = 500;
+            }
           res.status(response.code).json(response.error);
         } else {
           res.sendStatus(200);
@@ -196,8 +201,8 @@ function injectAPI(webSource, manifest, uuid, objectId){
       content+= "<script type='text/javascript' src='http://localhost:5000/js/OperationalTransformation.js'></script>";
       content+= "<script src='/socket.io/socket.io.js'></script>";
       content+= "<script type='text/javascript' src='http://localhost:5000/js/StateInterface.js'></script>";
-      //hardcoded, obviously change this
-      content+= "<script type='text/javascript'>var AS = new AppState('" + manifest.id + "', '" + uuid + "', '" + objectId +"');";
+
+      content+= "<script type='text/javascript'>var AS = new AppState('" + manifest.id + "', '" + uuid + "', '" + objectId +"',[" + manifest.dependencies.map(function(o){return JSON.stringify(o);}) + "]);";
       content+= "var dmp = new diff_match_patch();</script>";
 
     if(manifest.style) {

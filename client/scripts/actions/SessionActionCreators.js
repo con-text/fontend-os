@@ -11,7 +11,8 @@ var SessionActionCreators = {
     ApiUtils.sendToWearble(user);
 
     AppDispatcher.handleViewAction({
-      type: ActionTypes.START_AUTH
+      type: ActionTypes.START_AUTH,
+      user: user
     });
   },
 

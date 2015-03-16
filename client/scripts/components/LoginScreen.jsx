@@ -14,7 +14,8 @@ var LoginScreen = React.createClass({
   getStateFromStores: function() {
     return {
       isLoggingIn: SessionStore.isLoggingIn(),
-      available: AvailableUsersStore.getAvailable()
+      available: AvailableUsersStore.getAvailable(),
+      userLoggingIn: SessionStore.whoLoggingIn()
     };
   },
 
@@ -51,7 +52,9 @@ var LoginScreen = React.createClass({
           <span className="page-header">
             <h1>Welcome to Nimble</h1>
           </span>
-          <UsersList disabled={this.state.isLoggingIn} users={this.state.available} />
+          <UsersList disabled={this.state.isLoggingIn}
+            userLoggingIn={this.state.userLoggingIn}
+            users={this.state.available} />
         </div>
         <div className="desktop"></div>
       </div>

@@ -46,9 +46,16 @@ var UsersList = React.createClass({
 
       // Is currently logged in
       var isActive;
+      var isLoggingIn;
 
       if(active) {
           isActive = _.isEqual(user.uuid, active.uuid);
+      }
+
+      var isLoggingIn = false;
+      if(this.props.userLoggingIn &&
+        _.isEqual(this.props.userLoggingIn.uuid, user.uuid)) {
+          isLoggingIn = true;
       }
 
       // Create single list element
@@ -58,13 +65,14 @@ var UsersList = React.createClass({
           disabled={this.props.disabled}
           showNames={this.props.showNames}
           loggedIn={isActive}
+          isLoggingIn={isLoggingIn}
            />
       );
 
     }, this);
 
     var isEmpty = userNodes.length === 0;
-    var cssClass = this.props.disabled ? 'login-list disabled' : 'login-list';
+    var cssClass = 'login-list';
 
     if(isEmpty) {
       return (

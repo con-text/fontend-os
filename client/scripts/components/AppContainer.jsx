@@ -72,7 +72,9 @@ var AppContainer = React.createClass({
   },
 
   _onChange: function() {
-    this.setState({currentUser: SessionStore.getCurrentUser()});
+    if(this.isMounted()) {
+      this.setState({currentUser: SessionStore.getCurrentUser()});
+    }
   },
 
   render: function() {
@@ -130,7 +132,7 @@ var AppContainer = React.createClass({
 
   handleCloseClick: function(e) {
     e.preventDefault();
-    AppsActionCreators.close();
+    AppsActionCreators.close(this.props.app);
   }
 });
 

@@ -34,10 +34,14 @@ var Desktop = React.createClass({
             var delta = context.getCurrentOffsetDelta();
             var left = item.x + delta.x;
             var top = item.y + delta.y;
-            component.setState({
+
+            var currentPos = component.state.pos;
+            currentPos[item.app.id] = {
               x: left,
               y: top
-            });
+            };
+
+            component.setState({pos: currentPos});
           }
         }
       });
@@ -47,14 +51,18 @@ var Desktop = React.createClass({
   getStateFromStores: function() {
     return {
       showSearch: DesktopStore.isSearchVisible(),
-      currentApp: AppsStore.getOpened(),
-      x: 0,
-      y: 0
+      currentApps: AppsStore.getOpened(),
     };
   },
 
   getInitialState: function() {
-    return this.getStateFromStores();
+    var stateFromStores = this.getStateFromStores();
+    stateFromStores.pos = {};
+    stateFromStores.currentApps.forEach(function(app) {
+      stateFromStores.pos[app.id] = {x: 0, y: 0};
+    }, this);
+
+    return stateFromStores;
   },
 
   componentDidMount: function() {
@@ -69,33 +77,45 @@ var Desktop = React.createClass({
 
   render: function() {
 
+    var dropState = this.getDropState(ItemTypes.WINDOW);
+    var containers = this.state.currentApps.map(function(app) {
+
+
+
+      if(!this.state.pos[app.id]) {
+        this.state.pos[app.id] = {x: 0, y: 0};
+      }
+
+      return <AppContainer key={app.id}
+        app={app}
+
+        onClick={this.bringToFront}
+        x={this.state.pos[app.id].x}
+        y={this.state.pos[app.id].y} />;
+    }, this);
+
+    var divStyle = {
+      zIndex: 1
+    };
+
+    if(dropState.isDragging) {
+      divStyle.zIndex = 2222;
+    }
 
     return (
       <div className="container" onClickCapture={this.handleClick}>
         <NotificationArea />
         <Sidebar />
-        <span className="button" onClick={this.notify}>CLICK ME</span>
-        <div className="desktop" {...this.dropTargetFor(ItemTypes.WINDOW)}>
+        <div className="desktop" style={divStyle} {...this.dropTargetFor(ItemTypes.WINDOW)}>
           <SearchBox boxVisible={this.state.showSearch} />
-          <AppContainer app={this.state.currentApp}
-            x={this.state.x}
-            y={this.state.y} />
+          {containers}
         </div>
     </div>
     );
   },
 
-  notify: function(e) {
-    // Request should specify who is sharing what app
-    var app = {
-      id: "89447cef-0ee6-4805-942b-bc790e89dce1"
-    };
-
-    // Create notification about sharing
-    NotificationActions.createTextNotification("You will share this app.",
-      AppsActions.open.bind(
-        AppsActions,
-        app));
+  bringToFront: function(e) {
+    console.log('to front', e.target);
   },
 
   handleClick: function(e) {
@@ -107,6 +127,12 @@ var Desktop = React.createClass({
 
   _onChange: function() {
     this.setState(this.getStateFromStores());
+
+    this.state.currentApps.forEach(function(app) {
+      if(!this.state.pos[app.id]) {
+        this.state.pos[app.id] = {x: 0, y: 0};
+      }
+    }, this);
   }
 });
 

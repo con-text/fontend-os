@@ -20,6 +20,7 @@ var CHANGE_EVENT = 'change';
 
 var _session = null;
 var _isLoggingIn = false;
+var _whoIsLoggingIn = null;
 
 // API Utils
 var SessionApiUtils = require('../utils/SessionApiUtils');
@@ -88,6 +89,10 @@ var SessionStore = assign({}, EventEmitter.prototype, {
     return _isLoggingIn;
   },
 
+  whoLoggingIn: function() {
+    return _whoIsLoggingIn;
+  },
+
   /**
    * @param {function} callback
    */
@@ -112,16 +117,19 @@ SessionStore.dispatchToken = AppDispatcher.register(function(payload) {
 
     case ActionTypes.START_AUTH:
       _isLoggingIn = true;
+      _whoIsLoggingIn = action.user;
       SessionStore.emitChange();
       break;
 
     case ActionTypes.AUTH_SUCCESS:
       _isLoggingIn = false;
+      _whoIsLoggingIn = null;
       SessionStore.emitChange();
       break;
 
     case ActionTypes.AUTH_FAILED:
       _isLoggingIn = false;
+      _whoIsLoggingIn = null;
       SessionStore.emitChange();
       break;
 

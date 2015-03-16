@@ -3,6 +3,7 @@ var EventEmitter  = require('events').EventEmitter;
 var assign        = require('object-assign');
 var React         = require('react');
 var querystring   = require('querystring');
+var _             = require('lodash');
 
 // Application dispatcher
 var AppDispatcher = require('../dispatchers/AppDispatcher');
@@ -26,11 +27,11 @@ var AppsStore = assign({}, EventEmitter.prototype, {
   init: function() {
     this._apps = [];
     this.fetchAll();
-    this.openedApp = null;
+    this.openedApps = [];
   },
 
   getOpened: function() {
-    return this.openedApp;
+    return this.openedApps;
   },
 
   getApps: function() {
@@ -60,6 +61,9 @@ var AppsStore = assign({}, EventEmitter.prototype, {
 
   open: function (id, params) {
 
+    // Try close app with that id first
+    this.close(id);
+
     // Create a window from a DOM element
     var app = AppsStore.getApp(id);
 
@@ -68,13 +72,20 @@ var AppsStore = assign({}, EventEmitter.prototype, {
     params = params || {};
     // What is my current state?
 
-    // TODO: This can be provided from the search box
     var stateId = params.objectId;
     var url;
 
+    // TODO: Move some of that code to AppsApiUtils
     if(!stateId) {
-      // Ask app server for default or new
+      // Ask app server for new state
+
       url = 'http://localhost:3001/users/'+ uuid +'/apps/' + app.id + '/states';
+
+      // Create new state or use default if available
+      if(params.useDefault) {
+        url += '/default';
+      }
+
       $.ajax({
         url: url,
         success: function(data) {
@@ -88,12 +99,13 @@ var AppsStore = assign({}, EventEmitter.prototype, {
             url += '?' + querystring.stringify(params.args);
           }
 
-          this.openedApp = app;
-          this.openedApp.element = React.createElement('iframe', {src: url, className: "app-window"});
+          this.openedApps.push(app);
+          this.openedApps[this.openedApps.length-1].element = React.createElement('iframe', {src: url, className: "app-window",
+            allowFullScreen: ''});
           this.emitChange();
           return;
         }.bind(this),
-        type: 'GET'
+        type: params.useDefault ? 'GET' : 'POST'
       });
 
     } else {
@@ -106,14 +118,17 @@ var AppsStore = assign({}, EventEmitter.prototype, {
         url += '?' + querystring.stringify(params.args);
       }
 
-      this.openedApp = app;
-      this.openedApp.element = React.createElement('iframe', {src: url, className: "app-window"});
+      this.openedApps.push(app);
+      this.openedApps[this.openedApps.length-1].element = React.createElement('iframe', {src: url, className: "app-window",
+        allowFullScreen: ''});
       this.emitChange();
     }
   },
 
-  close: function() {
-    this.openedApp = null;
+  close: function(appId) {
+    _.remove(this.openedApps, function(openedApp) {
+      return openedApp.id === appId;
+    });
   },
 
   emitChange: function() {
@@ -152,7 +167,7 @@ AppDispatcher.register(function(payload) {
 
       break;
     case ActionTypes.CLOSE_APPS:
-      AppsStore.close();
+      AppsStore.close(action.app.id);
       AppsStore.emitChange();
       break;
     default:

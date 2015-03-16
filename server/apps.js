@@ -85,9 +85,33 @@ module.exports = {
   routeHandler: function(app, io, ble, redis) {
 
     var self = this;
-    app.get('/apps', function(req, res) {
+
+    /**
+    * Get all apps that are locally available
+    */
+    app.get('/apps/local', function(req, res) {
       var apps = self.getApps();
       res.json(apps);
+    });
+
+
+    /**
+    * Gets information about the app, objects etc.
+    */
+    app.get('/apps/:id', authenticated, function(req, res) {
+
+      var appId = req.params.id;
+      var userId = req.session.user.id;
+      unirest.get(config.baseApiUrl + '/users/' + userId + '/apps/' + appId)
+        .end(function(response) {
+
+            if(response.error) {
+              res.status(response.code).json(response.error);
+              return;
+            }
+
+            res.json(response.body);
+        });
     });
 
     /**
@@ -101,6 +125,20 @@ module.exports = {
       unirest.post(config.baseApiUrl + '/users/' + userId + '/apps', {
         id: appId
       });
+    });
+
+    /**
+    * Signal that user closed the app
+    */
+    //TODO: Complete!
+    app.delete('/apps/:id', authenticated, function(req, res) {
+
+      var appId = req.params.id;
+      var userId = req.session.user.id;
+      unirest.delete(config.baseApiUrl + '/users/'+ userId +'/apps', {
+        id: appId
+      });
+
     });
 
     /**
@@ -140,20 +178,6 @@ module.exports = {
 
       redis.publish('notif', JSON.stringify(notification));
       console.log("Published " +JSON.stringify(notification));
-    });
-
-    /**
-    * Signal that user closed the app
-    */
-    //TODO: Complete!
-    app.delete('/apps/:id', authenticated, function(req, res) {
-
-      var appId = req.params.id;
-      var userId = req.session.user.id;
-      unirest.delete(config.baseApiUrl + '/users/'+ userId +'/apps', {
-        id: appId
-      });
-
     });
   }
 };

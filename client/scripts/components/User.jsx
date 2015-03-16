@@ -13,7 +13,6 @@ var SessionActionCreators = require('../actions/SessionActionCreators');
 var DragDropMixin = require('react-dnd').DragDropMixin;
 var ItemTypes = require('./DragItemTypes');
 
-
 // Single list element
 var User = React.createClass({
 
@@ -59,6 +58,8 @@ var User = React.createClass({
   render: function() {
     var pictureEl, nameEl;
     var loggedInClass = this.props.loggedIn? " logged-in" : "";
+    var title = '';
+
     if(this.props.showNames) {
       pictureEl =
         <div className="user-picture">
@@ -71,6 +72,8 @@ var User = React.createClass({
           <div className="userName vcenter padLR names profileHeight">{this.props.user.name}</div>
         </div>;
 
+      title = '';
+
     } else {
 
       pictureEl =
@@ -79,13 +82,26 @@ var User = React.createClass({
              />;
 
       nameEl = '';
+
+      title = this.props.user.name;
+    }
+
+    var styling = '';
+    var loader = '';
+
+    if (this.props.disabled) styling = 'disabled';
+
+    if(this.props.isLoggingIn) {
+      loader = <div className="loader"></div>;
+      styling = 'clicked';
     }
 
     return (
-      <div className={"user" + loggedInClass} onClick={this.handleClick} title={this.props.user.name}
+      <div className={"user" + loggedInClass + " " + styling } onClick={this.handleClick} title={title}
         {...this.dragSourceFor(ItemTypes.USER)}>
         {pictureEl}
         {nameEl}
+        {loader}
       </div>
     );
   }

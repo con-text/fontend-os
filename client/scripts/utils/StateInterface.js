@@ -36,8 +36,8 @@ function AppState(appId, userId, objectId, dependencies){
 
 	this.socket.on('syncedState', (function(AS){
 			// console.log("Got into closure",this);
+			console.log("Got syncedState");
 			return function(data){
-				// console.log("Got", data);
 
 				AS.dealWithChange(data);
 				AS.emit('syncedState', data);
@@ -67,7 +67,7 @@ AppState.prototype.dealWithChange = function(changeInfo){
 	switch(changeInfo.action){
 		case "added":
 		case "changed":
-			this.updateValueFromArray(this._state, changeInfo.path, changeInfo.property, changeInfo.value, changeInfo.OT);
+			this.updateValueFromArray(changeInfo, this._state, changeInfo.path, changeInfo.property, changeInfo.value, changeInfo.OT);
 		break;
 		case "removed":
 			this.deleteValueFromArray(this._state, changeInfo.path, changeInfo.property);
@@ -76,49 +76,159 @@ AppState.prototype.dealWithChange = function(changeInfo){
 };
 
 AppState.prototype.fillState = function(data){
+	this._state = data;
 	if(this.dependencies){
-		this.dependencies.forEach(function(m){
-			//the property name doesn't exist, lets create it
-			if(!data[m.name]){
-				switch(m.type.toLowerCase()){
+		this.dependencies.forEach(
+			(function(context){ return function(m){
+				//lets traverse the path to get to the right element
+				var currentRoot = context._state;
+				console.log(currentRoot);
+				if(m.path !== ""){
+					m.path.split(".").forEach(function(p){
+						if(!currentRoot[p]){
+							currentRoot[p] = {};
+						}
+						currentRoot = currentRoot[p];
+					});
+				}
+				switch(m.type){
 					case "array":
-						data[m.name] = [];
+						if(currentRoot[m.property].constructor !== Array)
+							currentRoot[m.property] = [];
+					break;
+					case "number":
+					case "int":
+						if(typeof currentRoot[m.property] !== "number"){
+							currentRoot[m.property] = 0;
+						}
+					break;
+					case "str":
+					case "string":
+						if(typeof currentRoot[m.property] !== "string"){
+							currentRoot[m.property] = "";
+						}
 					break;
 					case "object":
-						data[m.name] = {};
-					break;
-					case "string":
-						data[m.name] = "";
-					break;
-					default:
-						data[m.name] = 0;
+						if(typeof currentRoot[m.property] !== "object"){
+							currentRoot[m.property] = {};
+						}
 					break;
 				}
 			}
-		});
+		}(this)));
+		console.log(this._state);
 	}
-	// console.log("GOT",data);
-	this._state = data;
+	//sort the dependencies by the depth of the path, add listeners on the deepest first
+
+	this.dependencies = this.dependencies.sort(function(a,b){
+		var lena,lenb;
+		// sorting function, get the depth of the path
+		if(a.path === ""){
+			lena = -1;
+		}
+		else{
+			lena = a.path.split(".").length;
+		}
+		if(b.path === ""){
+			lenb = -1;
+		}
+		else{
+			lenb = b.path.split(".").length;
+		}
+		if(lena == lenb){
+			return 0;
+		}
+		return (lena > lenb) ? -1 : 1;
+	});
 	this._state._parent = false;
 	this._state._parentProp = false;
-	this.addWatcher();
+	this.dependencies.forEach((function(context){
+		return function(dep){
+			//traverse to the right location and add a listener...this may be able to be done above
+			var currentRoot = context._state;
+			console.log("DEP",dep);
+			if(dep.path !== ""){
+				dep.path.split(".").forEach(function(p){
+					var parent = currentRoot;
+					currentRoot = currentRoot[p];
+				});
+			}
+
+			currentRoot = currentRoot[dep.property];
+			var fullPath = dep.path + "." + dep.property;
+			switch(dep.type){
+					case "array":
+						context.addArrayObserver(currentRoot, fullPath);
+					break;
+					case "number":
+					case "int":
+					case "str":
+					case "string":
+						context.addPathObserver(context._state, fullPath)
+					break;
+					case "object":
+						context.addObserver(currentRoot, fullPath);
+					break;
+				}
+
+		}
+	}(this)));
+	console.log(this._state);
+	// console.log("GOT",data);
+
+	// this.addWatcher();
 };
 
-AppState.prototype.addObserver = function(obj){
-	// console.log("Adding observer", obj);
-	var obsObj;
-	if(!this.observerArray.root){
-		//first time setting an observer
-		this.observerArray.root = new ObjectObserver(obj);
-		obsObj = this.observerArray.root;
-	}
-	else{
-		var fullPath = getToRoot(obj).join("_");
-		this.observerArray[fullPath] = new ObjectObserver(obj);
-		obsObj = this.observerArray[fullPath];
-	}
+AppState.prototype.addArrayObserver = function(obj, fullPath){
+	this.observerArray[fullPath] = new ArrayObserver(obj);
+	this.observerArray[fullPath].open((function(objectBeingObserved, AS, path){
+		return function(splices) {
+			// respond to changes to the elements of arr.
+			splices.forEach(function(splice) {
+				// console.log("splice", splice);
+				// console.log("new value", objectBeingObserved[splice.index]);
+				// splice.index; // index position that the change occurred.
+				// splice.removed; // an array of values representing the sequence of elements which were removed
+				// splice.addedCount; // the number of elements which were inserted.
+				var property = path.split(".").slice(-1);
+				var changeObject = {uuid: AS.userId, objectId: AS.objectId, action: 'changed',
+									path: path.split("."), property: property, value: objectBeingObserved[splice.index],
+									type: "array", splice: splice};
+				console.log("SPLICE", splice);
+				AS.socket.emit('stateChange', changeObject);
+			});
+			
+		}
+	})(obj, this, fullPath));
+}
+
+AppState.prototype.addPathObserver = function(obj,fullPath){
+	console.log("Adding path obs", obj, fullPath);
+	this.observerArray[fullPath] = new PathObserver(obj, ((fullPath.charAt(0) == ".") ? fullPath.substr(1) : fullPath));
+	this.observerArray[fullPath].open((function(objectBeingObserved, AS, path){
+		return function(newValue, oldValue) {
+			// respond to changes to the elements of arr.
+			console.log("newValue",newValue,"oldValue",oldValue);
+			var changeObject = {uuid: AS.userId, objectId: AS.objectId, action: 'changed',
+								path: path.split(".").slice(0,-1), property: path.split(".").slice(-1), value: newValue, type: (typeof newValue)};
+			if(typeof newValue === "string" && typeof oldValue === "string"){
+				//use changes instead of entire string
+				var OTChanges = getOperations(oldValue, newValue);
+				console.log(OTChanges);
+				changeObject.OTChanges = OTChanges;
+			}
+			AS.socket.emit('stateChange', changeObject);
+		}
+	})(obj, this, fullPath));
+}
+
+AppState.prototype.addObserver = function(obj, fullPath){
+	console.log("Adding observer", obj, fullPath);
+	
+	this.observerArray[fullPath] = new ObjectObserver(obj);
+	obsObj = this.observerArray[fullPath];
 	obsObj.open(
-		(function(objectBeingObserved, AS){
+		(function(objectBeingObserved, AS, path){
 			return function handleChanges(added, removed, changed, getOldValueFn) {
 
 
@@ -133,18 +243,13 @@ AppState.prototype.addObserver = function(obj){
 
 						property = addedKeys[i];
 						//new property added, check if it's an object, if so, add a listener
+						console.log("Got add in",property);
 
-						if(typeof added[property] === "object"){
-							// give it parent and parentprop values then add the observer
-							//this is used to traverse the tree upwards
-							added[property]._parent = objectBeingObserved;
-							added[property]._parentProp = property;
-							AS.addObserver(added[property]);
-						}
+
 
 						AS.socket.emit('stateChange',
 								{uuid: AS.userId, objectId: AS.objectId, action: 'added',
-								path: getToRoot(objectBeingObserved), property: property, value: added[property]});
+								path: path.split("."), property: property, value: added[property], type: 'object'});
 
 
 					}
@@ -152,17 +257,11 @@ AppState.prototype.addObserver = function(obj){
 					for(i = 0; i<removedKeys.length; i++) {
 						property = removedKeys[property];
 
-
-						if(typeof getOldValueFn(property) === "object"){
-
-							toClosePath = getToRoot(objectBeingObserved).join("_");
-							AS.observerArray[toClosePath].close();
-							delete AS.observerArray[toClosePath];
-						}
+					console.log("Got removed in",property);
 
 						AS.socket.emit('stateChange',
 								{uuid: AS.userId, objectId: AS.objectId, action: 'removed',
-								path: getToRoot(objectBeingObserved), property: property});
+								path: path.split("."), property: property, type: "object"});
 					}
 
 
@@ -170,34 +269,21 @@ AppState.prototype.addObserver = function(obj){
 					for(i = 0; i<changedKeys.length; i++){
 						property = changedKeys[i];
 						// console.log("Changed", property, changed[property], getOldValueFn(property));
-						if(typeof changed[property] !== getOldValueFn(property)){
-							//type has changed, check for new object
-							if(typeof changed[property] === "object"){
-								changed[property]._parent = objectBeingObserved;
-								changed[property]._parentProp = property;
-								AS.addObserver(changed[property]);
-							}
-							else if(typeof getOldValueFn(property) === "object"){
-								console.log("Closing observer");
-								toClosePath = getToRoot(objectBeingObserved).join("_");
-								AS.observerArray[toClosePath].close();
-								delete AS.observerArray[toClosePath];
-							}
-						}
 						var changeObject = {uuid: AS.userId, objectId: AS.objectId, action: 'changed',
-								path: getToRoot(objectBeingObserved), property: property, value: changed[property]};
+								path: path.split("."), property: property, value: changed[property], type: (typeof changed[property])};
 						if(typeof changed[property] === "string"){
 							//use changes instead of entire string
 							var OTChanges = getOperations(getOldValueFn(property), changed[property]);
 							console.log(OTChanges);
 							changeObject.OTChanges = OTChanges;
 						}
+						console.log("Got change in",property);
 						AS.socket.emit('stateChange', changeObject);
 					}
 
 
 				};
-			})(obj, this));
+			})(obj, this, fullPath));
 };
 
 function getToRoot(obj){
@@ -209,33 +295,11 @@ function getToRoot(obj){
 	return fullPath;
 }
 
-AppState.prototype.watchDeepObject = function(obj){
 
-	this.addObserver(obj);
+AppState.prototype.updateValueFromArray = function(change,obj,path,prop,value,transformations){
 
-	var keys = Object.keys(obj);
-	var key;
-	for(var i = 0; i<keys.length; i++){
-		key = keys[i];
-		if(key === "_parentProp" || key === "_parent"){
-			return;
-		}
-		if(typeof obj[key] === "object" && obj.constructor !== Array){
-			obj[key]._parentProp = key;
-			obj[key]._parent = obj;
-			this.watchDeepObject(obj[key]);
-			// console.log("parent",obj,"key",key);
-		}
-	}
-};
+	if(change.type === "array"){
 
-AppState.prototype.updateValueFromArray = function(obj,arr,prop,value,transformations){
-	//loop through until we're at the right object
-	for(var i = 0; i<arr.length; i++){
-		obj = obj[arr[i]];
-		if(obj === undefined){
-			return false;
-		}
 	}
 
 	if(transformations){
@@ -245,13 +309,17 @@ AppState.prototype.updateValueFromArray = function(obj,arr,prop,value,transforma
 	//set the value and discard the changes
 	obj[prop] = value;
 
-	if(typeof value === "object"){
-		value._parent = obj;
-		value._parentProp = prop;
-		this.addObserver(value);
+	var fullPath = path.join(".");
+
+	if(fullPath.indexOf(".") === -1 && path.length === 1){
+		//doesn't have a full stop
+		fullPath = "."+fullPath;
 	}
+
+	console.log("fullpath = ",fullPath);
+	// console.log("Fullpath = ",fullPath);
 	// console.log(this.observerArray,arr);
-	this.observerArray[arr.join("_")].discardChanges();
+	this.observerArray[fullPath].discardChanges();
 	return true;
 };
 
@@ -264,8 +332,8 @@ AppState.prototype.deleteValueFromArray = function(obj,arr,prop){
 	}
 	//set the value and discard the changes
 	//there may be observers within this part, deal with this later
-	this.observerArray[arr.join("_")].close();
-	delete this.observerArray[arr.join("_")];
+	this.observerArray[arr.join(".")].close();
+	delete this.observerArray[arr.join(".")];
 	delete obj[prop];
 	return true;
 };

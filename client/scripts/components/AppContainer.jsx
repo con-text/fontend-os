@@ -133,6 +133,10 @@ var AppContainer = React.createClass({
           {this.props.app && this.props.app.name}
         </div>
         <div className="buttons">
+          <div role="button" onClick={this.handleFullScreen}>
+            <i className="fa fa-arrows-alt btn"></i>
+          </div>
+
           <div role="button" onClick={this.handleCloseClick}>
             <i className="fa fa-times-circle close-btn"></i>
           </div>
@@ -164,6 +168,12 @@ var AppContainer = React.createClass({
   handleCloseClick: function(e) {
     e.preventDefault();
     AppsActionCreators.close(this.props.app);
+  },
+
+  handleFullScreen: function(e) {
+    e.preventDefault();
+    var domNode = this.getDOMNode();
+    $(domNode).toggleClass('fullscreen');
   }
 });
 

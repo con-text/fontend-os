@@ -39,7 +39,7 @@ var AppContainer = React.createClass({
   mixins: [DragDropMixin],
 
   statics: {
-    configureDragDrop: function(register) {
+    configureDragDrop: function(register, context) {
       register(ItemTypes.USER, {
         dropTarget: itemDropTarget
       });
@@ -47,19 +47,30 @@ var AppContainer = React.createClass({
       register(ItemTypes.WINDOW, {
         dragSource: {
           beginDrag: function(component) {
+            component.props.dragStarted(component);
             return {
               item: component.props,
               effectAllowed: DropEffects.MOVE
             };
+          },
+          endDrag: function(component) {
+            component.props.dragFinished(component);
           }
-        }
+        },
+
+        dropTarget: {
+          over: function(component, item) {
+            component.props.dragOver(component);
+          }
+        },
       });
     }
   },
 
   getInitialState: function() {
     return {
-      currentUser: SessionStore.getCurrentUser()
+      currentUser: SessionStore.getCurrentUser(),
+      hidden: false
     };
   },
 
@@ -84,12 +95,18 @@ var AppContainer = React.createClass({
 
     var dragStateWindow = this.getDragState(ItemTypes.WINDOW);
 
-    var divStyle = {
-      display: this.props.app && !dragStateWindow.isDragging ? 'block' : 'none',
+    var divStyle = _.assign(this.props.style, {
+      display: (this.props.app && !dragStateWindow.isDragging) ?
+        'block' : 'none',
       left: this.props.x,
       top: this.props.y
-    };
+    });
 
+    if(this.state.hidden) {
+      divStyle.display = 'none';
+    }
+
+    // Is user being dropped?
     if(dropState.isHovering) {
       divStyle.background = 'gray';
 
@@ -107,7 +124,9 @@ var AppContainer = React.createClass({
 
     return <div className="appContainer" style={divStyle}
       {...this.dropTargetFor(ItemTypes.USER)}
+      {...this.dropTargetFor(ItemTypes.WINDOW)}
       {...this.dragSourceFor(ItemTypes.WINDOW)}
+      onClick={this.props.bringToFront}
       >
       <div className="titleBar">
         <div className="title">
@@ -128,6 +147,18 @@ var AppContainer = React.createClass({
         {this.props.app && this.props.app.element}
       </div>
     </div>;
+  },
+
+  hideWindow: function() {
+    this.setState({
+      hidden: true
+    });
+  },
+
+  showWindow: function() {
+    this.setState({
+      hidden: false
+    });
   },
 
   handleCloseClick: function(e) {

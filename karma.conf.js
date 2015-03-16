@@ -15,6 +15,7 @@ module.exports = function(config) {
 
     // list of files / patterns to load in the browser
     files: [
+      'bower_components/jquery/dist/jquery.js',
       'test/client/**/*.test.js',
       'test/client/*.test.js',
     ],
@@ -35,7 +36,7 @@ module.exports = function(config) {
     browserify: {
       debug: true,
       transform: ['reactify', 'istanbulify'],
-      extensions: [',js', '.jsx'],
+      extensions: ['.js', '.jsx'],
       bundleDelay: 1000 // WAR for karma-browserify race condition
     },
 

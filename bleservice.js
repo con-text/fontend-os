@@ -37,8 +37,9 @@ function handleActivePeripheralsMessage(io, users) {
 
   // Match IDs to user data
   users.forEach(function (user) {
-    userApi.getUserProfile(user.id, function(userProfie) {
-      availableUsers.push(userProfie);
+    userApi.getUserProfile(user.id, function(userProfile) {
+      userProfile.state = user.state;
+      availableUsers.push(userProfile);
 
       // Do we now have all users?
       if(availableUsers.length === users.length) {

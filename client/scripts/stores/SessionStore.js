@@ -64,7 +64,7 @@ function checkIfSessionIsValid() {
   // Compare to session, cannot use === because these are hashes
   for(var key in availableUsers) {
     var user = availableUsers[key];
-    if(_.isEqual(user, _session)) {
+    if(_.isEqual(user.id, _session.id)) {
           foundUser = true;
       }
   }

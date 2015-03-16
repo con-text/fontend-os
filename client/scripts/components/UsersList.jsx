@@ -58,11 +58,12 @@ var UsersList = React.createClass({
           isLoggingIn = true;
       }
 
+
       // Create single list element
       return (
         <User key={i}
           user={user}
-          disabled={this.props.disabled}
+          disabled={this.props.disabled || user.state === "stale"}
           showNames={this.props.showNames}
           loggedIn={isActive}
           isLoggingIn={isLoggingIn}

@@ -5,6 +5,8 @@ var SessionStore = require('../../client/scripts/stores/SessionStore');
 var SessionAction = require('../../client/scripts/actions/SessionActionCreators');
 var AvailableUsersStore = require('../../client/scripts/stores/AvailableUsersStore');
 var AvailableUsersActions = require('../../client/scripts/actions/AvailableUsersActionCreators');
+var SessionApiUtils = require('../../client/scripts/utils/SessionApiUtils');
+
 
 describe('SessionStore', function() {
 
@@ -14,6 +16,10 @@ describe('SessionStore', function() {
 
   var _mockUsers = [mockUser, otherUser];
 
+  sinon.stub(SessionApiUtils, 'destroySession', function(callback) {
+    callback();
+  });
+  
   var stub = sinon.stub(AvailableUsersStore, "getAvailable", function() {
     return _mockUsers;
   });

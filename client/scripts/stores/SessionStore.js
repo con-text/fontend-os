@@ -31,7 +31,7 @@ function createSession(user) {
   var found = false;
   for(var index in availableUsers) {
     var availableUser = availableUsers[index];
-    if(availableUser.id === user.id) {
+    if(availableUser.uuid === user.uuid) {
       found = true;
       break;
     }
@@ -64,13 +64,14 @@ function checkIfSessionIsValid() {
   // Compare to session, cannot use === because these are hashes
   for(var key in availableUsers) {
     var user = availableUsers[key];
-    if(_.isEqual(user.id, _session.id)) {
+    if(_.isEqual(user.uuid, _session.uuid)) {
           foundUser = true;
       }
   }
 
   // Validate current session against the list of available users
   if(_session && !foundUser) {
+    console.log("Kicking out user")
     destroySession();
   }
 }

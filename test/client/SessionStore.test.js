@@ -10,16 +10,16 @@ var SessionApiUtils = require('../../client/scripts/utils/SessionApiUtils');
 
 describe('SessionStore', function() {
 
-  var mockUser = {id: 1, name: "Foo Bar"};
-  var badUser = {id: 2, name: "Bad guy"};
-  var otherUser = {id:3, name: "Other user"};
+  var mockUser = {uuid: 1, name: "Foo Bar"};
+  var badUser = {uuid: 2, name: "Bad guy"};
+  var otherUser = {uuid:3, name: "Other user"};
 
   var _mockUsers = [mockUser, otherUser];
 
   sinon.stub(SessionApiUtils, 'destroySession', function(callback) {
     callback();
   });
-  
+
   var stub = sinon.stub(AvailableUsersStore, "getAvailable", function() {
     return _mockUsers;
   });

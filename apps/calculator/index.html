@@ -40,10 +40,19 @@
         }
 
       }.bind(this));
+
+      AS.on('syncedState', this.receiveCalcs);
     },
 
     componentWillUnmount: function() {
       AS.off('load');
+
+      AS.off('syncedState');
+    },
+
+    receiveCalcs: function () {
+
+      this.setState({items: AS._state.prevCalcs});
     },
 
     render: function() {

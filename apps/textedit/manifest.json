@@ -3,5 +3,5 @@
   "id": "89447cef-0ee6-4805-942b-bc790e89dce2",
   "icon": "icon.png",
   "style": "style.css",
-  "dependencies": [{"path": "", "property":"textValue", "type":"string"}]
+  "dependencies": [{"path": "", "property":"operations", "type":"array", "dontWatch":true}]
 }

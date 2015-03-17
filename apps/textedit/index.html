@@ -7,83 +7,96 @@
 
 <script type="text/jsx">
 
-  /** @jsx React.DOM */
-  'use strict';
+	/** @jsx React.DOM */
+	'use strict';
 
-  var textEditor;
+	var textEditor;
 
-  function receiveTextData() {
-    if(AS._state.htmlValue) {
-      textEditor.setHTML(AS._state.htmlValue);
-    } else if(AS._state.textValue) {
-      textEditor.setText(AS._state.textValue);
-    }
-  }
+	function receiveTextData(data) {
+		textEditor.setContents(AS._state.operations);
+	}
 
-  // Document editor class
-  var Editor = React.createClass({
+	function receiveChangeData(data){
+		textEditor.updateContents({ops:data.value});
+	}
 
-    /**
-    * When component mounted, bind application state interefece events
-    */
-    componentDidMount: function() {
-      var editor = this.refs.editor.getDOMNode();
+	// Document editor class
+	var Editor = React.createClass({
 
-      textEditor = new Quill(editor, {
-        formats: ['bold', 'italic', 'color', 'size', 'underline'],
-        theme: 'snow'
-      });
+		/**
+		* When component mounted, bind application state interefece events
+		*/
+		componentDidMount: function() {
+			var editor = this.refs.editor.getDOMNode();
 
-      textEditor.addModule('toolbar', {
-        container: '#toolbar'
-      });
+			textEditor = new Quill(editor, {
+				formats: ['bold', 'italic', 'color', 'size', 'underline'],
+				theme: 'snow'
+			});
 
-      textEditor.on("text-change", function(delta, source) {
+			textEditor.addModule('toolbar', {
+				container: '#toolbar'
+			});
 
-        if(source === "user") {
-          AS._state.textValue = textEditor.getText();
-          AS._state.htmlValue = textEditor.getHTML();
-        }
-      });
+			textEditor.on("text-change", function(delta, source) {
 
-      AS.on('syncedState', receiveTextData);
-      AS.on('load', receiveTextData);
-    },
+				if(source === "user") {
+					AS._state.textValue = textEditor.getText();
+					AS._state.htmlValue = textEditor.getHTML();
+				}
+			});
 
-    /**
-    * Render the editor
-    */
-    render: function() {
-      return (
-        <div className="editor-container">
-          <div id="toolbar" className="toolbar">
+			textEditor.on('text-change', function(delta, source) {
+				if (source == 'api') {
+					console.log("An API call triggered this change.");
+				}
+				else if (source == 'user') {
+					AS.pushChange('text-change', {uuid: AS.userId, objectId: AS.objectId, action: 'changed',
+							path: ["operations"], property: "operations", value: delta.ops, type: "string", OTChanges: true});  
+					console.log("A user action triggered this change.");
+				}
+			});
 
-            <span className="ql-format-group">
-              <select title="Size" className="ql-size ql-picker">
-                <option value="small">Small</option>
-                <option value="normal" defaultValue>Normal</option>
-                <option value="large">Large</option>
-                <option value="huge">Huge</option>
-              </select>
-            </span>
+			AS.on('text-change', receiveChangeData);
 
-            <span className="ql-format-group">
-              <span className="ql-format-button ql-bold"></span>
-              <span className="ql-format-separator"></span>
-              <span className="ql-format-button ql-italic"></span>
-              <span className="ql-format-separator"></span>
-              <span className="ql-format-button ql-underline"></span>
-            </span>
-          </div>
+			AS.on('syncedState', receiveTextData);
+			AS.on('load', receiveTextData);
+		},
 
-          <div className="editor" ref="editor">
-          </div>
-        </div>
-      );
-    }
-  });
+		/**
+		* Render the editor
+		*/
+		render: function() {
+			return (
+				<div className="editor-container">
+					<div id="toolbar" className="toolbar">
 
-  // Renender the editor
-  React.render(<Editor />, document.body);
+						<span className="ql-format-group">
+							<select title="Size" className="ql-size ql-picker">
+								<option value="small">Small</option>
+								<option value="normal" defaultValue>Normal</option>
+								<option value="large">Large</option>
+								<option value="huge">Huge</option>
+							</select>
+						</span>
+
+						<span className="ql-format-group">
+							<span className="ql-format-button ql-bold"></span>
+							<span className="ql-format-separator"></span>
+							<span className="ql-format-button ql-italic"></span>
+							<span className="ql-format-separator"></span>
+							<span className="ql-format-button ql-underline"></span>
+						</span>
+					</div>
+
+					<div className="editor" ref="editor">
+					</div>
+				</div>
+			);
+		}
+	});
+
+	// Renender the editor
+	React.render(<Editor />, document.body);
 
 </script>

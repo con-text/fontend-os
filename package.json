@@ -87,7 +87,8 @@
     "fullscreen": true,
     "width": 800,
     "height": 640,
-    "toolbar": false
+    "toolbar": false,
+    "frame": true
   },
   "node-remote": "*localhost:5000",
   "chromium-args": "--child-clean-exit --disable-web-security --allow-running-insecure-content",

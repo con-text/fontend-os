@@ -13,18 +13,35 @@
 	var Browser = React.createClass({
 
 		getInitialState: function() {
+			var text = '';
+
+			if(window.appParams) {
+				text = window.appParams.query;
+			}
+
 			return {
-				text: '',
+				text: text,
 				history: ['about:blank']
 			};
 		},
 
 		componentDidMount: function() {
-			var frame = this.refs.frame.getDOMNode();
-			frame.setAttribute('nwdisable', '');
-			frame.setAttribute('nwfaketop', '');
-			frame.setAttribute('allowFullScreen', '');
-			frame.addEventListener("DOMAttrModified", this.handleFrameLoad);
+			var frame = $(this.refs.frame.getDOMNode());
+			//frame.setAttribute('nwdisable', '');
+			//frame.setAttribute('nwfaketop', '');
+			//frame.setAttribute('allowFullScreen', '');
+			/*var webView = $("<webview>")
+				.attr('id', 'webview')
+				.attr('src', this.state.text)
+				.addClass('webview')
+				.attr('style', 'width: 100%; height: 100%;');*/
+
+				frame.on("loadcommit", this.handleFrameLoad);
+
+			//frame.append(webView);
+			if(this.state.text !== '') {
+				this.goToPage();
+			}
 		},
 
 		componentWillUnmount: function() {
@@ -47,7 +64,7 @@
 					</div>
 
 					<div className="web-view">
-						<iframe ref="frame" src={url} width="100%" height="100%" />
+						{React.createElement("webview", {ref: 'frame', className: 'webview', src: this.state.text})}
 					</div>
 				</div>
 			);
@@ -110,7 +127,7 @@
 				var frame = this.refs.frame.getDOMNode();
 				var url = frame.contentWindow.location.href;
 				this.state.history.push(url);
-				console.log("Pusing url". url);
+				console.log("Pushing url". url);
 			}
 		}
 	});

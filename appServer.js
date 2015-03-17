@@ -28,9 +28,6 @@ app.get('/apps/:appName/:asset', function(req, res) {
   res.sendFile(fileName, { root: './dist/apps/'+ appName + '/' });
 });
 
-// app.get('/syncState/:uuid/:appId', routes.syncGet);
-// app.post('/syncState/:uuid/:appId', routes.syncPost);
-
 var server = app.listen(3001, function () {
 
   var host = server.address().address;
@@ -53,26 +50,26 @@ backendSocket.on('connect', function(){
 });
 
 backendSocket.on('disconnect', function(){
-    //backend disconects, wipe the connection so that
-    console.log("Backend has disconnected");
-    currentUser = null;
+  //backend disconects, wipe the connection so that
+  console.log("Backend has disconnected");
+  currentUser = null;
 });
 
 backendSocket.on('syncedState', function(msg){
 	//got syncedState from the server, send to the saved object
-    if(currentObjects[msg.objectId]){
-      console.log("SEnding syncstate to",msg.objectId);
-        currentObjects[msg.objectId].emit('syncedState', msg);
-    }
-    else{
-        console.log("Object doesn't exist in currentObjects");
-    }
+  if(currentObjects[msg.objectId]){
+    console.log("Sending syncstate to",msg.objectId);
+    currentObjects[msg.objectId].emit('syncedState', msg);
+  }
+  else{
+    console.log("Object doesn't exist in currentObjects");
+  }
 });
 
 
 
 function socketCanRun(){
-    return (!!currentUser);
+  return (!!currentUser);
 }
 
 backendSocket.on('sendInitialFromBackend', function(msg){

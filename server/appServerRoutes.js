@@ -180,7 +180,7 @@ module.exports = {
 				//not too bothered about the user info at this point
 				if(realApp.found){
 
-					res.send(applicationList[realApp.index].displayApp(uuid, objectId));
+					res.send(applicationList[realApp.index].displayApp(uuid, objectId, req.query));
 				}
 				else{
 					res.status(404).json({message: "App doesn't exist"});
@@ -206,7 +206,7 @@ module.exports = {
 
 			//not too bothered about the user info at this point
 			if(realApp.found){
-				res.send(applicationList[realApp.index].displayApp(uuid, objectId));
+				res.send(applicationList[realApp.index].displayApp(uuid, objectId, req.query));
 			}
 			else{
 				console.log("State doesn't exist");

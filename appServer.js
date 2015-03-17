@@ -94,7 +94,7 @@ backendSocket.on('notification', function(notification) {
 	socket.emit('notification', notification);
 });
 
-backendSocket.on('pushedChange', function(notification) {
+backendSocket.on('pushedChange', function(msg) {
 	//got pushedChange from the server, send to the saved object
 	if(currentObjects[msg.objectId]){
 	  console.log("SEnding syncstate to",msg.objectId,currentObjects[msg.objectId].id);

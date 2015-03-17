@@ -16,6 +16,10 @@
 		textEditor.setContents(AS._state.operations);
 	}
 
+	function receiveChangeData(data){
+		textEditor.updateContents({ops:data.value});
+	}
+
 	// Document editor class
 	var Editor = React.createClass({
 
@@ -53,7 +57,7 @@
 				}
 			});
 
-
+			AS.on('text-change', receiveChangeData);
 
 			AS.on('syncedState', receiveTextData);
 			AS.on('load', receiveTextData);

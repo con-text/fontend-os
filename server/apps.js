@@ -14,6 +14,7 @@ function App(manifest) {
   // Expect these to be in the manifest
   this.id = manifest.id;
   this.name = manifest.name;
+  this.dependencies = manifest.dependencies;
   this.manifest = manifest;
   // Icon is optional
   if(manifest.icon) {
@@ -106,7 +107,7 @@ module.exports = {
         .end(function(response) {
 
             if(response.error) {
-              res.status(response.code).json(response.error);
+                res.status(response.code || 500).json(response.error);
               return;
             }
 

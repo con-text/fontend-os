@@ -36,9 +36,9 @@ function AppState(appId, userId, objectId, dependencies){
 
 	this.socket.on('syncedState', (function(AS){
 			// console.log("Got into closure",this);
-			console.log("Got syncedState");
-			return function(data){
 
+			return function(data){
+				console.log("got",data);
 				AS.dealWithChange(data);
 				AS.emit('syncedState', data);
 			};
@@ -62,18 +62,40 @@ AppState.prototype.emit = function(eventName, data) {
 	this.eventEmitter.emit(eventName, data);
 };
 
+AppState.prototype.pushChange = function(eventName, data){
+	var pushObject = data;
+		pushObject.eventName = eventName;
+	this.socket.emit('pushedChange', pushObject);
+}
+
+AppState.prototype.dealWithPushed = function(data){
+	console.log("got from pushed", data.eventName);
+	this.emit(data.eventName, data);
+}
 
 AppState.prototype.dealWithChange = function(changeInfo){
 	switch(changeInfo.action){
 		case "added":
 		case "changed":
-			this.updateValueFromArray(changeInfo, this._state, changeInfo.path, changeInfo.property, changeInfo.value, changeInfo.OT);
+			switch(changeInfo.type){
+				case "array":
+					return this.parseArrayChange(this._state, changeInfo.path, changeInfo.splice, changeInfo.value);
+				break;
+				case "string":
+					return updateValueFromArray(this._state, changeInfo.path, changeInfo.property, changeInfo.value);
+				break;
+				case "number":
+				default:
+					return updateValueFromArray(this._state, changeInfo.path, changeInfo.property, changeInfo.value);
+				break;
+			}
 		break;
 		case "removed":
-			this.deleteValueFromArray(this._state, changeInfo.path, changeInfo.property);
+			return deleteValueFromArray(this._state, changeInfo.path, changeInfo.property);
 		break;
 	}
-};
+	return false;
+}
 
 AppState.prototype.fillState = function(data){
 	this._state = data;
@@ -146,6 +168,9 @@ AppState.prototype.fillState = function(data){
 		return function(dep){
 			//traverse to the right location and add a listener...this may be able to be done above
 			var currentRoot = context._state;
+			if(dep.dontWatch){
+				return;
+			}
 			console.log("DEP",dep);
 			if(dep.path !== ""){
 				dep.path.split(".").forEach(function(p){
@@ -155,7 +180,13 @@ AppState.prototype.fillState = function(data){
 			}
 
 			currentRoot = currentRoot[dep.property];
-			var fullPath = dep.path + "." + dep.property;
+			var fullPath
+			if(!dep.path){
+				fullPath = dep.property;
+			}
+			else{
+				fullPath = dep.path + "." + dep.property;
+			}
 			switch(dep.type){
 					case "array":
 						context.addArrayObserver(currentRoot, fullPath);
@@ -210,7 +241,7 @@ AppState.prototype.addPathObserver = function(obj,fullPath){
 			// respond to changes to the elements of arr.
 			console.log("newValue",newValue,"oldValue",oldValue);
 			var changeObject = {uuid: AS.userId, objectId: AS.objectId, action: 'changed',
-								path: path.split(".").slice(0,-1), property: path.split(".").slice(-1), value: newValue, type: (typeof newValue)};
+								path: path.split("."), property: path.split(".").slice(-1), value: newValue, type: (typeof newValue)};
 			if(typeof newValue === "string" && typeof oldValue === "string"){
 				//use changes instead of entire string
 				var OTChanges = getOperations(oldValue, newValue);
@@ -293,6 +324,25 @@ function getToRoot(obj){
 		obj = obj._parent;
 	}
 	return fullPath;
+}
+
+AppState.prototype.parseArrayChange = function(obj, arr, splice, value){
+	for(var i = 0; i<arr.length; i++){
+		obj = obj[arr[i]];
+		if(obj === undefined){
+			return false;
+		}
+	}
+	console.log("parse array change");
+	console.log(obj,splice,value);
+	if(splice.removed.length !== 0){
+		obj.splice(splice.index);
+	}
+	else{
+		obj.splice(splice.index, 0, value);
+	}
+	this.observerArray[arr.join(".")].discardChanges();
+	return obj;
 }
 
 
@@ -379,5 +429,6 @@ function applyChange(startText, changes){
 	});
 	return text;
 }
+
 
 module.exports = AppState;

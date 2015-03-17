@@ -21,6 +21,61 @@ var appExists = function(id){
 	return {found:found, index: index};
 };
 
+var constructDependencies = function(dependencies){
+	var currentState = {};
+	dependencies.forEach(function(dep){
+		//lets traverse the path to get to the right element
+		var currentRoot = currentState;
+		// console.log(currentRoot,dep);
+		if(dep.path !== ""){
+			dep.path.split(".").forEach(function(p){
+				if(!currentRoot[p]){
+					currentRoot[p] = {};
+				}
+				currentRoot = currentRoot[p];
+			});
+		}
+		switch(dep.type){
+			case "array":
+				if(!currentRoot[dep.property] || currentRoot[dep.property].constructor !== Array)
+					currentRoot[dep.property] = [];
+			break;
+			case "number":
+			case "int":
+				if(typeof currentRoot[dep.property] !== "number"){
+					currentRoot[dep.property] = 0;
+				}
+			break;
+			case "str":
+			case "string":
+				if(typeof currentRoot[dep.property] !== "string"){
+					currentRoot[dep.property] = "";
+				}
+			break;
+			case "object":
+				if(typeof currentRoot[dep.property] !== "object"){
+					currentRoot[dep.property] = {};
+				}
+			break;
+		}
+	});
+	console.log(currentState);
+	return currentState;
+
+}
+
+var mapIdToIndex = function(list){
+	var map = {};
+	list.forEach(function(item){
+		map[item.id] = item;
+		if(item.dependencies){
+			map[item.id].dependencies = constructDependencies(item.dependencies);
+		}
+	});
+	return map;
+}
+var applicationMap  = mapIdToIndex(applicationList);
+
 function userExists(uuid, callback){
 	unirest.get(baseUrl+"/users/"+uuid)
 	.end(function(result){
@@ -73,6 +128,7 @@ function getOrCreateObject(uuid, appId, callback) {
 			// We need to create a state
 			unirest.post(baseUrl + '/users/' + uuid + '/apps/' + appId)
 			.header('Accept', 'application/json')
+			.send({"state": JSON.stringify(applicationMap[appId].dependencies)})
 			.end(function(response) {
 
 				if(response.error) {
@@ -97,6 +153,7 @@ function createObject(uuid, appId, callback) {
 	// We need to create a state
 	unirest.post(baseUrl + '/users/' + uuid + '/apps/' + appId)
 	.header('Accept', 'application/json')
+	.send({"state": JSON.stringify(applicationMap[appId].dependencies)})
 	.end(function(response) {
 
 		if(response.error) {

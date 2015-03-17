@@ -53,98 +53,104 @@ backendSocket.on('connect', function(){
 });
 
 backendSocket.on('disconnect', function(){
-    //backend disconects, wipe the connection so that
-    console.log("Backend has disconnected");
-    currentUser = null;
+	//backend disconects, wipe the connection so that
+	console.log("Backend has disconnected");
+	currentUser = null;
 });
 
 backendSocket.on('syncedState', function(msg){
 	//got syncedState from the server, send to the saved object
-    if(currentObjects[msg.objectId]){
-      console.log("SEnding syncstate to",msg.objectId);
-        currentObjects[msg.objectId].emit('syncedState', msg);
-    }
-    else{
-        console.log("Object doesn't exist in currentObjects");
-    }
+	if(currentObjects[msg.objectId]){
+	  console.log("SEnding syncstate to",msg.objectId,currentObjects[msg.objectId].id);
+		io.to(currentObjects[msg.objectId].id).emit('syncedState', msg)
+	}
+	else{
+		console.log("Object doesn't exist in currentObjects");
+	}
 });
 
 
 
 function socketCanRun(){
-    return (!!currentUser);
+	return (!!currentUser);
 }
 
 backendSocket.on('sendInitialFromBackend', function(msg){
 
-    if(!msg.objectId || !msg.state){
-        console.log("Message from backend is missing object id or state", msg.objectId, msg.state);
-        return;
-    }
-    if(!currentObjects[msg.objectId]){
-        console.log("The entry for object", msg.objectId,"doesn't exist");
-        return;
-    }
-    console.log("Filling for object", msg.objectId);
-    currentObjects[msg.objectId].emit('fillData', msg.state);
+	if(!msg.objectId || !msg.state){
+		console.log("Message from backend is missing object id or state", msg.objectId, msg.state);
+		return;
+	}
+	if(!currentObjects[msg.objectId]){
+		console.log("The entry for object", msg.objectId,"doesn't exist");
+		return;
+	}
+	console.log("Filling for object", msg.objectId);
+	currentObjects[msg.objectId].emit('fillData', msg.state);
 });
 
+backendSocket.on('notification', function(notification) {
+	socket.emit('notification', notification);
+});
 
 // Need to define something using
 io.on('connection', function(socket){
+
 	socket.on('stateChange', function(msg){
 		backendSocket.emit('stateChange',
 			msg);
 	});
 
-  backendSocket.on('notification', function(notification) {
-    socket.emit('notification', notification);
-  });
+	socket.on('pushedChange', function(msg){
+		msg.pushedChange = true;
+		console.log("got pushchange");
+		backendSocket.emit('stateChange', msg);
+	})
 
 	socket.on('getInitial', function(msg){
-        //new object has joined the room, check that it doesn't already exist
-        if(currentObjects[msg.objectId]){
-            console.log("state already exists in the object");
-            return;
-        }
-        //create the mappings between objectid and socketid
-        //the socketIdToObject will be used on disconnect
-        console.log("Creating entry for",msg.objectId);
+		//new object has joined the room, check that it doesn't already exist
+		if(currentObjects[msg.objectId]){
+			console.log("state already exists in the object");
+			return;
+		}
+		//create the mappings between objectid and socketid
+		//the socketIdToObject will be used on disconnect
+		console.log("Creating entry for",msg.objectId);
 
-        var packet = {uuid: msg.uuid, objectId: msg.objectId, socketId: socket.id};
+		var packet = {uuid: msg.uuid, objectId: msg.objectId, socketId: socket.id};
 		backendSocket.emit('requestInitialFromBackend', packet);
 
 
-        currentObjects[msg.objectId] = socket;
-        socketIdToObject[socket.id] = msg.objectId;
+		currentObjects[msg.objectId] = socket;
+		socketIdToObject[socket.id] = msg.objectId;
 
 	});
 
   socket.on('disconnect', function() {
-      //if this exists, its an object, otherwise its the connection from 5000
-      if(socketIdToObject[socket.id]){
-          console.log("Removing",socketIdToObject[socket.id]);
-          delete currentObjects[socketIdToObject[socket.id]];
-          delete socketIdToObject[socket.id];
-      }
+	  //if this exists, its an object, otherwise its the connection from 5000
+	  if(socketIdToObject[socket.id]){
+		  console.log("Removing",socketIdToObject[socket.id]);
+		  delete currentObjects[socketIdToObject[socket.id]];
+		  delete socketIdToObject[socket.id];
+	  }
 
   });
 
   socket.on('initRoom', function(data) {
-      //logged into the system, let the backend know so that it can map
-      //uuid to a socket object
-      if(data.uuid){
-          console.log("Joining",data.uuid);
-          backendSocket.emit('initRoom', {uuid: data.uuid});
-          currentUser = data.uuid;
-      }
-      else{
-          console.log("UUID didn't exist in the ");
-      }
+	  //logged into the system, let the backend know so that it can map
+	  //uuid to a socket object
+	  if(data.uuid){
+		  console.log("Joining",data.uuid);
+		  backendSocket.emit('initRoom', {uuid: data.uuid});
+		  currentUser = data.uuid;
+	  }
+	  else{
+		  console.log("UUID didn't exist in the ");
+	  }
   });
 
   socket.on('leaveRoom', function() {
-      backendSocket.emit('leaveRoom', {uuid: currentUser});
-      console.log("Leave room");
+	  backendSocket.emit('leaveRoom', {uuid: currentUser});
+	  console.log("Leave room");
   });
 });

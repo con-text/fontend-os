@@ -90,7 +90,19 @@ backendSocket.on('sendInitialFromBackend', function(msg){
 });
 
 backendSocket.on('notification', function(notification) {
+	console.log("got notification");
 	socket.emit('notification', notification);
+});
+
+backendSocket.on('pushedChange', function(notification) {
+	//got pushedChange from the server, send to the saved object
+	if(currentObjects[msg.objectId]){
+	  console.log("SEnding syncstate to",msg.objectId,currentObjects[msg.objectId].id);
+		io.to(currentObjects[msg.objectId].id).emit('pushedChange', msg)
+	}
+	else{
+		console.log("Object doesn't exist in currentObjects");
+	}
 });
 
 // Need to define something using

@@ -33,6 +33,14 @@ function AppState(appId, userId, objectId, dependencies){
 			};
 	})(this));
 
+	this.socket.on('pushedChange', (function(AS){
+		// console.log("Got into closure",this);
+
+		return function(data){
+			console.log("got",data,"in pushed change");
+			AS.dealWithPushed(data);
+		};
+	})(this));
 
 	this.socket.on('syncedState', (function(AS){
 			// console.log("Got into closure",this);

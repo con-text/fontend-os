@@ -75,14 +75,6 @@ var AppsStore = assign({}, EventEmitter.prototype, {
     var stateId = params.objectId;
     var url;
 
-    if(app.name === "Browser") {
-      this.openedApps.push(app);
-      this.openedApps[this.openedApps.length-1].element = React.createElement('webview', {src: url, className: "app-window",
-        allowFullScreen: ''});
-      this.emitChange();
-      return;
-    }
-
     // TODO: Move some of that code to AppsApiUtils
     if(!stateId) {
       // Ask app server for new state

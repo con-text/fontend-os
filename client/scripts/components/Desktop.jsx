@@ -78,44 +78,75 @@ var Desktop = React.createClass({
   render: function() {
 
     var dropState = this.getDropState(ItemTypes.WINDOW);
+
     var containers = this.state.currentApps.map(function(app) {
-
-
 
       if(!this.state.pos[app.id]) {
         this.state.pos[app.id] = {x: 0, y: 0};
       }
 
+      var divStyle = {
+        opacity: 1,
+        zIndex: 1
+      };
+
+      if(dropState.isDragging) {
+        divStyle.opacity = 0.2;
+      }
+
       return <AppContainer key={app.id}
         app={app}
-
+        style={divStyle}
         onClick={this.bringToFront}
         x={this.state.pos[app.id].x}
-        y={this.state.pos[app.id].y} />;
+        y={this.state.pos[app.id].y}
+        dragStarted={this.windowDragStarted}
+        dragOver={this.windowDragOver}
+        dragFinished={this.windowDragFinished}
+        bringToFront={this.bringToFront} />;
     }, this);
 
-    var divStyle = {
-      zIndex: 1
-    };
 
-    if(dropState.isDragging) {
-      divStyle.zIndex = 2222;
-    }
+
 
     return (
       <div className="container" onClickCapture={this.handleClick}>
         <NotificationArea />
         <Sidebar />
-        <div className="desktop" style={divStyle} {...this.dropTargetFor(ItemTypes.WINDOW)}>
+        <div className="desktop" >
           <SearchBox boxVisible={this.state.showSearch} />
+          <div id="dragOverlay"
+            {...this.dropTargetFor(ItemTypes.WINDOW)}/>
           {containers}
         </div>
     </div>
     );
   },
 
+  windowDragStarted: function(appContainer) {
+    $('#dragOverlay').css('z-index', 2);
+
+    // Bring up currently dragged element
+    $(appContainer.getDOMNode()).css('z-index', 2);
+  },
+
+  windowDragOver: function(appContainer) {
+    //$(appContainer.getDOMNode()).css('z-index', -1);
+
+  },
+
+  windowDragFinished: function(appContainer) {
+    $('#dragOverlay').css('z-index', -1);
+    $(".appContainer").css('z-index', 1);
+    $(appContainer.getDOMNode()).css('z-index', 2);
+  },
+
   bringToFront: function(e) {
-    console.log('to front', e.target);
+    // Put other windows at level 1
+    $(".appContainer").css('z-index', 1);
+
+    // Find app container clicked on, bring it up
+    $(e.target).closest('.appContainer').css('z-index', 2);
   },
 
   handleClick: function(e) {

@@ -39,7 +39,7 @@ var AppContainer = React.createClass({
   mixins: [DragDropMixin],
 
   statics: {
-    configureDragDrop: function(register) {
+    configureDragDrop: function(register, context) {
       register(ItemTypes.USER, {
         dropTarget: itemDropTarget
       });
@@ -47,19 +47,35 @@ var AppContainer = React.createClass({
       register(ItemTypes.WINDOW, {
         dragSource: {
           beginDrag: function(component) {
+            component.props.dragStarted(component);
             return {
               item: component.props,
               effectAllowed: DropEffects.MOVE
             };
+          },
+          endDrag: function(component) {
+            component.props.dragFinished(component);
+          },
+
+          canDrag: function(component) {
+            return !component.state.fullscreen;
           }
-        }
+        },
+
+        dropTarget: {
+          over: function(component, item) {
+            component.props.dragOver(component);
+          }
+        },
       });
     }
   },
 
   getInitialState: function() {
     return {
-      currentUser: SessionStore.getCurrentUser()
+      currentUser: SessionStore.getCurrentUser(),
+      hidden: false,
+      fullscreen: false
     };
   },
 
@@ -84,12 +100,18 @@ var AppContainer = React.createClass({
 
     var dragStateWindow = this.getDragState(ItemTypes.WINDOW);
 
-    var divStyle = {
-      display: this.props.app && !dragStateWindow.isDragging ? 'block' : 'none',
-      left: this.props.x,
-      top: this.props.y
-    };
+    var divStyle = _.assign(this.props.style, {
+      display: (this.props.app && !dragStateWindow.isDragging) ?
+        'block' : 'none',
+      left: this.state.fullscreen? 0 : this.props.x,
+      top: this.state.fullscreen? 0: this.props.y
+    });
 
+    if(this.state.hidden) {
+      divStyle.display = 'none';
+    }
+
+    // Is user being dropped?
     if(dropState.isHovering) {
       divStyle.background = 'gray';
 
@@ -107,13 +129,19 @@ var AppContainer = React.createClass({
 
     return <div className="appContainer" style={divStyle}
       {...this.dropTargetFor(ItemTypes.USER)}
+      {...this.dropTargetFor(ItemTypes.WINDOW)}
       {...this.dragSourceFor(ItemTypes.WINDOW)}
+      onClick={this.props.bringToFront}
       >
       <div className="titleBar">
         <div className="title">
           {this.props.app && this.props.app.name}
         </div>
         <div className="buttons">
+          <div role="button" onClick={this.handleFullScreen}>
+            <i className="fa fa-arrows-alt btn"></i>
+          </div>
+
           <div role="button" onClick={this.handleCloseClick}>
             <i className="fa fa-times-circle close-btn"></i>
           </div>
@@ -130,9 +158,29 @@ var AppContainer = React.createClass({
     </div>;
   },
 
+  hideWindow: function() {
+    this.setState({
+      hidden: true
+    });
+  },
+
+  showWindow: function() {
+    this.setState({
+      hidden: false
+    });
+  },
+
   handleCloseClick: function(e) {
     e.preventDefault();
     AppsActionCreators.close(this.props.app);
+  },
+
+  handleFullScreen: function(e) {
+    e.preventDefault();
+    var domNode = this.getDOMNode();
+    $(domNode).toggleClass('fullscreen');
+    var fullscreenState = this.state.fullscreen;
+    this.setState({fullscreen: !fullscreenState});
   }
 });
 

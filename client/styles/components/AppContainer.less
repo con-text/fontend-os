@@ -44,8 +44,10 @@
 
     .buttons {
       left-margin: auto;
+      flex-direction: row;
+      display: flex;
 
-      .close-btn {
+      .btn, .close-btn {
         margin-right: 5px;
         transition: opacity 0.5s;
         opacity: 0.5;
@@ -68,6 +70,8 @@
     padding-left: 20px;
     padding-top: 10px;
   }
+
+
 }
 
 .appInnerContainer {
@@ -81,4 +85,25 @@
 .app-window {
   width: 100%;
   height: 100%;
+}
+
+.fullscreenMixin {
+  position: fixed;
+
+  left: 0 !important;
+  right: 0;
+  top: 0;
+  bottom: 0;
+
+  width: 100%;
+  height: 100%;
+
+  margin: 0;
+  padding: 0;
+
+  transition: all 1s ease 0s;
+}
+
+.fullscreen {
+  .fullscreenMixin !important;
 }

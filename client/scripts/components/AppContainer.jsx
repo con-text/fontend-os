@@ -55,6 +55,10 @@ var AppContainer = React.createClass({
           },
           endDrag: function(component) {
             component.props.dragFinished(component);
+          },
+
+          canDrag: function(component) {
+            return !component.state.fullscreen;
           }
         },
 
@@ -70,7 +74,8 @@ var AppContainer = React.createClass({
   getInitialState: function() {
     return {
       currentUser: SessionStore.getCurrentUser(),
-      hidden: false
+      hidden: false,
+      fullscreen: false
     };
   },
 
@@ -98,8 +103,8 @@ var AppContainer = React.createClass({
     var divStyle = _.assign(this.props.style, {
       display: (this.props.app && !dragStateWindow.isDragging) ?
         'block' : 'none',
-      left: this.props.x,
-      top: this.props.y
+      left: this.state.fullscreen? 0 : this.props.x,
+      top: this.state.fullscreen? 0: this.props.y
     });
 
     if(this.state.hidden) {
@@ -174,6 +179,8 @@ var AppContainer = React.createClass({
     e.preventDefault();
     var domNode = this.getDOMNode();
     $(domNode).toggleClass('fullscreen');
+    var fullscreenState = this.state.fullscreen;
+    this.setState({fullscreen: !fullscreenState});
   }
 });
 

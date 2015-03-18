@@ -170,6 +170,19 @@ AppDispatcher.register(function(payload) {
       AppsStore.close(action.app.id);
       AppsStore.emitChange();
       break;
+
+    // Close app if it matches the state
+    case ActionTypes.CLOSE_APP_WITH_STATE:
+
+      var openedApp = _.findWhere(AppsStore.getOpened(), {id: action.app.id});
+
+      if(openedApp && openedApp.stateId === action.app.stateId) {
+        AppsStore.close(action.app.id);
+        AppsStore.emitChange();
+      }
+
+      break;
+
     default:
       // No operation
   }

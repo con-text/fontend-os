@@ -39,6 +39,11 @@ module.exports = {
         objectId: objectId
       });
 
+      AppDispatcher.handleViewAction({
+        type: ActionTypes.CLOSE_APP_WITH_STATE,
+        app: {id: appId, stateId: objectId},
+      });
+
     });
 
     AppDispatcher.handleViewAction({

@@ -35,7 +35,10 @@ var SearchResultItem = React.createClass({
 
   render: function() {
     var result = this.props.result;
-    var divClass = this.props.selected === result ? 'active' : '';
+
+    var divClass = "search-item" + 
+      (this.props.selected === result ? ' active' : '');
+
     var icon = (result.value.indexOf("Go to:") > -1) ? 'fa fa-globe fileIcon' : 'fa fa-file-text-o fileIcon';
 
     return <li
@@ -44,9 +47,10 @@ var SearchResultItem = React.createClass({
       onClick={this.handleClick}
       className={divClass}><i className={icon}></i>{result.value}
 
-      {this.renderDeleteButton()}
-      {this.renderDeleteAnimation()}
-
+        <div className="actions">
+          {this.renderDeleteButton()}
+          {this.renderDeleteAnimation()}
+        </div>
       </li>;
   },
 
@@ -63,7 +67,7 @@ var SearchResultItem = React.createClass({
 
   renderDeleteButton: function() {
 
-    if(this.props.result.objectId && !this.props.result.isRemoving) {
+    if(this.props.result.app.state.id && !this.props.result.isRemoving) {
       var deleteIconStyle = 'fa fa-trash-o';
       return <i className={deleteIconStyle} onClick={this.handleRemoveClick}></i>;
     }
@@ -94,8 +98,8 @@ var SearchResultItem = React.createClass({
     e.preventDefault();
     e.stopPropagation();
 
-    if(this.props.result.objectId) {
-      AppsActions.deleteState(this.props.result.appId, this.props.result.objectId);
+    if(this.props.result.app) {
+      AppsActions.deleteState(this.props.result.app);
     }
   }
 });

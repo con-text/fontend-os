@@ -66,6 +66,10 @@ function checkForWebsite(query, results) {
     results.push({
       value: "Go to: " + query,
       type: "Website",
+      app: {
+        id: app.id,
+        state: {}
+      },
       action: AppsActionCreator.open.bind(
         AppsActionCreator,
         app,
@@ -101,7 +105,10 @@ function findStates(app, params) {
     results.push({
       value: "New " + app.name.toLowerCase() + " instance",
       type: "App",
-      appId: app.id,
+      app: {
+        id: app.id,
+        state: {}
+      },
       action: AppsActionCreator.open.bind(
         AppsActionCreator,
         app,
@@ -112,16 +119,26 @@ function findStates(app, params) {
 
       var appParams = _.clone(params);
       // Assign state id
-      appParams.objectId = state._id;
+      appParams.state = state;
+      appParams.state.id = state._id;
 
-      // Extract timestamp
-      var timestamp = mongoIdToTimestamp(state._id);
+      var stateName = '';
+      if(state.title) {
+        stateName = " - " + state.title;
+      } else {
+        // Extract timestamp
+        var timestamp = mongoIdToTimestamp(state._id);
+        stateName = " from " + timestamp.toDateString();
+      }
 
       results.push({
-        value: "\tOpen " + app.name.toLowerCase() + " from " + timestamp,
+        value: "\tOpen " + app.name.toLowerCase() + stateName,
         type: "App",
-        appId: app.id,
-        objectId: appParams.objectId,
+        // App parameters
+        app: {
+          id: app.id,
+          state: appParams.state
+        },
         action: AppsActionCreator.open.bind(
           AppsActionCreator,
           app,
@@ -149,7 +166,6 @@ module.exports = {
     var results = [];
     var app;
     var apps = AppsStore.getApps();
-    var browserObjectId;
     var id;
 
     // Params for app

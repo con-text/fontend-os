@@ -28,30 +28,33 @@ module.exports = {
     });
   },
 
-  deleteState: function(appId, objectId) {
+  deleteState: function(app) {
 
     var uuid = SessionStore.getCurrentUser().uuid;
-    AppsApiUtils.deleteState(uuid, appId, objectId, function() {
+    AppsApiUtils.deleteState(uuid, app, function() {
 
       AppDispatcher.handleViewAction({
         type: ActionTypes.DELETE_STATE_COMPLETED,
-        appId: appId,
-        objectId: objectId
+        app: app
       });
 
       AppDispatcher.handleViewAction({
         type: ActionTypes.CLOSE_APP_WITH_STATE,
-        app: {id: appId, stateId: objectId},
+        app: app,
       });
 
     });
 
     AppDispatcher.handleViewAction({
       type: ActionTypes.DELETE_STATE,
-      appId: appId,
-      objectId: objectId
+      app: app
     });
+  },
 
-
+  setTitle: function(app, newTitle) {
+    var uuid = SessionStore.getCurrentUser().uuid;
+    AppsApiUtils.updateState(uuid, app, {title: newTitle}, function() {
+      //...
+    });
   }
 };

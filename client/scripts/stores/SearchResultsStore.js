@@ -56,7 +56,7 @@ SearchResultsStore.dispatchToken = AppDispatcher.register(function(payload) {
 
   var action = payload.action;
   var appId;
-  var objectId;
+  var stateId;
 
   switch(action.type) {
 
@@ -79,10 +79,9 @@ SearchResultsStore.dispatchToken = AppDispatcher.register(function(payload) {
       break;
 
     case AppsActionTypes.DELETE_STATE:
-      appId = action.appId;
-      objectId = action.objectId;
+
       var searchResult = _.findWhere(SearchResultsStore._results, {
-        objectId: objectId, appId: appId
+        app: action.app
       });
 
       searchResult.isRemoving = true;
@@ -91,11 +90,11 @@ SearchResultsStore.dispatchToken = AppDispatcher.register(function(payload) {
       break;
 
     case AppsActionTypes.DELETE_STATE_COMPLETED:
-      appId = action.appId;
-      objectId = action.objectId;
+      appId = action.app.id;
+      stateId = action.app.state.id;
 
       _.remove(SearchResultsStore._results, function(searchResult) {
-        return searchResult.appId === appId && searchResult.objectId === objectId;
+        return searchResult.app.id === appId && searchResult.app.state.id === stateId;
       });
 
       SearchResultsStore.emitChange();

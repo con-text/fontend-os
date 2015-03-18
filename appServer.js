@@ -19,6 +19,8 @@ app.delete('/app/:uuid/:appId/states/:objectId', routes.deleteObject);
 app.post('/users/:uuid/apps/:appId/states', routes.createState);
 app.get('/users/:uuid/apps/:appId/states/default', routes.getDefaultState);
 
+app.put('/users/:uuid/apps/:appId/states/:stateId', routes.updateState);
+
 app.get('/object/:uuid/:objectId', routes.getObject);
 
 // Allow to serve assets, like css or images

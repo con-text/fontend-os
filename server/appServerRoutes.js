@@ -59,10 +59,9 @@ var constructDependencies = function(dependencies){
 			break;
 		}
 	});
-	console.log(currentState);
-	return currentState;
 
-}
+	return currentState;
+};
 
 var mapIdToIndex = function(list){
 	var map = {};
@@ -73,7 +72,8 @@ var mapIdToIndex = function(list){
 		}
 	});
 	return map;
-}
+};
+
 var applicationMap  = mapIdToIndex(applicationList);
 
 function userExists(uuid, callback){
@@ -137,7 +137,7 @@ function getOrCreateObject(uuid, appId, callback) {
 				}
 
 				var newState = response.body;
-				callback && callback(null, newState._id);
+				callback && callback(null, newState);
 			});
 		}
 	});
@@ -162,7 +162,7 @@ function createObject(uuid, appId, callback) {
 		}
 
 		var newState = response.body;
-		callback && callback(null, newState._id);
+		callback && callback(null, newState);
 	});
 }
 
@@ -193,22 +193,52 @@ module.exports = {
 	},
 
 	createState: function(req, res) {
-		createObject(req.params.uuid, req.params.appId, function(err, stateId){
+		createObject(req.params.uuid, req.params.appId, function(err, state){
 			if(err) {
 				return res.status(500).send("Couldn't get new state, wat111");
 			}
 
-			res.json({stateId: stateId});
+			res.json(state);
 		});
 	},
 
+	/**
+	* Update a particular object
+	*
+	* PUT /users/:uuid/apps/:appId/states/:stateId
+	*/
+	updateState: function(req, res) {
+		var uuid = req.params.uuid;
+		var appId = req.params.appId;
+		var stateId = req.params.stateId;
+
+		unirest
+			.put(baseUrl+"/users/"+uuid+"/apps/"+appId+"/states/"+stateId)
+			.headers({'Accept': 'application/json'})
+			.send(req.body)
+			.end(function(response) {
+
+				if(response.error){
+					res.status(response.code).send(response.error);
+					return;
+				}
+
+				res.send(response.body);
+			});
+	},
+
+	/**
+	* GET /users/:uuid/apps/:appId/states/default
+	*
+	* Gets default state of an app
+	*/
 	getDefaultState: function(req, res) {
-		getOrCreateObject(req.params.uuid, req.params.appId, function(err, stateId){
+		getOrCreateObject(req.params.uuid, req.params.appId, function(err, state){
 			if(err) {
 				return res.status(500).send("Couldn't get new state, wat111");
 			}
 
-			res.json({stateId: stateId});
+			res.json(state);
 		});
 	},
 
@@ -220,14 +250,14 @@ module.exports = {
 		var realApp = appExists(appId);
 
 		// Create object or get default (first)
-		getOrCreateObject(uuid, appId, function(err, objectId) {
+		getOrCreateObject(uuid, appId, function(err, object) {
 
 			if(err) {
 				res.status(404).json(err);
 				return;
 			}
 
-			getState(uuid, appId, objectId, function(err, state){
+			getState(uuid, appId, object._id, function(err, state){
 
 				if(err){
 					res.status(404).json(err);

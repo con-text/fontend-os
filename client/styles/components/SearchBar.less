@@ -64,6 +64,21 @@
     overflow-wrap: break-word;
     padding: 10px 10px;
     transition: background 0.25s;
+
+    ul {
+      display: flex;
+      flex-flow: column;
+      align-items: stretch;
+      align-content: stretch;
+
+      li.search-item {
+        display: inline-flex;
+
+        .actions {
+          margin-left: auto;
+        }
+      }
+    }
   }
 
   .searchResults {

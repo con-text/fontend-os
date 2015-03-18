@@ -28,14 +28,26 @@ module.exports = {
     });
   },
 
-  deleteState: function(uuid, appId, objectId, callback) {
+  deleteState: function(uuid, app, callback) {
 
     $.ajax({
       contentType: 'application/json',
       type: 'DELETE',
-      url: appServerUrl + '/app/' +uuid + '/' + appId + '/states/' + objectId,
+      url: appServerUrl + '/app/' +uuid + '/' + app.id +
+        '/states/' + app.state.id,
       success: callback
     });
+  },
 
+  updateState: function(uuid, app, changes, callback) {
+
+    $.ajax({
+      contentType: 'application/json',
+      type: 'PUT',
+      data: JSON.stringify(changes),
+      url: appServerUrl + '/users/' +uuid + '/apps/' + app.id +
+        '/states/' + app.state.id,
+      success: callback
+    });
   }
 };

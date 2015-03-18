@@ -1,6 +1,8 @@
 var AppDispatcher = require('../dispatchers/AppDispatcher');
 var AppsConstants = require('../constants/AppsConstants');
 var ActionTypes = AppsConstants.ActionTypes;
+var AppsApiUtils = require('../utils/AppsApiUtils');
+var SessionStore = require('../stores/SessionStore');
 
 module.exports = {
 
@@ -26,5 +28,25 @@ module.exports = {
     });
   },
 
+  deleteState: function(appId, objectId) {
 
+    var uuid = SessionStore.getCurrentUser().uuid;
+    AppsApiUtils.deleteState(uuid, appId, objectId, function() {
+
+      AppDispatcher.handleViewAction({
+        type: ActionTypes.DELETE_STATE_COMPLETED,
+        appId: appId,
+        objectId: objectId
+      });
+
+    });
+
+    AppDispatcher.handleViewAction({
+      type: ActionTypes.DELETE_STATE,
+      appId: appId,
+      objectId: objectId
+    });
+
+
+  }
 };

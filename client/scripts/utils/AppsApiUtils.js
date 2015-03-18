@@ -1,5 +1,6 @@
 // TODO: Should use HTTPS?
 var baseUrl = 'http://localhost:5000';
+var appServerUrl = 'http://localhost:3001';
 
 module.exports = {
 
@@ -25,5 +26,16 @@ module.exports = {
       type: 'POST',
       url: baseUrl + '/apps/' + app.id + '/collaborators'
     });
+  },
+
+  deleteState: function(uuid, appId, objectId, callback) {
+
+    $.ajax({
+      contentType: 'application/json',
+      type: 'DELETE',
+      url: appServerUrl + '/app/' +uuid + '/' + appId + '/states/' + objectId,
+      success: callback
+    });
+
   }
 };

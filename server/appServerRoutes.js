@@ -273,6 +273,24 @@ module.exports = {
 		});
 	},
 
+	deleteObject: function(req, res) {
+		var uuid = req.params.uuid;
+		var appId = req.params.appId;
+		var objectId = req.params.objectId;
+
+		unirest
+		.delete(baseUrl+"/users/"+uuid+"/apps/"+appId+"/states/"+objectId)
+		.end(function(response){
+
+			if(response.error){
+				//user probably doesn't exist, can change this depending on header
+				res.status(response.code).send(response.error);
+				return;
+			}
+
+			res.json(response.body);
+		});
+	},
 
 	syncPost: function(req,res){
 		var uuid = req.params.uuid;

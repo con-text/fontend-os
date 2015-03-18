@@ -14,6 +14,7 @@ app.use(bodyParser.json());
 app.get('/', routes.root);
 app.get('/app/:uuid/:appId', routes.getApp);
 app.get('/app/:uuid/:appId/states/:objectId', routes.getAppWithObject);
+app.delete('/app/:uuid/:appId/states/:objectId', routes.deleteObject);
 
 app.post('/users/:uuid/apps/:appId/states', routes.createState);
 app.get('/users/:uuid/apps/:appId/states/default', routes.getDefaultState);

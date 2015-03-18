@@ -101,6 +101,7 @@ function findStates(app, params) {
     results.push({
       value: "New " + app.name.toLowerCase() + " instance",
       type: "App",
+      appId: app.id,
       action: AppsActionCreator.open.bind(
         AppsActionCreator,
         app,
@@ -119,6 +120,8 @@ function findStates(app, params) {
       results.push({
         value: "\tOpen " + app.name.toLowerCase() + " from " + timestamp,
         type: "App",
+        appId: app.id,
+        objectId: appParams.objectId,
         action: AppsActionCreator.open.bind(
           AppsActionCreator,
           app,

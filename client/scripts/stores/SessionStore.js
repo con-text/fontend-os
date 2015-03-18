@@ -11,9 +11,6 @@ var assign = require('object-assign');
 // Stores
 var AvailableUsersStore = require('./AvailableUsersStore');
 
-// Actions
-var AppsActions = require('../actions/AppsActionCreators');
-
 // Libraries
 var _ = require('lodash');
 var CHANGE_EVENT = 'change';
@@ -71,7 +68,6 @@ function checkIfSessionIsValid() {
 
   // Validate current session against the list of available users
   if(_session && !foundUser) {
-    console.log("Kicking out user")
     destroySession();
   }
 }

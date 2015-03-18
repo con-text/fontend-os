@@ -36,7 +36,7 @@ var SearchResultItem = React.createClass({
   render: function() {
     var result = this.props.result;
 
-    var divClass = "search-item" + 
+    var divClass = "search-item" +
       (this.props.selected === result ? ' active' : '');
 
     var icon = (result.value.indexOf("Go to:") > -1) ? 'fa fa-globe fileIcon' : 'fa fa-file-text-o fileIcon';
@@ -58,7 +58,7 @@ var SearchResultItem = React.createClass({
       if(this.props.result.isRemoving) {
         return (
           <span clsasName="remove">
-            <div className="loader"></div>
+            <div className="loader smallLoad"></div>
           </span>
         );
       }

@@ -113,7 +113,6 @@ var Desktop = React.createClass({
       <div className="container" onClickCapture={this.handleClick}>
         <NotificationArea />
         <Sidebar />
-        <span className="button" onClick={this.notify}>CLICK ME</span>
         <div className="desktop" >
           <SearchBox boxVisible={this.state.showSearch} />
           <div id="dragOverlay"
@@ -123,19 +122,6 @@ var Desktop = React.createClass({
     </div>
     );
   },
-
-  notify: function(e) {
-   // Request should specify who is sharing what app
-   var app = {
-     id: "89447cef-0ee6-4805-942b-bc790e89dce1"
-   };
-
-   // Create notification about sharing
-   NotificationActions.createTextNotification("You will share this app.",
-     AppsActions.open.bind(
-       AppsActions,
-       app));
- },
 
   windowDragStarted: function(appContainer) {
     $('#dragOverlay').css('z-index', 2);

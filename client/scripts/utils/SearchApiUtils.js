@@ -102,8 +102,17 @@ function findStates(app, params) {
   // Find documents
   AppsApiUtils.getStates(app.id, function(states) {
 
+    var actionName = app.name.toLowerCase();
+
+    // Special cases:
+    if(actionName === "documents") {
+      actionName = "document";
+    } else if(actionName === "calculator") {
+      actionName = "calculator";
+    }
+
     results.push({
-      value: "New " + app.name.toLowerCase() + " instance",
+      value: "Open new " + actionName,
       type: "App",
       app: {
         id: app.id,
@@ -121,19 +130,19 @@ function findStates(app, params) {
       // Assign state id
       appParams.state = state;
       appParams.state.id = state._id;
-
+      var timestamp = mongoIdToTimestamp(state._id);
       var stateName = '';
       if(state.title) {
         stateName = " - " + state.title;
       } else {
         // Extract timestamp
-        var timestamp = mongoIdToTimestamp(state._id);
         stateName = " from " + timestamp.toDateString();
       }
 
       results.push({
-        value: "\tOpen " + app.name.toLowerCase() + stateName,
+        value: "\t\tOpen " + actionName + stateName,
         type: "App",
+        timestamp: timestamp,
         // App parameters
         app: {
           id: app.id,
@@ -147,7 +156,7 @@ function findStates(app, params) {
     });
 
     // Resolve the promise when server replies
-    deferred.resolve(results);
+    deferred.resolve(_.sortByOrder(results, ['timestamp'], [false]));
   });
 
   return deferred;

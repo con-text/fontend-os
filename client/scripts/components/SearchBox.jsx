@@ -132,6 +132,10 @@ var SearchBox = React.createClass({
     }
 
     SearchResultsStore.addChangeListener(this._onChange);
+
+    if(this.state.searchTerm.trim() !== '') {
+      SearchActions.search(this.state.searchTerm);
+    }
   },
 
   componentWillUnmount: function() {
@@ -141,6 +145,10 @@ var SearchBox = React.createClass({
   componentWillReceiveProps: function(nextProps) {
     if(nextProps.boxVisible) {
       this.focusInput();
+    }
+
+    if(this.state.searchTerm.trim() !== '') {
+      SearchActions.search(this.state.searchTerm);
     }
   },
 

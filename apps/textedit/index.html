@@ -38,14 +38,6 @@
 				container: '#toolbar'
 			});
 
-			textEditor.on("text-change", function(delta, source) {
-
-				if(source === "user") {
-					AS._state.textValue = textEditor.getText();
-					AS._state.htmlValue = textEditor.getHTML();
-				}
-			});
-
 			textEditor.on('text-change', function(delta, source) {
 				if (source == 'api') {
 					console.log("An API call triggered this change.");
@@ -53,7 +45,7 @@
 				else if (source == 'user') {
 					AS.pushChange('text-change', {uuid: AS.userId, objectId: AS.objectId, action: 'changed',
 							path: ["operations"], property: "operations", value: delta.ops, type: "string", OTChanges: true});  
-					console.log("A user action triggered this change.");
+					console.log(delta.ops);
 				}
 			});
 

@@ -14,9 +14,12 @@ app.use(bodyParser.json());
 app.get('/', routes.root);
 app.get('/app/:uuid/:appId', routes.getApp);
 app.get('/app/:uuid/:appId/states/:objectId', routes.getAppWithObject);
+app.delete('/app/:uuid/:appId/states/:objectId', routes.deleteObject);
 
 app.post('/users/:uuid/apps/:appId/states', routes.createState);
 app.get('/users/:uuid/apps/:appId/states/default', routes.getDefaultState);
+
+app.put('/users/:uuid/apps/:appId/states/:stateId', routes.updateState);
 
 app.get('/object/:uuid/:objectId', routes.getObject);
 
@@ -27,9 +30,6 @@ app.get('/apps/:appName/:asset', function(req, res) {
 
   res.sendFile(fileName, { root: './dist/apps/'+ appName + '/' });
 });
-
-// app.get('/syncState/:uuid/:appId', routes.syncGet);
-// app.post('/syncState/:uuid/:appId', routes.syncPost);
 
 var server = app.listen(3001, function () {
 
@@ -60,8 +60,8 @@ backendSocket.on('disconnect', function(){
 
 backendSocket.on('syncedState', function(msg){
 	//got syncedState from the server, send to the saved object
-	if(currentObjects[msg.objectId]){
-	  console.log("SEnding syncstate to",msg.objectId,currentObjects[msg.objectId].id);
+  if(currentObjects[msg.objectId]){
+    console.log("Sending syncstate to",msg.objectId);
 		io.to(currentObjects[msg.objectId].id).emit('syncedState', msg)
 	}
 	else{
@@ -72,7 +72,7 @@ backendSocket.on('syncedState', function(msg){
 
 
 function socketCanRun(){
-	return (!!currentUser);
+  return (!!currentUser);
 }
 
 backendSocket.on('sendInitialFromBackend', function(msg){

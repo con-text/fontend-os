@@ -8,7 +8,7 @@ var _ = require('lodash');
 var DesktopActions = require('../actions/DesktopActionCreators');
 var SearchActions = require('../actions/SearchActionCreators');
 var SearchResultsStore = require('../stores/SearchResultsStore');
-
+var AppsActions = require('../actions/AppsActionCreators');
 
 // Escape key code
 var ESC_KEY_CODE = 27;
@@ -35,14 +35,44 @@ var SearchResultItem = React.createClass({
 
   render: function() {
     var result = this.props.result;
-    var divClass = this.props.selected === result ? 'active' : '';
+
+    var divClass = "search-item" +
+      (this.props.selected === result ? ' active' : '');
+
     var icon = (result.value.indexOf("Go to:") > -1) ? 'fa fa-globe fileIcon' : 'fa fa-file-text-o fileIcon';
 
     return <li
       onMouseEnter={this.handleMouseEnter}
       onMouseLeave={this.handleMouseLeave}
       onClick={this.handleClick}
-      className={divClass}><i className={icon}></i>{result.value}</li>;
+      className={divClass}><i className={icon}></i>{result.value}
+
+        <div className="actions">
+          {this.renderDeleteButton()}
+          {this.renderDeleteAnimation()}
+        </div>
+      </li>;
+  },
+
+  renderDeleteAnimation: function() {
+      if(this.props.result.isRemoving) {
+        return (
+          <span clsasName="remove">
+            <div className="loader smallLoad"></div>
+          </span>
+        );
+      }
+      return '';
+  },
+
+  renderDeleteButton: function() {
+
+    if(this.props.result.app.state.id && !this.props.result.isRemoving) {
+      var deleteIconStyle = 'fa fa-trash-o';
+      return <i className={deleteIconStyle} onClick={this.handleRemoveClick}></i>;
+    }
+
+    return '';
   },
 
   handleMouseEnter: function(e) {
@@ -61,6 +91,15 @@ var SearchResultItem = React.createClass({
     if(this.props.result) {
       if(this.props.result.action)
       this.props.result.action();
+    }
+  },
+
+  handleRemoveClick: function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if(this.props.result.app) {
+      AppsActions.deleteState(this.props.result.app);
     }
   }
 });
@@ -93,6 +132,10 @@ var SearchBox = React.createClass({
     }
 
     SearchResultsStore.addChangeListener(this._onChange);
+
+    if(this.state.searchTerm.trim() !== '') {
+      SearchActions.search(this.state.searchTerm);
+    }
   },
 
   componentWillUnmount: function() {
@@ -121,7 +164,7 @@ var SearchBox = React.createClass({
         result={result}
         selected={this.state.selected}
         mouseEnter={this.onMouseEnter}
-        mouseLeave={this.onMouseLeave} />
+        mouseLeave={this.onMouseLeave} />;
     }, this);
 
     return !this.state.hasResults ?

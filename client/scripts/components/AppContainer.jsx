@@ -6,6 +6,9 @@ var DragDropMixin = reactDnd.DragDropMixin;
 var DropEffects = reactDnd.DropEffects;
 var ItemTypes = require('./DragItemTypes');
 
+// Components
+var AppTitleBar = require('../components/AppTitleBar');
+
 // Stores
 var SessionStore = require('../stores/SessionStore');
 
@@ -134,9 +137,7 @@ var AppContainer = React.createClass({
       onClick={this.props.bringToFront}
       >
       <div className="titleBar">
-        <div className="title">
-          {this.props.app && this.props.app.name}
-        </div>
+        <AppTitleBar app={this.props.app} />
         <div className="buttons">
           <div role="button" onClick={this.handleFullScreen}>
             <i className="fa fa-arrows-alt btn"></i>
@@ -181,6 +182,11 @@ var AppContainer = React.createClass({
     $(domNode).toggleClass('fullscreen');
     var fullscreenState = this.state.fullscreen;
     this.setState({fullscreen: !fullscreenState});
+  },
+
+  handleTitleChange: function(e) {
+    var newTitle = this.refs.titleInput.getDOMNode().value;
+    console.log("titleChanged");
   }
 });
 

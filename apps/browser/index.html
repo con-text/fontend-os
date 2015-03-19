@@ -13,18 +13,30 @@
 	var Browser = React.createClass({
 
 		getInitialState: function() {
+			var text = '';
+
+			if(window.appParams) {
+				text = window.appParams.query;
+			}
+
 			return {
-				text: '',
+				text: text,
 				history: ['about:blank']
 			};
 		},
 
 		componentDidMount: function() {
+
 			var frame = this.refs.frame.getDOMNode();
+
 			frame.setAttribute('nwdisable', '');
 			frame.setAttribute('nwfaketop', '');
 			frame.setAttribute('allowFullScreen', '');
-			frame.addEventListener("DOMAttrModified", this.handleFrameLoad);
+
+			//frame.append(webView);
+			if(this.state.text !== '') {
+				this.goToPage();
+			}
 		},
 
 		componentWillUnmount: function() {
@@ -110,7 +122,7 @@
 				var frame = this.refs.frame.getDOMNode();
 				var url = frame.contentWindow.location.href;
 				this.state.history.push(url);
-				console.log("Pusing url". url);
+				console.log("Pushing url". url);
 			}
 		}
 	});

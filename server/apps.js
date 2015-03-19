@@ -22,8 +22,8 @@ function App(manifest) {
   }
 }
 
-App.prototype.displayApp = function(uuid, objectId){
-  return injectAPI(loadMainPage(this.manifest), this.manifest, uuid, objectId);
+App.prototype.displayApp = function(uuid, objectId, params){
+  return injectAPI(loadMainPage(this.manifest), this.manifest, uuid, objectId, params);
 };
 
 module.exports = {
@@ -194,7 +194,7 @@ function readManifest(path) {
 //this will be used to inject the api that apps will use into the source of the page.
 //for now, it's simple, just adding it before hand. Later on we can explore putting in into the
 //correct secion of the dom
-function injectAPI(webSource, manifest, uuid, objectId){
+function injectAPI(webSource, manifest, uuid, objectId, params){
   //this port needs to not be hardcoded
   var content = "<script type='text/javascript' src='http://localhost:5000/vendor/jquery/dist/jquery.min.js'></script>";
       content+= "<script type='text/javascript' src='http://localhost:5000/vendor/observe-js/src/observe.js'></script>";
@@ -208,6 +208,12 @@ function injectAPI(webSource, manifest, uuid, objectId){
 
     if(manifest.style) {
       content += "<link href='"+ manifest.style + "' rel='stylesheet' />";
+    }
+
+    if(params) {
+      content += "<script type='text/javascript'>";
+      content += "window.appParams = " + JSON.stringify(params); + ";";
+      content += "</script>";
     }
 
   return content += webSource;

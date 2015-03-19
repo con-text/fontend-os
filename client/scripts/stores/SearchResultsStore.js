@@ -2,12 +2,14 @@ var AppDispatcher = require('../dispatchers/AppDispatcher');
 
 var SearchConstants = require('../constants/SearchConstants');
 var ActionTypes = SearchConstants.ActionTypes;
+var AppsActionTypes = require('../constants/AppsConstants').ActionTypes;
 
 // Actions
 var SearchActions = require('../actions/SearchActionCreators');
 
 var EventEmitter = require('events').EventEmitter;
 var assign = require('object-assign');
+var _ = require('lodash');
 
 var CHANGE_EVENT = 'change';
 
@@ -53,6 +55,9 @@ var SearchResultsStore = assign({}, EventEmitter.prototype, {
 SearchResultsStore.dispatchToken = AppDispatcher.register(function(payload) {
 
   var action = payload.action;
+  var appId;
+  var stateId;
+
   switch(action.type) {
 
     case ActionTypes.SEARCH:
@@ -70,6 +75,28 @@ SearchResultsStore.dispatchToken = AppDispatcher.register(function(payload) {
 
     case ActionTypes.SEARCH_RESET:
       SearchResultsStore.init();
+      SearchResultsStore.emitChange();
+      break;
+
+    case AppsActionTypes.DELETE_STATE:
+
+      var searchResult = _.findWhere(SearchResultsStore._results, {
+        app: action.app
+      });
+
+      searchResult.isRemoving = true;
+
+      SearchResultsStore.emitChange();
+      break;
+
+    case AppsActionTypes.DELETE_STATE_COMPLETED:
+      appId = action.app.id;
+      stateId = action.app.state.id;
+
+      _.remove(SearchResultsStore._results, function(searchResult) {
+        return searchResult.app.id === appId && searchResult.app.state.id === stateId;
+      });
+
       SearchResultsStore.emitChange();
       break;
 

@@ -42,10 +42,9 @@ module.exports = {
       };
 
       var params = {
-        objectId: notification.stateId
+        stateId: notification.stateId
       };
 
-      console.log("Going to open object id: " + params.objectId);
 
       // Create notification about sharing
       NotificationActions.createTextNotification("You now share this app with",

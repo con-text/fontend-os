@@ -71,15 +71,16 @@ var AppsStore = assign({}, EventEmitter.prototype, {
 
     params = params || {};
     // What is my current state?
+    params.state = params.state || {};
 
-    var stateId = params.objectId;
     var url;
+    var appServer = 'http://localhost:3001';
 
     // TODO: Move some of that code to AppsApiUtils
-    if(!stateId) {
-      // Ask app server for new state
+    if(!params.state.id) {
 
-      url = 'http://localhost:3001/users/'+ uuid +'/apps/' + app.id + '/states';
+      // Ask app server for new state
+      url = appServer + '/users/'+ uuid +'/apps/' + app.id + '/states';
 
       // Create new state or use default if available
       if(params.useDefault) {
@@ -90,10 +91,11 @@ var AppsStore = assign({}, EventEmitter.prototype, {
         url: url,
         success: function(data) {
 
-          stateId = data.stateId;
-          app.stateId = stateId;
+          app.state = data;
+          app.state.id = data._id;
+
           // Create react component from class
-          url = 'http://localhost:3001/app/'+ uuid +'/' + app.id + '/states/' + stateId;
+          url = appServer + '/app/'+ uuid +'/' + app.id + '/states/' + app.state.id;
 
           if(params.args) {
             url += '?' + querystring.stringify(params.args);
@@ -110,9 +112,9 @@ var AppsStore = assign({}, EventEmitter.prototype, {
 
     } else {
 
-      app.stateId = stateId;
       // Create react component from class
-      url = 'http://localhost:3001/app/'+ uuid +'/' + app.id + '/states/' + stateId;
+      app.state = params.state;
+      url = appServer + '/app/'+ uuid +'/' + app.id + '/states/' + app.state.id;
 
       if(params.args) {
         url += '?' + querystring.stringify(params.args);
@@ -170,6 +172,19 @@ AppDispatcher.register(function(payload) {
       AppsStore.close(action.app.id);
       AppsStore.emitChange();
       break;
+
+    // Close app if it matches the state
+    case ActionTypes.CLOSE_APP_WITH_STATE:
+
+      var openedApp = _.findWhere(AppsStore.getOpened(), {id: action.app.id});
+
+      if(openedApp && openedApp.state.id === action.app.state.id) {
+        AppsStore.close(action.app.id);
+        AppsStore.emitChange();
+      }
+
+      break;
+
     default:
       // No operation
   }

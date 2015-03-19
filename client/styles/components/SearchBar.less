@@ -38,6 +38,7 @@
   background: #f2edf2;
   box-shadow: 0px 0px 20px 0px rgba(65, 65, 65, 0.5);
 
+  overflow: hidden;
 
   input[type=search] {
     -webkit-appearance: none;
@@ -62,8 +63,28 @@
 
   .searchResults {
     overflow-wrap: break-word;
+    overflow-y: auto;
+
+    max-height: 500px;
+
     padding: 10px 10px;
     transition: background 0.25s;
+
+    ul {
+      display: flex;
+      flex-flow: column;
+      align-items: stretch;
+      align-content: stretch;
+
+      li.search-item {
+        display: inline-flex;
+        cursor: pointer;
+
+        .actions {
+          margin-left: auto;
+        }
+      }
+    }
   }
 
   .searchResults {
@@ -173,4 +194,10 @@
   input::-webkit-input-placeholder {
     color: transparent;
   }
+}
+
+.smallLoad {
+  margin-top: 0px;
+  height: 9px;
+  width: 9px;
 }

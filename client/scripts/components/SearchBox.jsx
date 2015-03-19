@@ -146,10 +146,6 @@ var SearchBox = React.createClass({
     if(nextProps.boxVisible) {
       this.focusInput();
     }
-
-    if(this.state.searchTerm.trim() !== '') {
-      SearchActions.search(this.state.searchTerm);
-    }
   },
 
   focusInput: function() {

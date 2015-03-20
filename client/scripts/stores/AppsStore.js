@@ -172,6 +172,11 @@ var AppsStore = assign({}, EventEmitter.prototype, {
 
     this.getApps().forEach(function(app) {
 
+      // Initial state
+      app.state = null;
+      app.isOpened = false;
+
+      // Now check in backend for more state
       AppsApiUtils.getStates(app.id, function(states) {
         states.forEach(function(state) {
 
@@ -190,8 +195,13 @@ var AppsStore = assign({}, EventEmitter.prototype, {
     }, this);
   },
 
-  serializeState: function() {
+  onSessionDestroyed: function() {
+    this.getApps().forEach(function(app) {
 
+      // Initial state
+      app.state = null;
+      app.isOpened = false;
+    });
   }
 });
 
@@ -240,7 +250,8 @@ AppDispatcher.register(function(payload) {
       break;
 
     case SessionActionTypes.DESTROY_SESSION:
-      //AppsStore.serializeState();
+      AppsStore.onSessionDestroyed();
+      AppsStore.emitChange();
       break;
 
     default:

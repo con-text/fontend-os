@@ -1,6 +1,6 @@
 @profilePictureSize: 48px;
 @smallSidebarPadding: 20px;
-@sidebarColor: rgb(173, 146, 146);
+@sidebarColor: #313031;
 
 .sidebar {
     height: 100%;
@@ -12,7 +12,7 @@
 #sidebar,
 #users-box {
   background-color: @sidebarColor;
-  opacity: 0.8;
+  opacity: 0.9;
   transition: opacity .5s ease-in;
 
   .page-header {
@@ -22,12 +22,13 @@
   }
 
   .logged-in {
-    background-color: darken(@sidebarColor, 20%);
+    background-color: darken(@sidebarColor, 10%);
   }
 
   .user {
 
     padding: 0 10px;
+    transition: background 0.5s;
 
     .img-circle {
       width: @profilePictureSize;
@@ -41,6 +42,7 @@
     .userName {
       padding: 5px;
       font-weight: 200;
+      color: #d0d0d0;
     }
 
     vertical-align: middle;
@@ -50,6 +52,10 @@
   .user:hover {
     background: #dde7f2;
     transition: background 0.5s;
+
+    .userName {
+      color: #313031;
+    }
   }
 }
 

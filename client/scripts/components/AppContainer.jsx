@@ -106,8 +106,8 @@ var AppContainer = React.createClass({
     var divStyle = _.assign(this.props.style, {
       display: (this.props.app && !dragStateWindow.isDragging) ?
         'block' : 'none',
-      left: this.state.fullscreen? 0 : this.props.x,
-      top: this.state.fullscreen? 0: this.props.y
+      left: this.state.fullscreen? 0 : this.props.app.state.x,
+      top: this.state.fullscreen? 0: this.props.app.state.y
     });
 
     if(this.state.hidden) {

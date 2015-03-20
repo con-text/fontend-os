@@ -32,16 +32,11 @@ var Desktop = React.createClass({
         dropTarget: {
           acceptDrop: function(component, item) {
             var delta = context.getCurrentOffsetDelta();
-            var left = item.x + delta.x;
-            var top = item.y + delta.y;
+            var left = (item.app.state.x || 0) + delta.x;
+            var top = (item.app.state.y || 0) + delta.y;
 
-            var currentPos = component.state.pos;
-            currentPos[item.app.id] = {
-              x: left,
-              y: top
-            };
-
-            component.setState({pos: currentPos});
+            AppsActions.setPosition(item.app, left, top);
+            //component.setState({pos: currentPos});
           }
         }
       });
@@ -56,13 +51,7 @@ var Desktop = React.createClass({
   },
 
   getInitialState: function() {
-    var stateFromStores = this.getStateFromStores();
-    stateFromStores.pos = {};
-    stateFromStores.currentApps.forEach(function(app) {
-      stateFromStores.pos[app.id] = {x: 0, y: 0};
-    }, this);
-
-    return stateFromStores;
+    return this.getStateFromStores();
   },
 
   componentDidMount: function() {
@@ -81,10 +70,6 @@ var Desktop = React.createClass({
 
     var containers = this.state.currentApps.map(function(app) {
 
-      if(!this.state.pos[app.id]) {
-        this.state.pos[app.id] = {x: 0, y: 0};
-      }
-
       var divStyle = {
         opacity: 1,
         zIndex: 1
@@ -98,8 +83,6 @@ var Desktop = React.createClass({
         app={app}
         style={divStyle}
         onClick={this.bringToFront}
-        x={this.state.pos[app.id].x}
-        y={this.state.pos[app.id].y}
         dragStarted={this.windowDragStarted}
         dragOver={this.windowDragOver}
         dragFinished={this.windowDragFinished}
@@ -158,12 +141,6 @@ var Desktop = React.createClass({
 
   _onChange: function() {
     this.setState(this.getStateFromStores());
-
-    this.state.currentApps.forEach(function(app) {
-      if(!this.state.pos[app.id]) {
-        this.state.pos[app.id] = {x: 0, y: 0};
-      }
-    }, this);
   }
 });
 

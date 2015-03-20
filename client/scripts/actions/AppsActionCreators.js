@@ -16,6 +16,11 @@ module.exports = {
       app: app,
       params: param
     });
+
+    var uuid = SessionStore.getCurrentUser().uuid;
+    AppsApiUtils.updateState(uuid, app, {isOpened: true}, function() {
+      //...
+    });
   },
 
   /**
@@ -26,6 +31,8 @@ module.exports = {
       type: ActionTypes.CLOSE_APPS,
       app: app
     });
+
+    var uuid = SessionStore.getCurrentUser().uuid;
   },
 
   deleteState: function(app) {
@@ -54,6 +61,24 @@ module.exports = {
   setTitle: function(app, newTitle) {
     var uuid = SessionStore.getCurrentUser().uuid;
     AppsApiUtils.updateState(uuid, app, {title: newTitle}, function() {
+      //...
+    });
+  },
+
+  setPosition: function(app, x, y) {
+    var position = {
+      x: x,
+      y: y
+    };
+
+    AppDispatcher.handleViewAction({
+      type: ActionTypes.SET_POSITION,
+      app: app,
+      position: position
+    });
+
+    var uuid = SessionStore.getCurrentUser().uuid;
+    AppsApiUtils.updateState(uuid, app, position, function() {
       //...
     });
   }

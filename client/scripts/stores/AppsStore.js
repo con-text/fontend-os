@@ -11,7 +11,7 @@ var AppDispatcher = require('../dispatchers/AppDispatcher');
 // Constants
 var AppsConstants = require('../constants/AppsConstants');
 var ActionTypes = AppsConstants.ActionTypes;
-
+var SessionActionTypes = require('../constants/SessionConstants').ActionTypes;
 // Stores
 var DesktopStore = require('./DesktopStore');
 var SessionStore = require('../stores/SessionStore');
@@ -31,7 +31,9 @@ var AppsStore = assign({}, EventEmitter.prototype, {
   },
 
   getOpened: function() {
-    return this.openedApps;
+    return _.filter(this._apps, function(app) {
+      return app.isOpened;
+    });
   },
 
   getApps: function() {
@@ -39,12 +41,7 @@ var AppsStore = assign({}, EventEmitter.prototype, {
   },
 
   getApp: function(appId) {
-    if(appId in this._apps) {
-      return this._apps[appId];
-    } else {
-      console.error("Unknown app id", appId);
-      return null;
-    }
+    return _.findWhere(this._apps, {id: appId});
   },
 
   fetchAll: function() {
@@ -52,7 +49,9 @@ var AppsStore = assign({}, EventEmitter.prototype, {
 
         if(Object.keys(this._apps).length === 0) {
           data.forEach(function(app) {
-            this._apps[app.id] = app;
+
+            // Inital position
+            this._apps.push(app);
           }, this);
         }
 
@@ -101,9 +100,15 @@ var AppsStore = assign({}, EventEmitter.prototype, {
             url += '?' + querystring.stringify(params.args);
           }
 
-          this.openedApps.push(app);
-          this.openedApps[this.openedApps.length-1].element = React.createElement('iframe', {src: url, className: "app-window",
+          app.isOpened = true;
+          app.element = React.createElement('iframe', {src: url, className: "app-window",
             allowFullScreen: ''});
+
+          // Save that we opened app with new state
+          AppsApiUtils.updateState(uuid, app, {isOpened: true}, function() {
+            //...
+          });
+
           this.emitChange();
           return;
         }.bind(this),
@@ -120,17 +125,23 @@ var AppsStore = assign({}, EventEmitter.prototype, {
         url += '?' + querystring.stringify(params.args);
       }
 
-      this.openedApps.push(app);
-      this.openedApps[this.openedApps.length-1].element = React.createElement('iframe', {src: url, className: "app-window",
+      app.isOpened = true;
+      app.element = React.createElement('iframe', {src: url, className: "app-window",
         allowFullScreen: ''});
       this.emitChange();
     }
   },
 
   close: function(appId) {
-    _.remove(this.openedApps, function(openedApp) {
-      return openedApp.id === appId;
-    });
+    var app = this.getApp(appId);
+    app.isOpened = false;
+    var uuid = SessionStore.getCurrentUser().uuid;
+
+    if(app.state && app.state.id) {
+      AppsApiUtils.updateState(uuid, app, {isOpened: false}, function() {
+      //...
+      });
+    }
   },
 
   emitChange: function() {
@@ -149,8 +160,39 @@ var AppsStore = assign({}, EventEmitter.prototype, {
    */
   removeChangeListener: function(callback) {
     this.removeListener(CHANGE_EVENT, callback);
-  }
+  },
 
+  updatePosition: function(app, position) {
+    app = this.getApp(app.id);
+    app.state.x = position.x;
+    app.state.y = position.y;
+  },
+
+  deserializeState: function() {
+
+    this.getApps().forEach(function(app) {
+
+      AppsApiUtils.getStates(app.id, function(states) {
+        states.forEach(function(state) {
+
+          state.id = state._id;
+
+          if(state.isOpened) {
+            this.open(app.id, {
+              state: state,
+            });
+          }
+
+        }, this);
+
+      }.bind(this));
+
+    }, this);
+  },
+
+  serializeState: function() {
+
+  }
 });
 
 // Register with the dispatcher
@@ -183,6 +225,22 @@ AppDispatcher.register(function(payload) {
         AppsStore.emitChange();
       }
 
+      break;
+
+    // Change the position
+    case ActionTypes.SET_POSITION:
+      AppsStore.updatePosition(action.app, action.position);
+      AppsStore.emitChange();
+      break;
+
+    // Serialize the state
+    case SessionActionTypes.CREATE_SESSION:
+      AppsStore.deserializeState();
+      AppsStore.emitChange();
+      break;
+
+    case SessionActionTypes.DESTROY_SESSION:
+      //AppsStore.serializeState();
       break;
 
     default:

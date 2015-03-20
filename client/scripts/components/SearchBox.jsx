@@ -24,7 +24,8 @@ var SearchResultItem = React.createClass({
     selected: React.PropTypes.object,
     result: React.PropTypes.object.isRequired,
     mouseEnter: React.PropTypes.func,
-    mouseLeave: React.PropTypes.func
+    mouseLeave: React.PropTypes.func,
+    handleClick: React.PropTypes.func.isRequired
   },
 
   getDefaultProps: function() {
@@ -44,7 +45,7 @@ var SearchResultItem = React.createClass({
     return <li
       onMouseEnter={this.handleMouseEnter}
       onMouseLeave={this.handleMouseLeave}
-      onClick={this.handleClick}
+      onClick={this.props.handleClick}
       className={divClass}><i className={icon}></i>{result.value}
 
         <div className="actions">
@@ -84,13 +85,6 @@ var SearchResultItem = React.createClass({
   handleMouseLeave: function(e) {
     if(this.props.mouseLeave) {
       this.props.mouseLeave(this.props.result);
-    }
-  },
-
-  handleClick: function(e) {
-    if(this.props.result) {
-      if(this.props.result.action)
-      this.props.result.action();
     }
   },
 
@@ -164,7 +158,8 @@ var SearchBox = React.createClass({
         result={result}
         selected={this.state.selected}
         mouseEnter={this.onMouseEnter}
-        mouseLeave={this.onMouseLeave} />;
+        mouseLeave={this.onMouseLeave}
+        handleClick={this.handleSubmit} />;
     }, this);
 
     return !this.state.hasResults ?
@@ -278,7 +273,8 @@ var SearchBox = React.createClass({
 
       if(this.state.selected.action)
         this.state.selected.action();
-
+        this.setState({searchTerm: ''});
+        e.target.value = '';
     }
   },
 

@@ -23,6 +23,54 @@ var NotificationArea = require('./NotificationArea');
 var DesktopStore  = require('../stores/DesktopStore');
 var AppsStore     = require('../stores/AppsStore');
 
+var Clock = React.createClass({
+  getInitialState: function() {
+    return {currentTime: this.getTime()};
+  },
+
+  componentDidMount: function() {
+    this.timeOut = setTimeout(function() {
+      this.setState({currentTime: this.getTime()});
+    }.bind(this), 500);
+  },
+
+  componentWillUnmount: function() {
+    clearTimeout(this.timeOut);
+  },
+
+  render: function() {
+
+    var divStyle = {
+      position: 'absolute',
+      top: '5px',
+      right: '5px',
+      fontSize: '0.8em',
+      userSelect: 'none',
+      cursor: 'default'
+    };
+
+    return <div className="noselect" ref="clock" style={divStyle}>{this.state.currentTime}</div>;
+  },
+
+  getTime: function() {
+    var today = new Date();
+    var h = today.getHours();
+    var m = today.getMinutes();
+    m = this.checkTime(m);
+    return h + ":" + m;
+  },
+
+  checkTime: function(i) {
+
+    if (i<10) {
+      // add zero in front of numbers < 10
+      i = "0" + i;
+    }
+
+    return i;
+  }
+});
+
 var Desktop = React.createClass({
   mixins: [DragDropMixin],
 
@@ -97,6 +145,7 @@ var Desktop = React.createClass({
         <NotificationArea />
         <Sidebar />
         <div className="desktop" >
+          <Clock />
           <SearchBox boxVisible={this.state.showSearch} />
           <div id="dragOverlay"
             {...this.dropTargetFor(ItemTypes.WINDOW)}/>

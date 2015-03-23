@@ -41,13 +41,15 @@ module.exports = {
 
   updateState: function(uuid, app, changes, callback) {
 
-    $.ajax({
-      contentType: 'application/json',
-      type: 'PUT',
-      data: JSON.stringify(changes),
-      url: appServerUrl + '/users/' +uuid + '/apps/' + app.id +
-        '/states/' + app.state.id,
-      success: callback
-    });
+    if(app.state && app.state.id) {
+      $.ajax({
+        contentType: 'application/json',
+        type: 'PUT',
+        data: JSON.stringify(changes),
+        url: appServerUrl + '/users/' +uuid + '/apps/' + app.id +
+          '/states/' + app.state.id,
+        success: callback
+      });
+    }
   }
 };

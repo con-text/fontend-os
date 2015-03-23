@@ -122,7 +122,7 @@ function getOrCreateObject(uuid, appId, callback) {
 
 		// If exists, get first state
 		if(states && states.length > 0) {
-			callback && callback(null, states[0]._id);
+			callback && callback(null, states[0]);
 		} else {
 
 			// We need to create a state

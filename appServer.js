@@ -90,8 +90,13 @@ backendSocket.on('sendInitialFromBackend', function(msg){
 });
 
 backendSocket.on('notification', function(notification) {
-	console.log("got notification");
-	socket.emit('notification', notification);
+  console.log("got notification");
+  if(socketCanRun()){
+    io.to(currentUser.id).emit('notification', notification);
+  }
+  else{
+    console.log("Can't send notification to root user");
+  }
 });
 
 backendSocket.on('pushedChange', function(msg) {
@@ -107,6 +112,8 @@ backendSocket.on('pushedChange', function(msg) {
 
 // Need to define something using
 io.on('connection', function(socket){
+
+
 
 	socket.on('stateChange', function(msg){
 		backendSocket.emit('stateChange',
@@ -154,7 +161,7 @@ io.on('connection', function(socket){
 	  if(data.uuid){
 		  console.log("Joining",data.uuid);
 		  backendSocket.emit('initRoom', {uuid: data.uuid});
-		  currentUser = data.uuid;
+		  currentUser = socket;
 	  }
 	  else{
 		  console.log("UUID didn't exist in the ");

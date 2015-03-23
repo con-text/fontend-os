@@ -132,7 +132,7 @@ var AppContainer = React.createClass({
 
     return <div className="appContainer" style={divStyle}
       {...this.dropTargetFor(ItemTypes.USER)}
-      {...this.dropTargetFor(ItemTypes.WINDOW)}
+
       {...this.dragSourceFor(ItemTypes.WINDOW)}
       onClick={this.props.bringToFront}
       >
@@ -149,7 +149,8 @@ var AppContainer = React.createClass({
         </div>
       </div>
 
-      <div className="dropTarget" style={dragOverlayDivStyle}>
+      <div className="dropTarget" style={dragOverlayDivStyle}
+        {...this.dropTargetFor(ItemTypes.WINDOW)}>
         <h1>Drop user here to share</h1>
       </div>
 

@@ -62,7 +62,7 @@ backendSocket.on('syncedState', function(msg){
 	//got syncedState from the server, send to the saved object
   if(currentObjects[msg.objectId]){
     console.log("Sending syncstate to",msg.objectId);
-		io.to(currentObjects[msg.objectId].id).emit('syncedState', msg)
+		io.to(currentObjects[msg.objectId].id).emit('syncedState', msg);
 	}
 	else{
 		console.log("Object doesn't exist in currentObjects");
@@ -102,8 +102,8 @@ backendSocket.on('notification', function(notification) {
 backendSocket.on('pushedChange', function(msg) {
 	//got pushedChange from the server, send to the saved object
 	if(currentObjects[msg.objectId]){
-	  console.log("SEnding syncstate to",msg.objectId,currentObjects[msg.objectId].id);
-		io.to(currentObjects[msg.objectId].id).emit('pushedChange', msg)
+	  console.log("Sending syncstate to",msg.objectId,currentObjects[msg.objectId].id);
+		io.to(currentObjects[msg.objectId].id).emit('pushedChange', msg);
 	}
 	else{
 		console.log("Object doesn't exist in currentObjects");
@@ -124,7 +124,7 @@ io.on('connection', function(socket){
 		msg.pushedChange = true;
 		console.log("got pushchange");
 		backendSocket.emit('stateChange', msg);
-	})
+	});
 
 	socket.on('getInitial', function(msg){
 		//new object has joined the room, check that it doesn't already exist

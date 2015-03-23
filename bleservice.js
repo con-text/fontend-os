@@ -85,23 +85,39 @@ function handleLoginStatusMessage(app, io, sessionStore, data) {
 module.exports.connectToBleService = function(app, io, sessionStore) {
 
   // Use UNIX socket
+  var connecting;
   var socket = new JsonSocket(new net.Socket());
 
-  socket.connect(socketPath, function () {
-    console.log("Started listening to BLE service on " + socketPath);
+  connecting = true;
+  socket.connect(socketPath);
+
+  socket.on('connect', function () {
+    console.info("BLE: Started listening to BLE service on " + socketPath);
 
     // Process message
-    socket.on('message', function(msg) { processMessage(app, msg, io, sessionStore); });
+    socket.on('message', function(msg) {
+      processMessage(app, msg, io, sessionStore);
+    });
 
+    connecting = false;
   });
 
   socket.on('end', function () {
-    // TODO: Add reconnection logic here
-    console.log("Disconnected from BLE service");
+    console.info("BLE: connection end.");
+  });
+
+  socket.on('close', function () {
+    console.info("BLE: Disconnected from BLE service");
+
+    // Try to reconnect
+    setTimeout(function() {
+      console.info("BLE: Trying to reconnect...");
+      socket.connect(socketPath);
+    }, 2000);
   });
 
   socket.on('error', function(err) {
-    console.log("Error during connection to the BLE servie", err);
+    console.error("BLE: " +  err.code + " Error during connection to the BLE servie");
   });
 
   return socket;

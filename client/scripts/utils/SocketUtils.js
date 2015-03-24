@@ -42,7 +42,7 @@ module.exports = {
       };
 
       var params = {
-        stateId: notification.stateId
+        state: {id: notification.stateId}
       };
 
 

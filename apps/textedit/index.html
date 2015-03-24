@@ -20,6 +20,41 @@
 		textEditor.updateContents({ops:data.value});
 	}
 
+	// Collaborators pane
+	var Collaborators = new React.createClass({
+
+		getInitialState: function() {
+			return {users: []}
+		},
+
+		componentDidMount: function() {
+			AS.on('load', this.updateUsers);
+			AS.on('syncedState', this.updateUsers);
+		},
+
+		componentWillUnmount: function() {
+			AS.off('load', this.updateUsers);
+			AS.off('syncedState', this.updateUsers);
+		},
+
+		updateUsers: function() {
+			console.log(AS.collaborators);
+			this.setState({users: AS.collaborators});
+		},
+
+		render: function() {
+			var collaborators = this.state.users.map(function(user) {
+					return <span>{user.id}</span>;
+			}, this);
+
+			return (
+				<div id="collaborators">
+					{collaborators}
+				</div>
+			);
+		}
+	});
+
 	// Document editor class
 	var Editor = React.createClass({
 
@@ -44,7 +79,7 @@
 				}
 				else if (source == 'user') {
 					AS.pushChange('text-change', {uuid: AS.userId, objectId: AS.objectId, action: 'changed',
-							path: ["operations"], property: "operations", value: delta.ops, type: "string", OTChanges: true});  
+							path: ["operations"], property: "operations", value: delta.ops, type: "string", OTChanges: true});
 					console.log(delta.ops);
 				}
 			});
@@ -81,7 +116,9 @@
 						</span>
 					</div>
 
-					<div className="editor" ref="editor">
+					<div id="main">
+						<div className="editor" ref="editor"></div>
+						<Collaborators />
 					</div>
 				</div>
 			);

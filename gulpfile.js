@@ -129,7 +129,8 @@ gulp.task('watch', ['build'], function() {
 		'browserify',
 		'copy-stateinterface', browserSync.reload]);
 
-	gulp.watch(['apps/**/*.js', 'apps/**/manifest.json', 'apps/**/index.html'], [
+	gulp.watch(['apps/**/*.js', 'apps/**/manifest.json', 'apps/**/index.html',
+		'apps/**/*.css'], [
 		'lint',
 		'browserify:apps', browserSync.reload
 	]);

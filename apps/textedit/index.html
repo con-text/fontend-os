@@ -20,6 +20,44 @@
 		textEditor.updateContents({ops:data.value});
 	}
 
+	var ColaboratorItem = new React.createClass({
+
+		getInitialState: function() {
+			return {
+				loaded: false,
+				profile: {}
+			};
+		},
+
+		componentWillMount: function() {
+
+			var baseUrl = 'http://localhost:5000';
+
+			$.get(baseUrl + '/users/' + this.props.uuid + '/profile').then(function(profile) {
+
+				this.setState({
+					loaded: true,
+					profile: profile});
+
+			}.bind(this));
+		},
+
+		render: function() {
+			var userDiv = <div>Loading..</div>;
+
+			if(this.state.loaded) {
+				userDiv = (
+					<div className="user">
+						<img className="userPic img-circle"
+							src={this.state.profile.profilePicUrl} />
+					</div>
+				);
+			}
+
+			return userDiv;
+		}
+	});
+
 	// Collaborators pane
 	var Collaborators = new React.createClass({
 
@@ -40,12 +78,16 @@
 		},
 
 		render: function() {
-			var collaborators = this.state.usersIds.map(function(userId) {
-					return <span>{userId}</span>;
+
+
+			var collaborators = this.state.usersIds.map(function(userId, i) {
+					return (
+						<ColaboratorItem key={i} uuid={userId} className="user" />
+					);
 			}, this);
 
 			return (
-				<div id="collaborators">
+				<div id="collaborators" className="collaborators">
 					{collaborators}
 				</div>
 			);
@@ -97,29 +139,31 @@
 		*/
 		render: function() {
 			return (
-				<div className="editor-container">
-					<div id="toolbar" className="toolbar">
+				<div id="main" className="main Grid Grid--gutters u-textCenter">
+					<div id="editor" className="editor-container Grid-cell">
+						<div id="toolbar" className="toolbar">
 
-						<span className="ql-format-group">
-							<select title="Size" className="ql-size ql-picker">
-								<option value="small">Small</option>
-								<option value="normal" defaultValue>Normal</option>
-								<option value="large">Large</option>
-								<option value="huge">Huge</option>
-							</select>
-						</span>
+							<span className="ql-format-group">
+								<select title="Size" className="ql-size ql-picker">
+									<option value="small">Small</option>
+									<option value="normal" defaultValue>Normal</option>
+									<option value="large">Large</option>
+									<option value="huge">Huge</option>
+								</select>
+							</span>
 
-						<span className="ql-format-group">
-							<span className="ql-format-button ql-bold"></span>
-							<span className="ql-format-separator"></span>
-							<span className="ql-format-button ql-italic"></span>
-							<span className="ql-format-separator"></span>
-							<span className="ql-format-button ql-underline"></span>
-						</span>
-					</div>
+							<span className="ql-format-group">
+								<span className="ql-format-button ql-bold"></span>
+								<span className="ql-format-separator"></span>
+								<span className="ql-format-button ql-italic"></span>
+								<span className="ql-format-separator"></span>
+								<span className="ql-format-button ql-underline"></span>
+							</span>
+						</div>
 
-					<div id="main">
 						<div className="editor" ref="editor"></div>
+					</div>
+					<div className="Grid-call u-1of3">
 						<Collaborators />
 					</div>
 				</div>

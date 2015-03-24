@@ -20,6 +20,80 @@
 		textEditor.updateContents({ops:data.value});
 	}
 
+	var ColaboratorItem = new React.createClass({
+
+		getInitialState: function() {
+			return {
+				loaded: false,
+				profile: {}
+			};
+		},
+
+		componentWillMount: function() {
+
+			var baseUrl = 'http://localhost:5000';
+
+			$.get(baseUrl + '/users/' + this.props.uuid + '/profile').then(function(profile) {
+
+				this.setState({
+					loaded: true,
+					profile: profile});
+
+			}.bind(this));
+		},
+
+		render: function() {
+			var userDiv = <div>Loading..</div>;
+
+			if(this.state.loaded) {
+				userDiv = (
+					<div className="user">
+						<img className="userPic img-circle"
+							src={this.state.profile.profilePicUrl} />
+					</div>
+				);
+			}
+
+			return userDiv;
+		}
+	});
+
+	// Collaborators pane
+	var Collaborators = new React.createClass({
+
+		getInitialState: function() {
+			return {usersIds: []}
+		},
+
+		componentDidMount: function() {
+			AS.on('load', this.updateUsers);
+		},
+
+		componentWillUnmount: function() {
+			AS.off('load', this.updateUsers);
+		},
+
+		updateUsers: function() {
+			this.setState({usersIds: AS.collaborators});
+		},
+
+		render: function() {
+
+
+			var collaborators = this.state.usersIds.map(function(userId, i) {
+					return (
+						<ColaboratorItem key={i} uuid={userId} className="user" />
+					);
+			}, this);
+
+			return (
+				<div id="collaborators" className="collaborators">
+					{collaborators}
+				</div>
+			);
+		}
+	});
+
 	// Document editor class
 	var Editor = React.createClass({
 
@@ -40,19 +114,24 @@
 
 			textEditor.on('text-change', function(delta, source) {
 				if (source == 'api') {
-					console.log("An API call triggered this change.");
+					//console.log("An API call triggered this change.");
 				}
 				else if (source == 'user') {
 					AS.pushChange('text-change', {uuid: AS.userId, objectId: AS.objectId, action: 'changed',
-							path: ["operations"], property: "operations", value: delta.ops, type: "string", OTChanges: true});  
-					console.log(delta.ops);
+							path: ["operations"], property: "operations", value: delta.ops, type: "string", OTChanges: true});
+					//console.log(delta.ops);
 				}
 			});
 
 			AS.on('text-change', receiveChangeData);
-
 			AS.on('syncedState', receiveTextData);
 			AS.on('load', receiveTextData);
+		},
+
+		componentWillUnmount: function() {
+			AS.off('text-change', receiveChangeData);
+			AS.off('syncedState', receiveTextData);
+			AS.off('load', receiveTextData);
 		},
 
 		/**
@@ -60,28 +139,32 @@
 		*/
 		render: function() {
 			return (
-				<div className="editor-container">
-					<div id="toolbar" className="toolbar">
+				<div id="main" className="main Grid Grid--gutters u-textCenter">
+					<div id="editor" className="editor-container Grid-cell">
+						<div id="toolbar" className="toolbar">
 
-						<span className="ql-format-group">
-							<select title="Size" className="ql-size ql-picker">
-								<option value="small">Small</option>
-								<option value="normal" defaultValue>Normal</option>
-								<option value="large">Large</option>
-								<option value="huge">Huge</option>
-							</select>
-						</span>
+							<span className="ql-format-group">
+								<select title="Size" className="ql-size ql-picker">
+									<option value="small">Small</option>
+									<option value="normal" defaultValue>Normal</option>
+									<option value="large">Large</option>
+									<option value="huge">Huge</option>
+								</select>
+							</span>
 
-						<span className="ql-format-group">
-							<span className="ql-format-button ql-bold"></span>
-							<span className="ql-format-separator"></span>
-							<span className="ql-format-button ql-italic"></span>
-							<span className="ql-format-separator"></span>
-							<span className="ql-format-button ql-underline"></span>
-						</span>
+							<span className="ql-format-group">
+								<span className="ql-format-button ql-bold"></span>
+								<span className="ql-format-separator"></span>
+								<span className="ql-format-button ql-italic"></span>
+								<span className="ql-format-separator"></span>
+								<span className="ql-format-button ql-underline"></span>
+							</span>
+						</div>
+
+						<div className="editor" ref="editor"></div>
 					</div>
-
-					<div className="editor" ref="editor">
+					<div className="Grid-call u-1of3">
+						<Collaborators />
 					</div>
 				</div>
 			);

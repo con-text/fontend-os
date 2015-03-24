@@ -5,6 +5,9 @@ var NotificationActions          = require('../actions/NotificationActionCreator
 // Initialize socket.io
 var socket = io();
 var appServerSocket = io('http://localhost:3001');
+var SessionStore = require('../stores/SessionStore');
+var SessionApiUtils = require('./SessionApiUtils');
+var AppsApiUtils    = require('./AppsApiUtils');
 
 module.exports = {
 
@@ -45,14 +48,28 @@ module.exports = {
         state: {id: notification.stateId}
       };
 
+      // TODO: Is params still necessary?
+      app.state = params.state;
 
-      // Create notification about sharing
-      NotificationActions.createTextNotification("You now share this app with",
+      var uuid = SessionStore.getCurrentUser().uuid;
 
-        // Bind action to open the app to the notification
-        AppsActionCreators.open.bind(AppsActionCreators, app, params)
-      );
+      // Get full state object, as now we only have id
+      AppsApiUtils.getState(uuid, app).then(function(state) {
 
+        // Insert state into the app object
+        app.state = state;
+
+        // Get name of the user
+        SessionApiUtils.getProfile(notification.userToShareId).then(function(user) {
+          // Create notification about sharing
+          NotificationActions.createTextNotification(
+            user.name + " shared something with you",
+            // Bind action to open the app to the notification
+            AppsActionCreators.open.bind(AppsActionCreators, app, params)
+          );
+
+        });
+      });
     });
   }
 };

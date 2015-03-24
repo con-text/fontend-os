@@ -77,6 +77,8 @@ function socketCanRun(){
 
 backendSocket.on('sendInitialFromBackend', function(msg){
 
+	console.log("Got inital from backend");
+
 	if(!msg.objectId || !msg.state){
 		console.log("Message from backend is missing object id or state", msg.objectId, msg.state);
 		return;
@@ -86,6 +88,7 @@ backendSocket.on('sendInitialFromBackend', function(msg){
 		return;
 	}
 	console.log("Filling for object", msg.objectId);
+	console.log("Online",msg.online);
 	currentObjects[msg.objectId].emit('fillData', {state:msg.state, collaborators: msg.collaborators, online: msg.online});
 });
 
@@ -147,10 +150,11 @@ io.on('connection', function(socket){
 
   socket.on('disconnect', function() {
 	  //if this exists, its an object, otherwise its the connection from 5000
+	  console.log("currentObject", currentObjects);
 	  if(socketIdToObject[socket.id]){
-		  console.log("Removing",socketIdToObject[socket.id]);
+		  console.log("Removing",socketIdToObject[socket.id].objectId);
 		  backendSocket.emit('requestFinalFromBackend', socketIdToObject[socket.id]);
-		  delete currentObjects[socketIdToObject[socket.id]];
+		  delete currentObjects[socketIdToObject[socket.id].objectId];
 		  delete socketIdToObject[socket.id];
 	  }
 	  else{

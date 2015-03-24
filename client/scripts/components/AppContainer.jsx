@@ -28,7 +28,7 @@ var itemDropTarget = {
 
     AppsApiUtils.addCollaborator(app, user, function() {
       NotificationActionCreators
-        .createTextNotification("You a sharing this with " + user.name);
+        .createTextNotification("You are sharing this with " + user.name);
     });
   },
 

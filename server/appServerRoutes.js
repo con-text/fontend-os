@@ -203,6 +203,30 @@ module.exports = {
 	},
 
 	/**
+	* Get a particular object
+	*
+	* GET /users/:uuid/apps/:appId/states/:stateId
+	*/
+	getState: function(req, res) {
+		var uuid = req.params.uuid;
+		var appId = req.params.appId;
+		var stateId = req.params.stateId;
+
+		unirest
+			.get(baseUrl+"/users/"+uuid+"/apps/"+appId+"/states/"+stateId)
+			.headers({'Accept': 'application/json'})
+			.end(function(response) {
+
+				if(response.error){
+					res.status(response.code).send(response.error);
+					return;
+				}
+
+				res.send(response.body);
+			});
+	},
+
+	/**
 	* Update a particular object
 	*
 	* PUT /users/:uuid/apps/:appId/states/:stateId

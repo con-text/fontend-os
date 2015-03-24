@@ -24,7 +24,7 @@
 	var Collaborators = new React.createClass({
 
 		getInitialState: function() {
-			return {users: []}
+			return {usersIds: []}
 		},
 
 		componentDidMount: function() {
@@ -38,13 +38,12 @@
 		},
 
 		updateUsers: function() {
-			console.log(AS.collaborators);
 			this.setState({users: AS.collaborators});
 		},
 
 		render: function() {
-			var collaborators = this.state.users.map(function(user) {
-					return <span>{user.id}</span>;
+			var collaborators = this.state.usersIds.map(function(userId) {
+					return <span>{userId}</span>;
 			}, this);
 
 			return (

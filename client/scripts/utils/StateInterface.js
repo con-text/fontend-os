@@ -10,6 +10,8 @@ function AppState(appId, userId, objectId, dependencies){
 	this.eventEmitter = new events.EventEmitter();
 	this.socket = io('http://localhost:3001');
 	this.observerArray = {};
+	this.collaborators;
+	this.online;
 
 
 	this.socket.on('fillData', (function(AS){
@@ -106,7 +108,10 @@ AppState.prototype.dealWithChange = function(changeInfo){
 }
 
 AppState.prototype.fillState = function(data){
-	this._state = data;
+	console.log("Filling data",data);
+	this.collaborators = data.collaborators;
+	this.online = data.online;
+	this._state = data.state;
 	if(this.dependencies){
 		this.dependencies.forEach(
 			(function(context){ return function(m){

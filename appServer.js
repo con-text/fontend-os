@@ -86,7 +86,7 @@ backendSocket.on('sendInitialFromBackend', function(msg){
 		return;
 	}
 	console.log("Filling for object", msg.objectId);
-	currentObjects[msg.objectId].emit('fillData', msg.state);
+	currentObjects[msg.objectId].emit('fillData', {state:msg.state, collaborators: msg.collaborators, online: msg.online});
 });
 
 backendSocket.on('notification', function(notification) {
@@ -141,7 +141,7 @@ io.on('connection', function(socket){
 
 
 		currentObjects[msg.objectId] = socket;
-		socketIdToObject[socket.id] = msg.objectId;
+		socketIdToObject[socket.id] = {objectId: msg.objectId, uuid: msg.uuid};
 
 	});
 
@@ -149,8 +149,12 @@ io.on('connection', function(socket){
 	  //if this exists, its an object, otherwise its the connection from 5000
 	  if(socketIdToObject[socket.id]){
 		  console.log("Removing",socketIdToObject[socket.id]);
+		  backendSocket.emit('requestFinalFromBackend', socketIdToObject[socket.id]);
 		  delete currentObjects[socketIdToObject[socket.id]];
 		  delete socketIdToObject[socket.id];
+	  }
+	  else{
+	  	console.log("Doesn't exist");
 	  }
 
   });

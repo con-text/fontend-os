@@ -64,6 +64,10 @@ function startServer(server, port) {
 		stdio: 'inherit'
 	});
 
+	var killChildProcess = function() {
+		child.kill();
+	};
+
 	// On ctrl-c exit
 	process.on( 'SIGINT', function() {
 		console.log( "\nShutting down - SIGINT (Ctrl-C)" );
@@ -75,8 +79,11 @@ function startServer(server, port) {
 		process.exit();
 
 		// Close app server
-		child.kill('SIGINT');
+		killChildProcess();
 	});
+	
+	process.on('SIGTERM', killChildProcess);
+	process.on('uncaughtException', killChildProcess);
 }
 
 // If called from command line

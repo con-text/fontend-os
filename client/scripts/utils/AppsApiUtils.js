@@ -21,7 +21,7 @@ module.exports = {
   addCollaborator: function(app, user, callback) {
     $.ajax({
       contentType: 'application/json',
-      data: JSON.stringify({user: user, stateId: app.stateId}),
+      data: JSON.stringify({user: user, stateId: app.state.id}),
       success: callback,
       type: 'POST',
       url: baseUrl + '/apps/' + app.id + '/collaborators'

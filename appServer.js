@@ -89,7 +89,8 @@ backendSocket.on('sendInitialFromBackend', function(msg){
 	}
 	console.log("Filling for object", msg.objectId);
 	console.log("Online",msg.online);
-	currentObjects[msg.objectId].emit('fillData', {state:msg.state, collaborators: msg.collaborators, online: msg.online});
+	console.log("Collab", msg.collaborators);
+	io.to(currentObjects[msg.objectId].id).emit('fillData', {state:msg.state, collaborators: msg.collaborators, online: msg.online});
 });
 
 backendSocket.on('notification', function(notification) {

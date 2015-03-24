@@ -29,16 +29,14 @@
 
 		componentDidMount: function() {
 			AS.on('load', this.updateUsers);
-			AS.on('syncedState', this.updateUsers);
 		},
 
 		componentWillUnmount: function() {
 			AS.off('load', this.updateUsers);
-			AS.off('syncedState', this.updateUsers);
 		},
 
 		updateUsers: function() {
-			this.setState({users: AS.collaborators});
+			this.setState({usersIds: AS.collaborators});
 		},
 
 		render: function() {
@@ -74,19 +72,24 @@
 
 			textEditor.on('text-change', function(delta, source) {
 				if (source == 'api') {
-					console.log("An API call triggered this change.");
+					//console.log("An API call triggered this change.");
 				}
 				else if (source == 'user') {
 					AS.pushChange('text-change', {uuid: AS.userId, objectId: AS.objectId, action: 'changed',
 							path: ["operations"], property: "operations", value: delta.ops, type: "string", OTChanges: true});
-					console.log(delta.ops);
+					//console.log(delta.ops);
 				}
 			});
 
 			AS.on('text-change', receiveChangeData);
-
 			AS.on('syncedState', receiveTextData);
 			AS.on('load', receiveTextData);
+		},
+
+		componentWillUnmount: function() {
+			AS.off('text-change', receiveChangeData);
+			AS.off('syncedState', receiveTextData);
+			AS.off('load', receiveTextData);
 		},
 
 		/**

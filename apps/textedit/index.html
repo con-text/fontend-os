@@ -139,9 +139,10 @@
 		*/
 		render: function() {
 			return (
-				<div id="main" className="main Grid Grid--gutters u-textCenter">
-					<div id="editor" className="editor-container Grid-cell">
-						<div id="toolbar" className="toolbar">
+				<div id="main" className="main">
+
+					<div className="Grid">
+						<div id="toolbar" className="Grid-cell toolbar">
 
 							<span className="ql-format-group">
 								<select title="Size" className="ql-size ql-picker">
@@ -160,11 +161,15 @@
 								<span className="ql-format-button ql-underline"></span>
 							</span>
 						</div>
-
-						<div className="editor" ref="editor"></div>
 					</div>
-					<div className="Grid-call u-1of3">
-						<Collaborators />
+
+					<div className="Grid u-textCenter">
+						<div id="editor" className="editor-container Grid-cell">
+							<div className="editor" ref="editor"></div>
+						</div>
+						<div className="collab-container Grid-call u-1of3">
+							<Collaborators />
+						</div>
 					</div>
 				</div>
 			);

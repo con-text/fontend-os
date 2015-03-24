@@ -53,6 +53,12 @@ function AppState(appId, userId, objectId, dependencies){
 				AS.emit('syncedState', data);
 			};
 	})(this));
+
+
+	this.socket.on('userChange', function(msg){
+		console.log("userChange");
+		console.log(this,msg);
+	}.bind(this));
 	// this.socket.on('disconnect', function(){});
 }
 

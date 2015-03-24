@@ -94,7 +94,7 @@ backendSocket.on('sendInitialFromBackend', function(msg){
 });
 
 backendSocket.on('notification', function(notification) {
-  console.log("got notification");
+  console.log("got notification", notification);
   if(socketCanRun()){
     io.to(currentUser.id).emit('notification', notification);
   }
@@ -111,6 +111,14 @@ backendSocket.on('pushedChange', function(msg) {
 	}
 	else{
 		console.log("Object doesn't exist in currentObjects");
+	}
+});
+
+
+//a user has left or joined an object
+backendSocket.on('userChange', function(msg){
+	if(currentObjects[msg.objectId]){
+		io.to(currentObjects[msg.objectId].id).emit('userChange', msg);
 	}
 });
 

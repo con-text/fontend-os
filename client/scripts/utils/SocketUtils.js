@@ -48,7 +48,6 @@ module.exports = {
         state: {id: notification.stateId}
       };
 
-      // TODO: Is params still necessary?
       app.state = params.state;
 
       var uuid = SessionStore.getCurrentUser().uuid;
@@ -57,8 +56,10 @@ module.exports = {
       AppsApiUtils.getState(uuid, app).done(function(state) {
 
         // Insert state into the app object
-        app.state = state;
-        app.state.id = state._id;
+        //app.state = state;
+        //app.state.id = state._id;
+        params.state = state;
+        params.state.id = state._id;
         
         // Get name of the user
         SessionApiUtils.getProfile(notification.userId).done(function(user) {

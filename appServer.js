@@ -159,7 +159,7 @@ io.on('connection', function(socket){
 
   socket.on('disconnect', function() {
 	  //if this exists, its an object, otherwise its the connection from 5000
-	  console.log("currentObject", currentObjects);
+	  // console.log("currentObject", currentObjects);
 	  if(socketIdToObject[socket.id]){
 		  console.log("Removing",socketIdToObject[socket.id].objectId);
 		  backendSocket.emit('requestFinalFromBackend', socketIdToObject[socket.id]);

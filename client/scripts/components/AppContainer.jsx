@@ -28,7 +28,7 @@ var itemDropTarget = {
 
     AppsApiUtils.addCollaborator(app, user, function() {
       NotificationActionCreators
-        .createTextNotification("You a sharing this with " + user.name);
+        .createTextNotification("You are sharing this with " + user.name);
     });
   },
 
@@ -84,6 +84,10 @@ var AppContainer = React.createClass({
 
   componentDidMount: function() {
     SessionStore.addChangeListener(this._onChange);
+
+    // Put other windows at level 1
+    $(".appContainer").css('z-index', 1);
+    $(this.refs.container.getDOMNode()).css('z-index', 2);
   },
 
   componentWillUnmount: function() {
@@ -130,7 +134,7 @@ var AppContainer = React.createClass({
       display: dropState.isDragging ? 'block' : 'none'
     };
 
-    return <div className="appContainer" style={divStyle}
+    return <div ref="container" className="appContainer" style={divStyle}
       {...this.dropTargetFor(ItemTypes.USER)}
 
       {...this.dragSourceFor(ItemTypes.WINDOW)}

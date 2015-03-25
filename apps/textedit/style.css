@@ -1,7 +1,7 @@
-.main {
-  margin-top: -7px;
+body {
+  margin: 0;
+  padding: 0;
 }
-
 
 .img-circle {
   -webkit-border-radius:500px;
@@ -13,13 +13,18 @@
   width: 32px;
   height: 32px;
 
-  margin-top: 15px;
+  margin-bottom: 15px;
   margin-left: 5px;
   margin-right: 5px
 }
 
+.collab-container {
+  background: white;
+  border-left: #DDD 1px solid;
+}
+
 .collaborators {
-  margin-top: 20px;
+  margin-top: 5px;
 }
 
 .editor-container {
@@ -29,6 +34,7 @@
 .toolbar {
   border-bottom: 1px solid #ccc;
   border-top: 1px solid #ccc;
+  background-color: #FFF;
 }
 
 .Grid {

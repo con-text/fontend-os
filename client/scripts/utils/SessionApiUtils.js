@@ -51,5 +51,9 @@ module.exports = {
       type: 'DELETE',
       success: callback
     });
+  },
+
+  getProfile: function(userId) {
+    return $.getJSON(baseUrl + '/users/' + userId + '/profile');
   }
 };

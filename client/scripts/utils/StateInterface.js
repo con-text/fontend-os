@@ -17,7 +17,6 @@ function AppState(appId, userId, objectId, dependencies){
 	this.socket.on('fillData', (function(AS){
 			// console.log("Got into closure",this);
 			return function(data){
-				console.log(data);
 				if(!data)
 					data = {};
 				// console.log("Got",data,"in",AS);
@@ -39,7 +38,6 @@ function AppState(appId, userId, objectId, dependencies){
 		// console.log("Got into closure",this);
 
 		return function(data){
-			console.log("got",data,"in pushed change");
 			AS.dealWithPushed(data);
 		};
 	})(this));
@@ -48,7 +46,6 @@ function AppState(appId, userId, objectId, dependencies){
 			// console.log("Got into closure",this);
 
 			return function(data){
-				console.log("got",data);
 				AS.dealWithChange(data);
 				AS.emit('syncedState', data);
 			};
@@ -56,8 +53,7 @@ function AppState(appId, userId, objectId, dependencies){
 
 
 	this.socket.on('userChange', function(msg){
-		console.log("userChange");
-		console.log(this,msg);
+
 	}.bind(this));
 	// this.socket.on('disconnect', function(){});
 }
@@ -114,7 +110,6 @@ AppState.prototype.dealWithChange = function(changeInfo){
 }
 
 AppState.prototype.fillState = function(data){
-	console.log("Filling data",data);
 	this.collaborators = data.collaborators;
 	this.online = data.online;
 	this._state = data.state;
@@ -123,7 +118,6 @@ AppState.prototype.fillState = function(data){
 			(function(context){ return function(m){
 				//lets traverse the path to get to the right element
 				var currentRoot = context._state;
-				console.log(currentRoot);
 				if(m.path !== ""){
 					m.path.split(".").forEach(function(p){
 						if(!currentRoot[p]){
@@ -157,7 +151,6 @@ AppState.prototype.fillState = function(data){
 				}
 			}
 		}(this)));
-		console.log(this._state);
 	}
 	//sort the dependencies by the depth of the path, add listeners on the deepest first
 
@@ -190,7 +183,6 @@ AppState.prototype.fillState = function(data){
 			if(dep.dontWatch){
 				return;
 			}
-			console.log("DEP",dep);
 			if(dep.path !== ""){
 				dep.path.split(".").forEach(function(p){
 					var parent = currentRoot;
@@ -223,7 +215,6 @@ AppState.prototype.fillState = function(data){
 
 		}
 	}(this)));
-	console.log(this._state);
 	// console.log("GOT",data);
 
 	// this.addWatcher();
@@ -244,27 +235,23 @@ AppState.prototype.addArrayObserver = function(obj, fullPath){
 				var changeObject = {uuid: AS.userId, objectId: AS.objectId, action: 'changed',
 									path: path.split("."), property: property, value: objectBeingObserved[splice.index],
 									type: "array", splice: splice};
-				console.log("SPLICE", splice);
 				AS.socket.emit('stateChange', changeObject);
 			});
-			
+
 		}
 	})(obj, this, fullPath));
 }
 
 AppState.prototype.addPathObserver = function(obj,fullPath){
-	console.log("Adding path obs", obj, fullPath);
 	this.observerArray[fullPath] = new PathObserver(obj, ((fullPath.charAt(0) == ".") ? fullPath.substr(1) : fullPath));
 	this.observerArray[fullPath].open((function(objectBeingObserved, AS, path){
 		return function(newValue, oldValue) {
 			// respond to changes to the elements of arr.
-			console.log("newValue",newValue,"oldValue",oldValue);
 			var changeObject = {uuid: AS.userId, objectId: AS.objectId, action: 'changed',
 								path: path.split("."), property: path.split(".").slice(-1), value: newValue, type: (typeof newValue)};
 			if(typeof newValue === "string" && typeof oldValue === "string"){
 				//use changes instead of entire string
 				var OTChanges = getOperations(oldValue, newValue);
-				console.log(OTChanges);
 				changeObject.OTChanges = OTChanges;
 			}
 			AS.socket.emit('stateChange', changeObject);
@@ -273,8 +260,7 @@ AppState.prototype.addPathObserver = function(obj,fullPath){
 }
 
 AppState.prototype.addObserver = function(obj, fullPath){
-	console.log("Adding observer", obj, fullPath);
-	
+
 	this.observerArray[fullPath] = new ObjectObserver(obj);
 	obsObj = this.observerArray[fullPath];
 	obsObj.open(
@@ -293,9 +279,6 @@ AppState.prototype.addObserver = function(obj, fullPath){
 
 						property = addedKeys[i];
 						//new property added, check if it's an object, if so, add a listener
-						console.log("Got add in",property);
-
-
 
 						AS.socket.emit('stateChange',
 								{uuid: AS.userId, objectId: AS.objectId, action: 'added',
@@ -306,8 +289,6 @@ AppState.prototype.addObserver = function(obj, fullPath){
 
 					for(i = 0; i<removedKeys.length; i++) {
 						property = removedKeys[property];
-
-					console.log("Got removed in",property);
 
 						AS.socket.emit('stateChange',
 								{uuid: AS.userId, objectId: AS.objectId, action: 'removed',
@@ -324,10 +305,8 @@ AppState.prototype.addObserver = function(obj, fullPath){
 						if(typeof changed[property] === "string"){
 							//use changes instead of entire string
 							var OTChanges = getOperations(getOldValueFn(property), changed[property]);
-							console.log(OTChanges);
 							changeObject.OTChanges = OTChanges;
 						}
-						console.log("Got change in",property);
 						AS.socket.emit('stateChange', changeObject);
 					}
 
@@ -352,8 +331,6 @@ AppState.prototype.parseArrayChange = function(obj, arr, splice, value){
 			return false;
 		}
 	}
-	console.log("parse array change");
-	console.log(obj,splice,value);
 	if(splice.removed.length !== 0){
 		obj.splice(splice.index);
 	}
@@ -385,7 +362,6 @@ AppState.prototype.updateValueFromArray = function(change,obj,path,prop,value,tr
 		fullPath = "."+fullPath;
 	}
 
-	console.log("fullpath = ",fullPath);
 	// console.log("Fullpath = ",fullPath);
 	// console.log(this.observerArray,arr);
 	this.observerArray[fullPath].discardChanges();
@@ -409,7 +385,6 @@ AppState.prototype.deleteValueFromArray = function(obj,arr,prop){
 
 function getOperations(startText, endText, id){
 
-	console.log("SE", "'"+startText+"'", "'"+endText+"'", id);
 	var diff 		= dmp.diff_main(startText, endText);
 	var actions = [];
 	var cursor = 0;
@@ -428,7 +403,7 @@ function getOperations(startText, endText, id){
 			actions.push({cursor: cursor, action: -1, text: change[1]});
 		}
 		else{
-			console.log("Invalid change param");
+			console.error("Invalid change param");
 		}
 	});
 
@@ -438,7 +413,6 @@ function getOperations(startText, endText, id){
 function applyChange(startText, changes){
 	var text = startText;
 	changes.forEach(function(change){
-		console.log("Applying","'"+change.text+"'", "to",text, change.cursor);
 		if(change.action === 1){
 			text = new ot.TextOperation().retain(change.cursor).insert(change.text).retain(text.length - change.cursor).apply(text);
 		}

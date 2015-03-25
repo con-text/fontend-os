@@ -39,6 +39,13 @@ module.exports = {
     });
   },
 
+  /**
+  * Get state, returns promise
+  */
+  getState: function(uuid, app) {
+    return $.getJSON(appServerUrl + '/users/'+ uuid + '/apps/' +app.id+ '/states/' + app.state.id);
+  },
+
   updateState: function(uuid, app, changes, callback) {
 
     if(app.state && app.state.id) {

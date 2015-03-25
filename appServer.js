@@ -19,6 +19,7 @@ app.delete('/app/:uuid/:appId/states/:objectId', routes.deleteObject);
 app.post('/users/:uuid/apps/:appId/states', routes.createState);
 app.get('/users/:uuid/apps/:appId/states/default', routes.getDefaultState);
 
+app.get('/users/:uuid/apps/:appId/states/:stateId', routes.getState);
 app.put('/users/:uuid/apps/:appId/states/:stateId', routes.updateState);
 
 app.get('/object/:uuid/:objectId', routes.getObject);
@@ -159,7 +160,6 @@ io.on('connection', function(socket){
 
   socket.on('disconnect', function() {
 	  //if this exists, its an object, otherwise its the connection from 5000
-	  // console.log("currentObject", currentObjects);
 	  if(socketIdToObject[socket.id]){
 		  console.log("Removing",socketIdToObject[socket.id].objectId);
 		  backendSocket.emit('requestFinalFromBackend', socketIdToObject[socket.id]);

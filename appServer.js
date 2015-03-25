@@ -123,6 +123,13 @@ backendSocket.on('userChange', function(msg){
 	}
 });
 
+backendSocket.on('newCollab', function(msg){
+	console.log("got new collab from backend");
+	if(currentObjects[msg.objectId]){
+		io.to(currentObjects[msg.objectId].id).emit('newCollab', msg);
+	}
+});
+
 // Need to define something using
 io.on('connection', function(socket){
 

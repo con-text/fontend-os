@@ -58,6 +58,10 @@ function AppState(appId, userId, objectId, dependencies){
 
 	this.socket.on('newCollab', function(msg){
 		console.log('newcollab', msg);
+		if(this.collaborators.indexOf(msg.userId) === -1){
+			this.collaborators.push(msg.userId);
+			this.emit('newCollab');
+		}
 	}.bind(this));
 	// this.socket.on('disconnect', function(){});
 }

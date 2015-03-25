@@ -67,10 +67,12 @@
 
 		componentDidMount: function() {
 			AS.on('load', this.updateUsers);
+			AS.on('newCollab', this.updateUsers);
 		},
 
 		componentWillUnmount: function() {
 			AS.off('load', this.updateUsers);
+			AS.off('newCollab', this.updateUsers);
 		},
 
 		updateUsers: function() {
@@ -126,6 +128,7 @@
 			AS.on('text-change', receiveChangeData);
 			AS.on('syncedState', receiveTextData);
 			AS.on('load', receiveTextData);
+
 		},
 
 		componentWillUnmount: function() {

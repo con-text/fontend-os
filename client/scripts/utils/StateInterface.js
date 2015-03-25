@@ -53,7 +53,11 @@ function AppState(appId, userId, objectId, dependencies){
 
 
 	this.socket.on('userChange', function(msg){
+		console.log('userChange', msg);
+	}.bind(this));
 
+	this.socket.on('newCollab', function(msg){
+		console.log('newcollab', msg);
 	}.bind(this));
 	// this.socket.on('disconnect', function(){});
 }

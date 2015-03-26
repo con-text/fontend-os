@@ -139,7 +139,7 @@
 						var text = editor.getText(range.start, range.end);
 						console.log('User has highlighted', text);
 					}
-					AS.pushChange('multi-selection-change', {uuid: AS.uuid, objectId: AS.objectId, location: range.start}, true)
+					AS.pushChange('multi-selection-change', {uuid: AS.userId, objectId: AS.objectId, location: range.start}, false)
 				}
 				else {
 					console.log('Cursor not in the editor');

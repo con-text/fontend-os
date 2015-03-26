@@ -142,7 +142,7 @@ io.on('connection', function(socket){
 
 	socket.on('pushedChange', function(msg){
 		msg.pushedChange = true;
-		console.log("got pushchange");
+		console.log("got pushchange",msg);
 		backendSocket.emit('stateChange', msg);
 	});
 

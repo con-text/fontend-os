@@ -114,6 +114,11 @@
 				container: '#toolbar'
 			});
 
+			var multiCursor = textEditor.addModule('multi-cursor', {
+				timeout: 10000
+			});
+
+
 			textEditor.on('text-change', function(delta, source) {
 				if (source == 'api') {
 					//console.log("An API call triggered this change.");
@@ -125,9 +130,29 @@
 				}
 			});
 
+			textEditor.on('selection-change', function(range) {
+				if (range) {
+					if (range.start == range.end) {
+						console.log('User cursor is on', range.start);
+					}
+					else{
+						var text = editor.getText(range.start, range.end);
+						console.log('User has highlighted', text);
+					}
+					AS.pushChange('multi-selection-change', {uuid: AS.uuid, objectId: AS.objectId, location: range.start}, true)
+				}
+				else {
+					console.log('Cursor not in the editor');
+				}
+			});
+
 			AS.on('text-change', receiveChangeData);
 			AS.on('syncedState', receiveTextData);
 			AS.on('load', receiveTextData);
+
+			AS.on('multi-selection-change', function(event){
+				multiCursor.setCursor(event.uuid, event.location, event.uuid, 'rgb(255, 0, 255)');
+			})
 
 		},
 

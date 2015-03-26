@@ -82,9 +82,10 @@ AppState.prototype.emit = function(eventName, data) {
 	this.eventEmitter.emit(eventName, data);
 };
 
-AppState.prototype.pushChange = function(eventName, data){
+AppState.prototype.pushChange = function(eventName, data, act){
 	var pushObject = data;
 		pushObject.eventName = eventName;
+		pushObject.act = (act === undefined) ? true : act;
 	this.socket.emit('pushedChange', pushObject);
 }
 

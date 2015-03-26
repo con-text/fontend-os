@@ -53,7 +53,7 @@ function AppState(appId, userId, objectId, dependencies){
 
 
 	this.socket.on('userChange', function(msg){
-
+		console.log("User change");
 	}.bind(this));
 	// this.socket.on('disconnect', function(){});
 }

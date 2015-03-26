@@ -32,10 +32,9 @@ module.exports = {
       } else if (data.result === 'logout') {
         // Pass it back to apps server
         appServerSocket.emit('leaveRoom');
+        console.log("Leave room in frontend");
         return;
       }
-
-
     });
 
     appServerSocket.on('notification', function(notification) {
@@ -60,7 +59,7 @@ module.exports = {
         //app.state.id = state._id;
         params.state = state;
         params.state.id = state._id;
-        
+
         // Get name of the user
         SessionApiUtils.getProfile(notification.userId).done(function(user) {
           // Create notification about sharing

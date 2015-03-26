@@ -32,7 +32,6 @@ module.exports = {
       } else if (data.result === 'logout') {
         // Pass it back to apps server
         appServerSocket.emit('leaveRoom');
-        console.log("Leave room in frontend");
         return;
       }
     });

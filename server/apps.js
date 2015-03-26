@@ -35,7 +35,6 @@ module.exports = {
     var apps = [];
 
     this.getManifests().forEach(function(manifest) {
-
       apps.push(new App(manifest));
 
     }, this);
@@ -94,7 +93,6 @@ module.exports = {
       var apps = self.getApps();
       res.json(apps);
     });
-
 
     /**
     * Gets information about the app, objects etc.

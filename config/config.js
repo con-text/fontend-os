@@ -18,7 +18,8 @@ function allowAppsOrigin(req, res, next) {
   // Only one origin is allowed
   res.header('Access-Control-Allow-Origin', "*");
   res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
-  res.header('Access-Control-Allow-Headers', 'X-Requested-With,Content-Type');
+  res.header('Access-Control-Allow-Headers', 'Accept-Ranges,X-Requested-With,Content-Type,Content-Length');
+  res.header('Accept-Ranges', 'bytes');
 
   next();
 }

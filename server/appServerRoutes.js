@@ -291,7 +291,7 @@ module.exports = {
 				//not too bothered about the user info at this point
 				if(realApp.found){
 
-					res.send(applicationList[realApp.index].displayApp(uuid, objectId, req.query));
+					res.send(applicationList[realApp.index].displayApp(uuid, state._id, req.query));
 				}
 				else{
 					res.status(404).json({message: "App doesn't exist"});

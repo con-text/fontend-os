@@ -9,6 +9,11 @@
   /** @jsx React.DOM */
   'use strict';
 
+  var pageNum = 1;
+  var pdfDoc = null;
+  var pageRendering = false;
+  var pageNumPending = null;
+  var scale = 0.8;
   // PDF Viewer
   var Viewer = React.createClass({
 
@@ -17,26 +22,18 @@
     */
     componentDidMount: function() {
 
-      var url = 'http://localhost:3001/uploads/nimble.pdf';
-      var canvas = this.refs.canvas.getDOMNode();
+      var url = 'http://localhost:3001/uploads/cloud.pdf';
 
       PDFJS.disableWorker = true;
       PDFJS.getDocument(url).then(function getPdfHelloWorld(pdf) {
 
+        pdfDoc = pdf;
+
         //
         // Fetch the first page
         //
-        pdf.getPage(1).then(function getPageHelloWorld(page) {
-          var scale = 0.5;
-          var viewport = page.getViewport(scale);
-
-          var context = canvas.getContext('2d');
-          canvas.height = viewport.height;
-          canvas.width = viewport.width;
-
-          page.render({canvasContext: context, viewport: viewport});
-        });
-      });
+        this.renderPage(pageNum);
+      }.bind(this));
 
     },
 
@@ -52,10 +49,83 @@
       };
 
       return (
-        <div className="main">
-          <canvas ref="canvas" style={style}></canvas>
+        <div className="main" onWheel={this.handleWheel}>
+          <canvas ref="canvas" style={style} ></canvas>
         </div>
       );
+    },
+
+    handleWheel: function(e) {
+
+      // Left
+      if (e.deltaY > 0) {
+        if (pageNum >= pdfDoc.numPages) {
+              return;
+        }
+
+        pageNum++;
+
+      } else if (e.deltaY < 0) {
+        if (pageNum <= 1) {
+          pageNum = 1;
+          return;
+        }
+
+        pageNum--;
+      }
+
+      this.queueRenderPage(pageNum);
+    },
+
+    /**
+     * If another page rendering in progress, waits until the rendering is
+     * finised. Otherwise, executes rendering immediately.
+     */
+    queueRenderPage: function (num) {
+      if (pageRendering) {
+        pageNumPending = num;
+      } else {
+        this.renderPage(num);
+      }
+    },
+
+    /**
+    * Get page info from document, resize canvas accordingly, and render page.
+    * @param num Page number.
+    */
+    renderPage: function (num) {
+
+      var canvas = this.refs.canvas.getDOMNode();
+      var ctx = canvas.getContext('2d');
+
+      pageRendering = true;
+      // Using promise to fetch the page
+      pdfDoc.getPage(num).then(function(page) {
+        var viewport = page.getViewport(scale);
+        canvas.height = viewport.height;
+        canvas.width = viewport.width;
+
+        // Render PDF page into canvas context
+        var renderContext = {
+          canvasContext: ctx,
+          viewport: viewport
+        };
+
+        var renderTask = page.render(renderContext);
+
+        // Wait for rendering to finish
+
+        renderTask.promise.then(function () {
+          pageRendering = false;
+
+          if (pageNumPending !== null) {
+            // New page rendering is pending
+            this.renderPage(pageNumPending);
+            pageNumPending = null;
+          }
+        }.bind(this));
+      }.bind(this));
+
     }
   });
 

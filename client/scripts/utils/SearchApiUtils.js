@@ -184,6 +184,7 @@ module.exports = {
     checkForWebsite(query, results);
     checkForAppWithStates("Calculator", deferred, query, params);
     checkForAppWithStates("Documents", deferred, query, params);
+    checkForAppWithStates("PDF", deferred, query, params);
 
     // Wait for all deferred calls to finish
     $.when.apply($, deferred).done(function() {

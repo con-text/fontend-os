@@ -17,7 +17,7 @@
     */
     componentDidMount: function() {
 
-      var url = 'http://cdn.mozilla.net/pdfjs/helloworld.pdf';
+      var url = 'http://localhost:3001/uploads/nimble.pdf';
       var canvas = this.refs.canvas.getDOMNode();
 
       PDFJS.disableWorker = true;
@@ -27,10 +27,9 @@
         // Fetch the first page
         //
         pdf.getPage(1).then(function getPageHelloWorld(page) {
-          var scale = 1.5;
+          var scale = 0.5;
           var viewport = page.getViewport(scale);
 
-          var canvas = document.getElementById('the-canvas');
           var context = canvas.getContext('2d');
           canvas.height = viewport.height;
           canvas.width = viewport.width;

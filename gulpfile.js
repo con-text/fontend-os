@@ -107,6 +107,11 @@ gulp.task('copy-stateinterface', function(){
 		.pipe(gulp.dest("dist/js"));
 });
 
+gulp.task('bundle-doc-helpers', function(){
+	return gulp.src([ 'client/scripts/utils/SJSDoc.js','client/scripts/utils/RichText.js'])
+		.pipe(gulp.dest("dist/js"));
+});
+
 gulp.task('bundle-stateinterface-helpers', function(){
 	return gulp.src([ 'client/scripts/utils/DifMatchPatch.js','client/scripts/utils/OperationalTransformation.js'])
 		.pipe(gulp.dest("dist/js"));
@@ -212,7 +217,7 @@ gulp.task('test', ['build'], function() {
 });
 
 gulp.task('build', ['copy-bower', 'lint', 'browserify', 'views', 'styles',
-	'images', 'copy-stateinterface', 'bundle-stateinterface-helpers']);
+	'images', 'copy-stateinterface', 'bundle-stateinterface-helpers', 'bundle-doc-helpers']);
 
 // Prepare the package
 gulp.task('package', ['build'], function(){

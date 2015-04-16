@@ -83,7 +83,9 @@ backendSocket.on('sendInitialFromBackend', function(msg){
 		console.log("The entry for object", msg.objectId,"doesn't exist");
 		return;
 	}
-
+	console.log("Filling for object", msg.objectId, msg.state);
+	console.log("Online",msg.online);
+	console.log("Collab", msg.collaborators);
 	io.to(currentObjects[msg.objectId].id).emit('fillData', {state:msg.state, collaborators: msg.collaborators, online: msg.online});
 });
 
@@ -116,6 +118,13 @@ backendSocket.on('userChange', function(msg){
 	}
 });
 
+backendSocket.on('newCollab', function(msg){
+	console.log("got new collab from backend");
+	if(currentObjects[msg.objectId]){
+		io.to(currentObjects[msg.objectId].id).emit('newCollab', msg);
+	}
+});
+
 // Need to define something using
 io.on('connection', function(socket){
 
@@ -145,13 +154,14 @@ io.on('connection', function(socket){
 
   socket.on('disconnect', function() {
 	  //if this exists, its an object, otherwise its the connection from 5000
+
 	  if(socketIdToObject[socket.id]){
 		  backendSocket.emit('requestFinalFromBackend', socketIdToObject[socket.id]);
 		  delete currentObjects[socketIdToObject[socket.id].objectId];
 		  delete socketIdToObject[socket.id];
 	  }
 	  else{
-	  	console.log("Socket with id " + socket.id + " doesn't exist.");
+	  	console.log("Doesn't exist in socketdisconnect");
 	  }
 
   });

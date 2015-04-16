@@ -1,4 +1,4 @@
-var socket = new BCSocket('http://localhost:3000/channel', {reconnect: true});
+var socket = new BCSocket('http://contexte.herokuapp.com/channel', {reconnect: true});
 var sjs = new sharejs.Connection(socket);
 sharejs.registerType(window.ottypes['rich-text']);
 

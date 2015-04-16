@@ -28,19 +28,22 @@ function initSJS(docId, userId, editor){
 		// Update the doc with the recent changes
 		editor.updateContents(doc.getSnapshot());
 
-		//************ end ***************//
 
-		editor.on('text-change', function (delta, source) {
-			console.log('text-change', delta, source);
-			doc.submitOp(delta);
-		});
 
-		doc.on('op', function (op, localContext) {
-			console.log("DOC.on.op", op);
-			if (!localContext) {
-				editor.updateContents(op);
-			}
-		});
+	});
+
+	//************ end ***************//
+
+	doc.on('op', function (op, localContext) {
+		console.log("DOC.on.op", op);
+		if (!localContext) {
+			editor.updateContents(op);
+		}
+	});
+
+	editor.on('text-change', function (delta, source) {
+		console.log('text-change', delta, source);
+		doc.submitOp(delta);
 	});
 }
 

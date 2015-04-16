@@ -135,6 +135,16 @@
 			// 	}
 			// });
 
+			textEditor.on('text-change', function(delta, source) {
+				if (source == 'api') {
+					//console.log("An API call triggered this change.");
+				}
+				else if (source == 'user') {
+					
+					console.log(delta);
+				}
+			});
+
 			textEditor.on('selection-change', function(range) {
 				if (range) {
 					if (range.start == range.end) {

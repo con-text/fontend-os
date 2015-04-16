@@ -36,8 +36,9 @@ function initSJS(docId, userId, editor){
 		});
 
 		doc.on('op', function (op, localContext) {
+			console.log("DOC.on.op", op);
 			if (!localContext) {
-				editor.updateContents(op.ops);
+				editor.updateContents(op);
 			}
 		});
 	});

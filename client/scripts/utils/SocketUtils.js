@@ -34,8 +34,6 @@ module.exports = {
         appServerSocket.emit('leaveRoom');
         return;
       }
-
-
     });
 
     appServerSocket.on('notification', function(notification) {
@@ -60,7 +58,7 @@ module.exports = {
         //app.state.id = state._id;
         params.state = state;
         params.state.id = state._id;
-        
+
         // Get name of the user
         SessionApiUtils.getProfile(notification.userId).done(function(user) {
           // Create notification about sharing

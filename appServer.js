@@ -61,24 +61,19 @@ backendSocket.on('disconnect', function(){
 
 backendSocket.on('syncedState', function(msg){
 	//got syncedState from the server, send to the saved object
-  if(currentObjects[msg.objectId]){
-    console.log("Sending syncstate to",msg.objectId);
-		io.to(currentObjects[msg.objectId].id).emit('syncedState', msg);
+  if(currentObjects[msg.objectId]) {
+  	io.to(currentObjects[msg.objectId].id).emit('syncedState', msg);
 	}
-	else{
+  else {
 		console.log("Object doesn't exist in currentObjects");
 	}
 });
-
-
 
 function socketCanRun(){
   return (!!currentUser);
 }
 
 backendSocket.on('sendInitialFromBackend', function(msg){
-
-	console.log("Got inital from backend");
 
 	if(!msg.objectId || !msg.state){
 		console.log("Message from backend is missing object id or state", msg.objectId, msg.state);
@@ -95,9 +90,9 @@ backendSocket.on('sendInitialFromBackend', function(msg){
 });
 
 backendSocket.on('notification', function(notification) {
-  console.log("got notification", notification);
+
   if(socketCanRun()){
-    io.to(currentUser.id).emit('notification', notification);
+    io.to(currentUser.socket.id).emit('notification', notification);
   }
   else{
     console.log("Can't send notification to root user");
@@ -107,7 +102,6 @@ backendSocket.on('notification', function(notification) {
 backendSocket.on('pushedChange', function(msg) {
 	//got pushedChange from the server, send to the saved object
 	if(currentObjects[msg.objectId]){
-	  console.log("Sending syncstate to",msg.objectId,currentObjects[msg.objectId].id);
 		io.to(currentObjects[msg.objectId].id).emit('pushedChange', msg);
 	}
 	else{
@@ -116,8 +110,9 @@ backendSocket.on('pushedChange', function(msg) {
 });
 
 
-//a user has left or joined an object
+// A user has left or joined an object
 backendSocket.on('userChange', function(msg){
+
 	if(currentObjects[msg.objectId]){
 		io.to(currentObjects[msg.objectId].id).emit('userChange', msg);
 	}
@@ -133,8 +128,6 @@ backendSocket.on('newCollab', function(msg){
 // Need to define something using
 io.on('connection', function(socket){
 
-
-
 	socket.on('stateChange', function(msg){
 		backendSocket.emit('stateChange',
 			msg);
@@ -142,39 +135,44 @@ io.on('connection', function(socket){
 
 	socket.on('pushedChange', function(msg){
 		msg.pushedChange = true;
+<<<<<<< HEAD
 		console.log("got pushchange",msg);
+=======
+>>>>>>> 265db9b4a967466a78e789c371fc3520e3d9b90a
 		backendSocket.emit('stateChange', msg);
 	});
 
 	socket.on('getInitial', function(msg){
 		//new object has joined the room, check that it doesn't already exist
 		if(currentObjects[msg.objectId]){
-			console.log("state already exists in the object");
 			return;
 		}
 		//create the mappings between objectid and socketid
 		//the socketIdToObject will be used on disconnect
-		console.log("Creating entry for",msg.objectId);
-
 		var packet = {uuid: msg.uuid, objectId: msg.objectId, socketId: socket.id};
 		backendSocket.emit('requestInitialFromBackend', packet);
 
-
 		currentObjects[msg.objectId] = socket;
 		socketIdToObject[socket.id] = {objectId: msg.objectId, uuid: msg.uuid};
-
 	});
 
   socket.on('disconnect', function() {
 	  //if this exists, its an object, otherwise its the connection from 5000
+<<<<<<< HEAD
+=======
+
+>>>>>>> 265db9b4a967466a78e789c371fc3520e3d9b90a
 	  if(socketIdToObject[socket.id]){
-		  console.log("Removing",socketIdToObject[socket.id].objectId);
 		  backendSocket.emit('requestFinalFromBackend', socketIdToObject[socket.id]);
 		  delete currentObjects[socketIdToObject[socket.id].objectId];
 		  delete socketIdToObject[socket.id];
 	  }
 	  else{
+<<<<<<< HEAD
 	  	console.log("Doesn't exist in socketdisconnect");
+=======
+	  	console.log("Socket with id " + socket.id + " doesn't exist.");
+>>>>>>> 265db9b4a967466a78e789c371fc3520e3d9b90a
 	  }
 
   });
@@ -183,9 +181,8 @@ io.on('connection', function(socket){
 	  //logged into the system, let the backend know so that it can map
 	  //uuid to a socket object
 	  if(data.uuid){
-		  console.log("Joining",data.uuid);
 		  backendSocket.emit('initRoom', {uuid: data.uuid});
-		  currentUser = socket;
+		  currentUser = {socket: socket, uuid: data.uuid};
 	  }
 	  else{
 		  console.log("UUID didn't exist in the ");
@@ -193,7 +190,10 @@ io.on('connection', function(socket){
   });
 
   socket.on('leaveRoom', function() {
-	  backendSocket.emit('leaveRoom', {uuid: currentUser});
-	  console.log("Leave room");
+	  backendSocket.emit('leaveRoom', {uuid: currentUser.uuid});
+  });
+
+  socket.on('error', function(err) {
+    console.error("Socket error: " + err.toString(), socketIdToObject[socket.id]);
   });
 });

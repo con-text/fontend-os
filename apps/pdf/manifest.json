@@ -1,0 +1,13 @@
+{
+  "name": "PDF",
+  "id": "0676d282-349d-4385-915a-29f5a216d019",
+  "icon": "icon.png",
+  "style": "style.css",
+  "dependencies": [
+    {
+      "path": "",
+      "property": "documentId",
+      "type": "string",
+      "dontWatch": true
+  }]
+}

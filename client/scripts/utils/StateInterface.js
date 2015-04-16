@@ -87,12 +87,12 @@ AppState.prototype.pushChange = function(eventName, data, act){
 		pushObject.eventName = eventName;
 		pushObject.act = (act === undefined) ? true : act;
 	this.socket.emit('pushedChange', pushObject);
-}
+};
 
 AppState.prototype.dealWithPushed = function(data){
 	console.log("got from pushed", data.eventName);
 	this.emit(data.eventName, data);
-}
+};
 
 AppState.prototype.dealWithChange = function(changeInfo){
 	switch(changeInfo.action){
@@ -116,7 +116,7 @@ AppState.prototype.dealWithChange = function(changeInfo){
 		break;
 	}
 	return false;
-}
+};
 
 AppState.prototype.fillState = function(data){
 	this.collaborators = data.collaborators;
@@ -158,7 +158,7 @@ AppState.prototype.fillState = function(data){
 						}
 					break;
 				}
-			}
+			};
 		}(this)));
 	}
 	//sort the dependencies by the depth of the path, add listeners on the deepest first
@@ -200,7 +200,7 @@ AppState.prototype.fillState = function(data){
 			}
 
 			currentRoot = currentRoot[dep.property];
-			var fullPath
+			var fullPath;
 			if(!dep.path){
 				fullPath = dep.property;
 			}
@@ -215,14 +215,14 @@ AppState.prototype.fillState = function(data){
 					case "int":
 					case "str":
 					case "string":
-						context.addPathObserver(context._state, fullPath)
+						context.addPathObserver(context._state, fullPath);
 					break;
 					case "object":
 						context.addObserver(currentRoot, fullPath);
 					break;
 				}
 
-		}
+		};
 	}(this)));
 	// console.log("GOT",data);
 
@@ -247,9 +247,9 @@ AppState.prototype.addArrayObserver = function(obj, fullPath){
 				AS.socket.emit('stateChange', changeObject);
 			});
 
-		}
+		};
 	})(obj, this, fullPath));
-}
+};
 
 AppState.prototype.addPathObserver = function(obj,fullPath){
 	this.observerArray[fullPath] = new PathObserver(obj, ((fullPath.charAt(0) == ".") ? fullPath.substr(1) : fullPath));
@@ -264,9 +264,9 @@ AppState.prototype.addPathObserver = function(obj,fullPath){
 				changeObject.OTChanges = OTChanges;
 			}
 			AS.socket.emit('stateChange', changeObject);
-		}
+		};
 	})(obj, this, fullPath));
-}
+};
 
 AppState.prototype.addObserver = function(obj, fullPath){
 
@@ -348,7 +348,7 @@ AppState.prototype.parseArrayChange = function(obj, arr, splice, value){
 	}
 	this.observerArray[arr.join(".")].discardChanges();
 	return obj;
-}
+};
 
 
 AppState.prototype.updateValueFromArray = function(change,obj,path,prop,value,transformations){

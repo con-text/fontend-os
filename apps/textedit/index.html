@@ -4,6 +4,11 @@
 <script src="https://code.jquery.com/jquery-2.1.3.min.js"></script>
 <link rel="stylesheet" href="//cdn.quilljs.com/0.19.8/quill.snow.css" />
 <script src="//cdn.quilljs.com/0.19.8/quill.min.js"></script>
+<script src="//contexte.herokuapp.com/channel/bcsocket.js"></script>
+<script src="//localhost:5000/js/RichText.js"></script>
+<script src="//contexte.herokuapp.com/share.uncompressed.js"></script>
+<script src="//localhost:5000/js/SJSDoc.js"></script>
+<script src="//cdn.quilljs.com/0.19.8/quill.min.js"></script>
 
 <script type="text/jsx">
 
@@ -67,10 +72,12 @@
 
 		componentDidMount: function() {
 			AS.on('load', this.updateUsers);
+			AS.on('newCollab', this.updateUsers);
 		},
 
 		componentWillUnmount: function() {
 			AS.off('load', this.updateUsers);
+			AS.off('newCollab', this.updateUsers);
 		},
 
 		updateUsers: function() {
@@ -112,26 +119,65 @@
 				container: '#toolbar'
 			});
 
+			var multiCursor = textEditor.addModule('multi-cursor', {
+				timeout: 10000
+			});
+
+
+			// textEditor.on('text-change', function(delta, source) {
+			// 	if (source == 'api') {
+			// 		//console.log("An API call triggered this change.");
+			// 	}
+			// 	else if (source == 'user') {
+			// 		AS.pushChange('text-change', {uuid: AS.userId, objectId: AS.objectId, action: 'changed',
+			// 				path: ["operations"], property: "operations", value: delta.ops, type: "string", OTChanges: true});
+			// 		//console.log(delta.ops);
+			// 	}
+			// });
+
 			textEditor.on('text-change', function(delta, source) {
 				if (source == 'api') {
 					//console.log("An API call triggered this change.");
 				}
 				else if (source == 'user') {
-					AS.pushChange('text-change', {uuid: AS.userId, objectId: AS.objectId, action: 'changed',
-							path: ["operations"], property: "operations", value: delta.ops, type: "string", OTChanges: true});
-					//console.log(delta.ops);
+					
+					console.log(delta);
 				}
 			});
 
-			AS.on('text-change', receiveChangeData);
-			AS.on('syncedState', receiveTextData);
-			AS.on('load', receiveTextData);
+			textEditor.on('selection-change', function(range) {
+				if (range) {
+					if (range.start == range.end) {
+						console.log('User cursor is on', range.start);
+					}
+					else{
+						var text = editor.getText(range.start, range.end);
+						console.log('User has highlighted', text);
+					}
+					AS.pushChange('multi-selection-change', {uuid: AS.userId, objectId: AS.objectId, location: range.start}, false)
+				}
+				else {
+					console.log('Cursor not in the editor');
+				}
+			});
+
+			// AS.on('text-change', receiveChangeData);
+			// AS.on('syncedState', receiveTextData);
+			// AS.on('load', receiveTextData);
+
+			initSJS(AS.objectId, AS.userId, textEditor);
+
+
+			AS.on('multi-selection-change', function(event){
+				multiCursor.setCursor(event.uuid, event.location, event.uuid, 'rgb(255, 0, 255)');
+			})
+
 		},
 
 		componentWillUnmount: function() {
-			AS.off('text-change', receiveChangeData);
-			AS.off('syncedState', receiveTextData);
-			AS.off('load', receiveTextData);
+			// AS.off('text-change', receiveChangeData);
+			// AS.off('syncedState', receiveTextData);
+			// AS.off('load', receiveTextData);
 		},
 
 		/**

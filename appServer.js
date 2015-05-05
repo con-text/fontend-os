@@ -85,7 +85,9 @@ backendSocket.on('sendInitialFromBackend', function(msg){
 		console.log("The entry for object", msg.objectId,"doesn't exist");
 		return;
 	}
-
+	console.log("Filling for object", msg.objectId, msg.state);
+	console.log("Online",msg.online);
+	console.log("Collab", msg.collaborators);
 	io.to(currentObjects[msg.objectId].id).emit('fillData', {state:msg.state, collaborators: msg.collaborators, online: msg.online});
 });
 
@@ -115,6 +117,13 @@ backendSocket.on('userChange', function(msg){
 
 	if(currentObjects[msg.objectId]){
 		io.to(currentObjects[msg.objectId].id).emit('userChange', msg);
+	}
+});
+
+backendSocket.on('newCollab', function(msg){
+	console.log("got new collab from backend");
+	if(currentObjects[msg.objectId]){
+		io.to(currentObjects[msg.objectId].id).emit('newCollab', msg);
 	}
 });
 
@@ -154,7 +163,7 @@ io.on('connection', function(socket){
 		  delete socketIdToObject[socket.id];
 	  }
 	  else{
-	  	console.log("Socket with id " + socket.id + " doesn't exist.");
+	  	console.log("Doesn't exist in socketdisconnect");
 	  }
 
   });

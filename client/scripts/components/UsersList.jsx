@@ -52,7 +52,7 @@ var UsersList = React.createClass({
           isActive = _.isEqual(user.uuid, active.uuid);
       }
 
-      var isLoggingIn = false;
+      isLoggingIn = false;
       if(this.props.userLoggingIn &&
         _.isEqual(this.props.userLoggingIn.uuid, user.uuid)) {
           isLoggingIn = true;
@@ -74,6 +74,11 @@ var UsersList = React.createClass({
 
     var isEmpty = userNodes.length === 0;
     var cssClass = 'login-list';
+    var userListClass = 'usersList';
+
+    if(this.props.showNames) {
+      userListClass += ' wide';
+    }
 
     if(isEmpty) {
       return (
@@ -84,7 +89,7 @@ var UsersList = React.createClass({
     } else {
       return(
         <div id="login-list" className={cssClass}>
-          <div className='usersList'>
+          <div className={userListClass}>
             <TimeoutTransitionGroup enterTimeout={2000}
               leaveTimeout={2000}
               transitionName='users'>

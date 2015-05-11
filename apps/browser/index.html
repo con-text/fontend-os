@@ -49,7 +49,7 @@
 					AS._state.url = this.state.text;
 				}
 
-			});
+			}.bind(this));
 
 			AS.on('syncedState', this.receiveUrl);
 		},

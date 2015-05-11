@@ -42,6 +42,7 @@
 					this.setState({
 						text: AS._state.url,
 					});
+					this.goToPage();
 				} else if(this.state.text !== '') {
 					AS._state.url = this.state.text;
 				}
@@ -128,7 +129,7 @@
 			var frame = this.refs.frame.getDOMNode();
 
 			if(url !== '' &&
-				!(_.startsWith(url, "http://") && _.startsWith(url, "https://"))) {
+				!(_.startsWith(url, "http://") || _.startsWith(url, "https://"))) {
 				url = "http://" + url;
 			}
 

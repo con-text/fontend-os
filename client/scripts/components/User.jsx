@@ -49,7 +49,7 @@ var User = React.createClass({
   },
 
   handleClick: function() {
-    if(!this.props.disabled) {
+    if(!this.props.disabled && !this.props.loggedIn) {
       // Call authenticate API and invoke action
       SessionActionCreators.authenticateUser(this.props.user);
     }

@@ -33,15 +33,12 @@
 			frame.setAttribute('nwfaketop', '');
 			frame.setAttribute('allowFullScreen', '');
 
-			//frame.append(webView);
-			if(this.state.text !== '') {
-				this.goToPage();
-			}
-
 			AS.on('load', function(data) {
 
 				// Check if there was anything before
-				if(this.state.text === '' && typeof AS._state.url !== 'undefined') {
+				var urlDefined = this.state.text && this.state.text !== '';
+
+				if(!urlDefined && typeof AS._state.url !== 'undefined') {
 					this.setState({
 						text: AS._state.url,
 					});
@@ -51,11 +48,17 @@
 
 			}.bind(this));
 
-			AS.on('syncedState', this.receiveUrl);
+			AS.on('syncedState', this.receiveUrl.bind(this));
+
+			//frame.append(webView);
+			if(this.state.text !== '') {
+				this.goToPage();
+			}
 		},
 
 		receiveUrl: function () {
 			this.setState({text: AS._state.url});
+			this.goToPage();
 		},
 
 		componentWillUnmount: function() {
@@ -88,8 +91,6 @@
 			this.setState({
 				text: e.target.value
 			});
-
-			AS._state.url = e.target.value;
 		},
 
 		handleBackClick: function(e) {
@@ -118,7 +119,12 @@
 		},
 
 		goToPage: function() {
-			var url = this.state.text.toString().trim();
+
+			if(!this.state || !this.state.text) {
+				return;
+			}
+
+			var url = this.state.text.trim();
 			var frame = this.refs.frame.getDOMNode();
 
 			if(url !== '' &&
@@ -129,6 +135,11 @@
 			if(url !== '') {
 				frame.setAttribute('src', url);
 				this.setState({history: this.state.history.concat([url])});
+
+				// Save the state if AS has been loaded
+				if(AS && AS._state) {
+					AS._state.url = url;
+				}
 			}
 		},
 

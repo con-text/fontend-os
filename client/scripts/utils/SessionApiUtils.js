@@ -6,8 +6,6 @@ function tryAuthenticate(user, options) {
   options = options || {};
 
   // Assume now we authenticate everyone
-  var authSuccess = true;
-
   $.get(baseUrl + '/users/' + user.uuid + '/profile')
   .done(function(data){
 
@@ -18,7 +16,7 @@ function tryAuthenticate(user, options) {
   })
   .fail(function(err) {
 
-    console.error("Failed to authenticate user");
+    console.error('Failed to authenticate user');
 
     if(options.error) {
       options.error(err);
@@ -30,7 +28,7 @@ function tryAuthenticate(user, options) {
 function sendToBuzzer(user) {
 
   $.get(baseUrl + '/users/' + user.uuid + '/buzz')
-    .done(function(data) {
+    .done(function() {
 
     });
 }

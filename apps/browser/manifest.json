@@ -4,4 +4,5 @@
   "icon": "browser.png",
   "style": "browser.css",
   "dependencies": [{"path": "", "property":"url", "type":"staticString"}]
+
 }

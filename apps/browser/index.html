@@ -33,15 +33,37 @@
 			frame.setAttribute('nwfaketop', '');
 			frame.setAttribute('allowFullScreen', '');
 
+			AS.on('load', function(data) {
+
+				// Check if there was anything before
+				var urlDefined = this.state.text && this.state.text !== '';
+
+				if(!urlDefined && typeof AS._state.url !== 'undefined') {
+					this.setState({
+						text: AS._state.url,
+					});
+				} else if(this.state.text !== '') {
+					AS._state.url = this.state.text;
+				}
+
+			}.bind(this));
+
+			AS.on('syncedState', this.receiveUrl.bind(this));
+
 			//frame.append(webView);
 			if(this.state.text !== '') {
 				this.goToPage();
 			}
 		},
 
+		receiveUrl: function () {
+			this.setState({text: AS._state.url});
+			this.goToPage();
+		},
+
 		componentWillUnmount: function() {
-			var frame = this.refs.frame.getDOMNode();
-			frame.removeEventListener("DOMAttrModified", this.handleFrameLoad);
+			AS.off('load');
+			AS.off('syncedState');
 		},
 
 		render: function() {
@@ -97,7 +119,12 @@
 		},
 
 		goToPage: function() {
-			var url = this.state.text.toString().trim();
+
+			if(!this.state || !this.state.text) {
+				return;
+			}
+
+			var url = this.state.text.trim();
 			var frame = this.refs.frame.getDOMNode();
 
 			if(url !== '' &&
@@ -108,22 +135,17 @@
 			if(url !== '') {
 				frame.setAttribute('src', url);
 				this.setState({history: this.state.history.concat([url])});
+
+				// Save the state if AS has been loaded
+				if(AS && AS._state) {
+					AS._state.url = url;
+				}
 			}
 		},
 
 		handleGoClick: function(e) {
 			e.preventDefault();
 			this.goToPage();
-		},
-
-		handleFrameLoad: function(e) {
-
-			if(e.attrName === "src") {
-				var frame = this.refs.frame.getDOMNode();
-				var url = frame.contentWindow.location.href;
-				this.state.history.push(url);
-				console.log("Pushing url". url);
-			}
 		}
 	});
 

@@ -32,6 +32,8 @@ app.get('/apps/:appName/:asset', function(req, res) {
   res.sendFile(fileName, { root: './dist/apps/'+ appName + '/' });
 });
 
+app.use('/uploads', express.static(__dirname + "/dist/uploads"));
+
 var server = app.listen(3001, function () {
 
   var host = server.address().address;

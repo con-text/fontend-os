@@ -48,8 +48,9 @@ module.exports = {
 
       app.state = params.state;
 
-      var uuid = SessionStore.getCurrentUser().uuid;
-
+      //var uuid = SessionStore.getCurrentUser().uuid;
+      var uuid = notification.userToShareId;
+      
       // Get full state object, as now we only have id
       AppsApiUtils.getState(uuid, app).done(function(state) {
 
@@ -61,6 +62,9 @@ module.exports = {
 
         // Get name of the user
         SessionApiUtils.getProfile(notification.userId).done(function(user) {
+
+          console.log('Notification received', notification, state, user);
+
           // Create notification about sharing
           NotificationActions.createTextNotification(
             user.name + " shared something with you",

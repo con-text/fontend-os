@@ -19,7 +19,7 @@ function AppState(appId, userId, objectId, dependencies){
 			return function(data){
 				if(!data)
 					data = {};
-				// console.log("Got",data,"in",AS);
+				console.log("Got",data,"in",AS);
 				AS.fillState(data);
 				AS.emit("load");
 			};
@@ -148,6 +148,7 @@ AppState.prototype.fillState = function(data){
 					break;
 					case "str":
 					case "string":
+					case "staticString":
 						if(typeof currentRoot[m.property] !== "string"){
 							currentRoot[m.property] = "";
 						}
@@ -217,6 +218,9 @@ AppState.prototype.fillState = function(data){
 					case "string":
 						context.addPathObserver(context._state, fullPath);
 					break;
+					case "staticString":
+						context.addPathObserver(context._state, fullPath, true);
+					break;
 					case "object":
 						context.addObserver(currentRoot, fullPath);
 					break;
@@ -243,7 +247,7 @@ AppState.prototype.addArrayObserver = function(obj, fullPath){
 				var property = path.split(".").slice(-1);
 				var changeObject = {uuid: AS.userId, objectId: AS.objectId, action: 'changed',
 									path: path.split("."), property: property, value: objectBeingObserved[splice.index],
-									type: "array", splice: splice};
+									type: "array", splice: splice, act:true};
 				AS.socket.emit('stateChange', changeObject);
 			});
 
@@ -251,21 +255,22 @@ AppState.prototype.addArrayObserver = function(obj, fullPath){
 	})(obj, this, fullPath));
 };
 
-AppState.prototype.addPathObserver = function(obj,fullPath){
+AppState.prototype.addPathObserver = function(obj,fullPath,ignoreOT){
+	var ignoreOperationalT = ignoreOT || false;
 	this.observerArray[fullPath] = new PathObserver(obj, ((fullPath.charAt(0) == ".") ? fullPath.substr(1) : fullPath));
-	this.observerArray[fullPath].open((function(objectBeingObserved, AS, path){
+	this.observerArray[fullPath].open((function(objectBeingObserved, AS, path, ignoreOT){
 		return function(newValue, oldValue) {
 			// respond to changes to the elements of arr.
 			var changeObject = {uuid: AS.userId, objectId: AS.objectId, action: 'changed',
-								path: path.split("."), property: path.split(".").slice(-1), value: newValue, type: (typeof newValue)};
-			if(typeof newValue === "string" && typeof oldValue === "string"){
+								path: path.split("."), property: path.split(".").slice(-1), value: newValue, type: (typeof newValue), act: true};
+			if(typeof newValue === "string" && typeof oldValue === "string" && !ignoreOT){
 				//use changes instead of entire string
 				var OTChanges = getOperations(oldValue, newValue);
 				changeObject.OTChanges = OTChanges;
 			}
 			AS.socket.emit('stateChange', changeObject);
 		};
-	})(obj, this, fullPath));
+	})(obj, this, fullPath, ignoreOperationalT));
 };
 
 AppState.prototype.addObserver = function(obj, fullPath){
@@ -291,7 +296,7 @@ AppState.prototype.addObserver = function(obj, fullPath){
 
 						AS.socket.emit('stateChange',
 								{uuid: AS.userId, objectId: AS.objectId, action: 'added',
-								path: path.split("."), property: property, value: added[property], type: 'object'});
+								path: path.split("."), property: property, value: added[property], type: 'object', act:true});
 
 
 					}
@@ -301,7 +306,7 @@ AppState.prototype.addObserver = function(obj, fullPath){
 
 						AS.socket.emit('stateChange',
 								{uuid: AS.userId, objectId: AS.objectId, action: 'removed',
-								path: path.split("."), property: property, type: "object"});
+								path: path.split("."), property: property, type: "object", act:true});
 					}
 
 
@@ -310,7 +315,7 @@ AppState.prototype.addObserver = function(obj, fullPath){
 						property = changedKeys[i];
 						// console.log("Changed", property, changed[property], getOldValueFn(property));
 						var changeObject = {uuid: AS.userId, objectId: AS.objectId, action: 'changed',
-								path: path.split("."), property: property, value: changed[property], type: (typeof changed[property])};
+								path: path.split("."), property: property, value: changed[property], type: (typeof changed[property]), act:true};
 						if(typeof changed[property] === "string"){
 							//use changes instead of entire string
 							var OTChanges = getOperations(getOldValueFn(property), changed[property]);

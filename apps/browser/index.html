@@ -37,11 +37,30 @@
 			if(this.state.text !== '') {
 				this.goToPage();
 			}
+
+			AS.on('load', function(data) {
+
+				// Check if there was anything before
+				if(this.state.text === '' && typeof AS._state.url !== 'undefined') {
+					this.setState({
+						text: AS._state.url,
+					});
+				} else if(this.state.text !== '') {
+					AS._state.url = this.state.text;
+				}
+
+			});
+
+			AS.on('syncedState', this.receiveUrl);
+		},
+
+		receiveUrl: function () {
+			this.setState({text: AS._state.url});
 		},
 
 		componentWillUnmount: function() {
-			var frame = this.refs.frame.getDOMNode();
-			frame.removeEventListener("DOMAttrModified", this.handleFrameLoad);
+			AS.off('load');
+			AS.off('syncedState');
 		},
 
 		render: function() {
@@ -69,6 +88,8 @@
 			this.setState({
 				text: e.target.value
 			});
+
+			AS._state.url = e.target.value;
 		},
 
 		handleBackClick: function(e) {
@@ -114,16 +135,6 @@
 		handleGoClick: function(e) {
 			e.preventDefault();
 			this.goToPage();
-		},
-
-		handleFrameLoad: function(e) {
-
-			if(e.attrName === "src") {
-				var frame = this.refs.frame.getDOMNode();
-				var url = frame.contentWindow.location.href;
-				this.state.history.push(url);
-				console.log("Pushing url". url);
-			}
 		}
 	});
 

@@ -46,8 +46,7 @@ var server = app.listen(3001, function () {
 // Create socket server
 var io = require('socket.io')(server);
 
-var clients = {};
-var currentUser;
+var currentUser = {};
 var socketIdToObject = {};
 var currentObjects = {};
 
@@ -94,6 +93,7 @@ backendSocket.on('sendInitialFromBackend', function(msg){
 backendSocket.on('notification', function(notification) {
 
   if(socketCanRun()){
+    console.log("FROM REDIS: Send notification", currentUser.socket.id);
     io.to(currentUser.socket.id).emit('notification', notification);
   }
   else{
@@ -174,9 +174,10 @@ io.on('connection', function(socket){
 	  if(data.uuid){
 		  backendSocket.emit('initRoom', {uuid: data.uuid});
 		  currentUser = {socket: socket, uuid: data.uuid};
+      console.log(currentUser.socket.id);
 	  }
 	  else{
-		  console.log("UUID didn't exist in the ");
+		  console.log('UUID did not exist in the ');
 	  }
   });
 

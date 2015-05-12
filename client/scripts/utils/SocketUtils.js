@@ -38,6 +38,8 @@ module.exports = {
 
     appServerSocket.on('notification', function(notification) {
 
+      console.log('Notification recived on client', notification);
+
       var app = {
         id: notification.appId
       };
@@ -50,30 +52,35 @@ module.exports = {
 
       //var uuid = SessionStore.getCurrentUser().uuid;
       var uuid = notification.userToShareId;
-      
+
+      console.log('Notification params', app, params.state.id, uuid);
+
       // Get full state object, as now we only have id
-      AppsApiUtils.getState(uuid, app).done(function(state) {
+      //AppsApiUtils.getState(uuid, app).done(function(state) {
+
+        console.log('Notification found state', app, params.state.id, uuid);
 
         // Insert state into the app object
         //app.state = state;
         //app.state.id = state._id;
-        params.state = state;
-        params.state.id = state._id;
+
+
+        //params.state = state;
+        //params.state.id = state._id;
 
         // Get name of the user
         SessionApiUtils.getProfile(notification.userId).done(function(user) {
 
-          console.log('Notification received', notification, state, user);
+          console.log('Notification found user id', notification, user);
 
           // Create notification about sharing
           NotificationActions.createTextNotification(
-            user.name + " shared something with you",
+            user.name + ' shared something with you',
             // Bind action to open the app to the notification
             AppsActionCreators.open.bind(AppsActionCreators, app, params)
           );
-
         });
-      });
+      //});
     });
   }
 };

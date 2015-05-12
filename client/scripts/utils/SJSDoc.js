@@ -30,22 +30,22 @@ function initSJS(docId, userId, editor){
 		editor.updateContents(doc.getSnapshot());
 
 
+		//************ end ***************//
+
+		doc.on('op', function (op, localContext) {
+			// console.log("DOC.on.op", op, localContext);
+			if (!localContext) {
+				editor.updateContents(op);
+			}
+		});
+
+		editor.on('text-change', function (delta, source) {
+			// console.log('text-change', delta, source);
+			doc.submitOp(delta);
+		});
 
 	});
 
-	//************ end ***************//
-
-	doc.on('op', function (op, localContext) {
-		console.log("DOC.on.op", op);
-		if (!localContext) {
-			editor.updateContents(op);
-		}
-	});
-
-	editor.on('text-change', function (delta, source) {
-		console.log('text-change', delta, source);
-		doc.submitOp(delta);
-	});
 }
 
 

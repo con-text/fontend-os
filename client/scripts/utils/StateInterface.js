@@ -19,23 +19,23 @@ function AppState(appId, userId, objectId, dependencies){
 			return function(data){
 				if(!data)
 					data = {};
-				console.log("Got",data,"in",AS);
+				console.log('Got',data,'in',AS);
 				AS.fillState(data);
-				AS.emit("load");
+				AS.emit('load');
 			};
 	})(this));
 
 
 	this.socket.on('connect', (function(AS){
-			// console.log("Got into closure",this);
+			// console.log('Got into closure',this);
 			return function(){
-				// console.log("Connected to socket", AS);
+				// console.log('Connected to socket', AS);
 				AS.socket.emit('getInitial', {uuid: AS.userId, objectId: AS.objectId});
 			};
 	})(this));
 
 	this.socket.on('pushedChange', (function(AS){
-		// console.log("Got into closure",this);
+		// console.log('Got into closure',this);
 
 		return function(data){
 			AS.dealWithPushed(data);
@@ -43,7 +43,7 @@ function AppState(appId, userId, objectId, dependencies){
 	})(this));
 
 	this.socket.on('syncedState', (function(AS){
-			// console.log("Got into closure",this);
+			// console.log('Got into closure',this);
 
 			return function(data){
 				AS.dealWithChange(data);
@@ -90,28 +90,28 @@ AppState.prototype.pushChange = function(eventName, data, act){
 };
 
 AppState.prototype.dealWithPushed = function(data){
-	console.log("got from pushed", data.eventName);
+	console.log('got from pushed', data.eventName);
 	this.emit(data.eventName, data);
 };
 
 AppState.prototype.dealWithChange = function(changeInfo){
 	switch(changeInfo.action){
-		case "added":
-		case "changed":
+		case 'added':
+		case 'changed':
 			switch(changeInfo.type){
-				case "array":
+				case 'array':
 					return this.parseArrayChange(this._state, changeInfo.path, changeInfo.splice, changeInfo.value);
 				break;
-				case "string":
+				case 'string':
 					return updateValueFromArray(this._state, changeInfo.path, changeInfo.property, changeInfo.value);
 				break;
-				case "number":
+				case 'number':
 				default:
 					return updateValueFromArray(this._state, changeInfo.path, changeInfo.property, changeInfo.value);
 				break;
 			}
 		break;
-		case "removed":
+		case 'removed':
 			return deleteValueFromArray(this._state, changeInfo.path, changeInfo.property);
 		break;
 	}
@@ -127,8 +127,8 @@ AppState.prototype.fillState = function(data){
 			(function(context){ return function(m){
 				//lets traverse the path to get to the right element
 				var currentRoot = context._state;
-				if(m.path !== ""){
-					m.path.split(".").forEach(function(p){
+				if(m.path !== ''){
+					m.path.split('.').forEach(function(p){
 						if(!currentRoot[p]){
 							currentRoot[p] = {};
 						}
@@ -136,25 +136,25 @@ AppState.prototype.fillState = function(data){
 					});
 				}
 				switch(m.type){
-					case "array":
+					case 'array':
 						if(currentRoot[m.property].constructor !== Array)
 							currentRoot[m.property] = [];
 					break;
-					case "number":
-					case "int":
-						if(typeof currentRoot[m.property] !== "number"){
+					case 'number':
+					case 'int':
+						if(typeof currentRoot[m.property] !== 'number'){
 							currentRoot[m.property] = 0;
 						}
 					break;
-					case "str":
-					case "string":
-					case "staticString":
-						if(typeof currentRoot[m.property] !== "string"){
-							currentRoot[m.property] = "";
+					case 'str':
+					case 'string':
+					case 'staticString':
+						if(typeof currentRoot[m.property] !== 'string'){
+							currentRoot[m.property] = '';
 						}
 					break;
-					case "object":
-						if(typeof currentRoot[m.property] !== "object"){
+					case 'object':
+						if(typeof currentRoot[m.property] !== 'object'){
 							currentRoot[m.property] = {};
 						}
 					break;

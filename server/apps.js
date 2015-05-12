@@ -164,19 +164,23 @@ module.exports = {
             }
           res.status(response.code).json(response.error);
         } else {
+
+          var notification = {
+            appId: appId,
+            userId: userId,
+            userToShareId: userToShare.uuid,
+            stateId: stateId
+          };
+
+          redis.publish('notif', JSON.stringify(notification));
+          console.log(' Published a notification to redis' +
+            JSON.stringify(notification));
+
           res.sendStatus(200);
         }
       });
 
-      var notification = {
-        appId: appId,
-        userId: userId,
-        userToShareId: userToShare.uuid,
-        stateId: stateId
-      };
 
-      redis.publish('notif', JSON.stringify(notification));
-      console.log("Published " +JSON.stringify(notification));
     });
   }
 };

@@ -102,7 +102,6 @@ var AppContainer = React.createClass({
   },
 
   _onKeyDown: function(e) {
-    console.log("Key down");
     if(e.keyCode === 27) {
       this.setState({fullscreen: false});
 

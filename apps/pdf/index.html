@@ -13,7 +13,7 @@
   var pdfDoc = null;
   var pageRendering = false;
   var pageNumPending = null;
-  var scale = 0.8;
+  var scale = 2;
   // PDF Viewer
   var Viewer = React.createClass({
 
@@ -22,7 +22,7 @@
     */
     componentDidMount: function() {
 
-      var url = 'http://localhost:3001/uploads/cloud.pdf';
+      var url = 'http://localhost:3001/uploads/Nimble-Business.pdf';
 
       var canvas = this.refs.canvas.getDOMNode();
       //canvas.style.width ='100%';
@@ -94,9 +94,9 @@
     },
 
     handleKeyDown: function(e) {
-      if(e.keyCode === 37) {
+      if(e.keyCode === 37 || e.keyCode === 40) {
         this.goBackwards();
-      } else if(e.keyCode === 39) {
+      } else if(e.keyCode === 39 || e.keyCode === 38) {
         this.goForward();
       }
     },

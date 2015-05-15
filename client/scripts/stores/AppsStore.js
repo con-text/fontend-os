@@ -101,8 +101,11 @@ var AppsStore = assign({}, EventEmitter.prototype, {
           }
 
           app.isOpened = true;
-          app.element = React.createElement('iframe', {src: url, className: "app-window",
-            allowFullScreen: ''});
+          app.element = React.createElement('iframe', {src: url,
+            className: 'app-window',
+            scrolling: 'no',
+            seamless: 'seamless'
+          });
 
           // Save that we opened app with new state
           AppsApiUtils.updateState(uuid, app, {isOpened: true}, function() {
@@ -126,7 +129,10 @@ var AppsStore = assign({}, EventEmitter.prototype, {
       }
 
       app.isOpened = true;
-      app.element = React.createElement('iframe', {src: url, className: "app-window",
+      app.element = React.createElement('iframe', {src: url,
+        className: "app-window",
+        scrolling: 'no',
+        seamless: 'seamless',
         allowFullScreen: ''});
       this.emitChange();
     }

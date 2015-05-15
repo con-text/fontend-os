@@ -88,9 +88,10 @@ var AppContainer = React.createClass({
     // Put other windows at level 1
     $(".appContainer").css('z-index', 1);
     $(this.refs.container.getDOMNode()).css('z-index', 2);
+    window.addEventListener("keydown", this._onKeyDown);
   },
-
   componentWillUnmount: function() {
+    window.removeEventListener("keydown", this._onKeyDown);
     SessionStore.removeChangeListener(this._onChange);
   },
 
@@ -100,10 +101,18 @@ var AppContainer = React.createClass({
     }
   },
 
+  _onKeyDown: function(e) {
+    if(e.keyCode === 27) {
+      this.setState({fullscreen: false});
+
+      var domNode = this.getDOMNode();
+      $(domNode).removeClass('fullscreen');
+    }
+  },
+
   render: function() {
 
     var dropState = this.getDropState(ItemTypes.USER);
-    var backgroundColor = 'white';
 
     var dragStateWindow = this.getDragState(ItemTypes.WINDOW);
 
@@ -134,13 +143,20 @@ var AppContainer = React.createClass({
       display: dropState.isDragging ? 'block' : 'none'
     };
 
+    var showTitleBar = !this.state.fullscreen;
+
+    var titleBarStyle = {
+      display: showTitleBar ? 'flex' : 'none'
+    };
+
     return <div ref="container" className="appContainer" style={divStyle}
       {...this.dropTargetFor(ItemTypes.USER)}
 
       {...this.dragSourceFor(ItemTypes.WINDOW)}
       onClick={this.props.bringToFront}
+      onKeyDown={this._onKeyDown}
       >
-      <div className="titleBar">
+      <div className="titleBar" style={titleBarStyle}>
         <AppTitleBar app={this.props.app} />
         <div className="buttons">
           <div role="button" onClick={this.handleFullScreen}>
@@ -189,7 +205,7 @@ var AppContainer = React.createClass({
     this.setState({fullscreen: !fullscreenState});
   },
 
-  handleTitleChange: function(e) {
+  handleTitleChange: function() {
     var newTitle = this.refs.titleInput.getDOMNode().value;
     console.log("titleChanged");
   }

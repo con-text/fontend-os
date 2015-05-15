@@ -111,74 +111,29 @@
 		* When component mounted, bind application state interefece events
 		*/
 		componentDidMount: function() {
-			var editor = this.refs.editor.getDOMNode();
+			// var editor = this.refs.editor.getDOMNode();
 
-			textEditor = new Quill(editor, {
-				formats: ['bold', 'italic', 'color', 'size', 'underline'],
-				theme: 'snow'
-			});
-
-			textEditor.addModule('toolbar', {
-				container: '#toolbar'
-			});
-
-			var multiCursor = textEditor.addModule('multi-cursor', {
-				timeout: 10000
-			});
-
-
-			// textEditor.on('text-change', function(delta, source) {
-			// 	if (source == 'api') {
-			// 		//console.log("An API call triggered this change.");
-			// 	}
-			// 	else if (source == 'user') {
-			// 		AS.pushChange('text-change', {uuid: AS.userId, objectId: AS.objectId, action: 'changed',
-			// 				path: ["operations"], property: "operations", value: delta.ops, type: "string", OTChanges: true});
-			// 		//console.log(delta.ops);
-			// 	}
+			// textEditor = new Quill(editor, {
+			// 	formats: ['bold', 'italic', 'color', 'size', 'underline'],
+			// 	theme: 'snow'
 			// });
 
-			textEditor.on('text-change', function(delta, source) {
-				if (source == 'api') {
-					if(delta.ops[1]){
-						// console.trace("API CALL", delta.ops[1]);
-						console.log("API", delta.ops[1]);
-					}
-				}
-				else if (source == 'user') {
-					if(delta.ops[1]){
-						// console.trace("USER", delta.ops[1]);
-						console.log("USER", delta.ops[1]);
-					}
-				}
-			});
+			// textEditor.addModule('toolbar', {
+			// 	container: '#toolbar'
+			// });
 
-			textEditor.on('selection-change', function(range) {
-				if (range) {
-					if (range.start == range.end) {
-						console.log('User cursor is on', range.start);
-					}
-					else{
-						var text = editor.getText(range.start, range.end);
-						console.log('User has highlighted', text);
-					}
-					AS.pushChange('multi-selection-change', {uuid: AS.userId, objectId: AS.objectId, location: range.start}, false)
-				}
-				else {
-					console.log('Cursor not in the editor');
-				}
-			});
-
-			// AS.on('text-change', receiveChangeData);
-			// AS.on('syncedState', receiveTextData);
-			// AS.on('load', receiveTextData);
-
-			initSJS(AS.objectId, AS.userId, textEditor);
+			// var multiCursor = textEditor.addModule('multi-cursor', {
+			// 	timeout: 10000
+			// });
 
 
-			AS.on('multi-selection-change', function(event){
-				multiCursor.setCursor(event.uuid, event.location, event.uuid, 'rgb(255, 0, 255)');
-			})
+
+			initSJS(AS.objectId);
+
+
+			// AS.on('multi-selection-change', function(event){
+			// 	multiCursor.setCursor(event.uuid, event.location, event.uuid, 'rgb(255, 0, 255)');
+			// })
 
 		},
 
@@ -193,39 +148,7 @@
 		*/
 		render: function() {
 			return (
-				<div id="main" className="main">
-
-					<div className="Grid">
-						<div id="toolbar" className="Grid-cell toolbar">
-
-							<span className="ql-format-group">
-								<select title="Size" className="ql-size ql-picker">
-									<option value="small">Small</option>
-									<option value="normal" defaultValue>Normal</option>
-									<option value="large">Large</option>
-									<option value="huge">Huge</option>
-								</select>
-							</span>
-
-							<span className="ql-format-group">
-								<span className="ql-format-button ql-bold"></span>
-								<span className="ql-format-separator"></span>
-								<span className="ql-format-button ql-italic"></span>
-								<span className="ql-format-separator"></span>
-								<span className="ql-format-button ql-underline"></span>
-							</span>
-						</div>
-					</div>
-
-					<div className="Grid u-textCenter">
-						<div id="editor" className="editor-container Grid-cell">
-							<div className="editor" ref="editor"></div>
-						</div>
-						<div className="collab-container Grid-call u-1of3">
-							<Collaborators />
-						</div>
-					</div>
-				</div>
+				<textarea id='pad'></textarea>
 			);
 		}
 	});

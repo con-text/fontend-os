@@ -16,6 +16,7 @@ function findAppByName(appName) {
 
   var apps = AppsStore.getApps();
   var app;
+  console.log("APPS = ", apps);
 
   // Find browser
   for(var id in apps) {
@@ -185,6 +186,7 @@ module.exports = {
     checkForAppWithStates("Calculator", deferred, query, params);
     checkForAppWithStates("Documents", deferred, query, params);
     checkForAppWithStates("PDF", deferred, query, params);
+    checkForAppWithStates("SimpleD", deferred, query, params);
 
     // Wait for all deferred calls to finish
     $.when.apply($, deferred).done(function() {

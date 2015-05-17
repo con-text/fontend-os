@@ -1,5 +1,13 @@
+var keyMirror = require('keymirror');
+
 // TODO: Should use HTTPS?
 var baseUrl = 'http://localhost:5000';
+
+
+var RequestType = keyMirror({
+  User: null,
+  File: null
+});
 
 function tryAuthenticate(user, options) {
 
@@ -25,12 +33,27 @@ function tryAuthenticate(user, options) {
 }
 
 
-function sendToBuzzer(user) {
+function sendToBuzzer(user, requestType) {
 
-  $.get(baseUrl + '/users/' + user.uuid + '/buzz')
-    .done(function() {
+  if(!user || !user.uuid) {
+    throw 'User ID not defined';
+  }
 
-    });
+  // Are we authenticating or requesting files?
+  var requestCode = 0;
+
+  if(requestType === RequestType.File) {
+    requestCode = 1;
+  }
+
+  $.ajax({
+    url: baseUrl + '/users/' + user.uuid + '/buzz',
+    data: {code: requestCode},
+    type: 'GET',
+    success: function() {
+      console.log('SessionApiUtils: Buzz sent to the wearbale');
+    }
+  });
 }
 
 module.exports = {
@@ -39,8 +62,11 @@ module.exports = {
     tryAuthenticate(user, options);
   },
 
-  sendToWearble: function(user) {
-    sendToBuzzer(user);
+  sendToWearble: function(user, requestType) {
+
+    // Default message to wearble is user auth
+    requestType = requestType || RequestType.User;
+    sendToBuzzer(user, requestType);
   },
 
   destroySession: function(callback) {
@@ -53,5 +79,7 @@ module.exports = {
 
   getProfile: function(userId) {
     return $.getJSON(baseUrl + '/users/' + userId + '/profile');
-  }
+  },
+
+  RequestType: RequestType
 };

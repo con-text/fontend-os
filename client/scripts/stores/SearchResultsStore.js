@@ -62,6 +62,7 @@ SearchResultsStore.dispatchToken = AppDispatcher.register(function(payload) {
 
     case ActionTypes.SEARCH:
       var query = action.query;
+      var userId = action.userId;
       SearchResultsStore._results = [];
       SearchResultsStore._isSearching = true;
       SearchResultsStore.emitChange();

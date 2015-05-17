@@ -1,8 +1,10 @@
 var SessionActionCreators        = require('../actions/SessionActionCreators');
+var DesktopActionCreators         = require('../actions/DesktopActionCreators');
 var AvailableUsersActionCreators = require('../actions/AvailableUsersActionCreators');
 var AppsActionCreators           = require('../actions/AppsActionCreators');
 var NotificationActions          = require('../actions/NotificationActionCreators');
 // Initialize socket.io
+
 var socket = io();
 var appServerSocket = io('http://localhost:3001');
 var SessionStore = require('../stores/SessionStore');
@@ -26,6 +28,11 @@ module.exports = {
         appServerSocket.emit('initRoom', {
           uuid: data.userId
         });
+
+      } else if (data.result === 'fileSuccess') {
+
+        // File sharing success, all good
+        DesktopActionCreators.toggleSearch(data.userId);
 
       } else if (data.result === 'fail') {
         SessionActionCreators.finishAuthFailed(data.userId);

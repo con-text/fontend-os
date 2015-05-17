@@ -11,10 +11,20 @@ module.exports = {
     });
   },
 
-  getStates: function(appId, callback) {
-    $.get(baseUrl + '/apps/' +appId)
-    .done(function(states){
-      callback(states);
+  getStates: function(appId, userId, callback) {
+
+    if(typeof userId === 'function') {
+      callback = userId;
+      userId = null;
+    }
+
+    $.ajax({
+      url: baseUrl + '/apps/' +appId,
+      data: {userId: userId},
+      method: 'GET',
+      success: function(states) {
+        callback(states);
+      }
     });
   },
 

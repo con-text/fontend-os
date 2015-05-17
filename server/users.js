@@ -52,10 +52,15 @@ module.exports.routeHandler = function(app, socketWithFrontend, bleSocket) {
   */
   app.get('/users/:userId/buzz', function(req, res) {
 
+    var code = req.query.code;
+
+    console.log('Buzz code: ' + req.query.code, req.query);
+
     // Write data to the socket
     bleSocket.sendMessage({
       request: 'buzz',
       data: req.params.userId,
+      code: code,
       sid: req.sessionID
     });
 

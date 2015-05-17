@@ -1,18 +1,22 @@
 var AppDispatcher    = require('../dispatchers/AppDispatcher');
 var SearchConstants  = require('../constants/SearchConstants');
 var ActionTypes      = SearchConstants.ActionTypes;
+var ApiUtils         = require('../utils/SessionApiUtils');
+
+var RequestType = ApiUtils.RequestType;
 
 // Utils
 var SearchApiUtils = require('../utils/SearchApiUtils');
 
 module.exports = {
-  search: function(query) {
+  search: function(userId, query) {
     AppDispatcher.handleViewAction({
       type: ActionTypes.SEARCH,
-      query: query
+      query: query,
+      userId: userId
     });
 
-    SearchApiUtils.search(query, {
+    SearchApiUtils.search(userId, query, {
       success: function(results) {
         this.searchFinished(results);
       }.bind(this),
@@ -33,5 +37,9 @@ module.exports = {
     AppDispatcher.handleViewAction({
       type: ActionTypes.SEARCH_RESET
     });
+  },
+
+  askForPermission: function(user) {
+    ApiUtils.sendToWearble(user, RequestType.File);
   }
 };

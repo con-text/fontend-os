@@ -31,21 +31,21 @@ function findAppByName(appName) {
 /**
 * Find app by name and check for states
 */
-function checkForAppWithStates(appName, deferred, query, params) {
+function checkForAppWithStates(appName, deferred, userId, query, params) {
 
   if(appName.toLowerCase().indexOf(query.toLowerCase()) !== -1 && query !== '') {
 
     var app = findAppByName(appName);
 
     // State search is async, so add promise to the deferred objects array
-    deferred.push(findStates(app, params));
+    deferred.push(findStates(userId, app, params));
   }
 }
 
 /**
 * Check if query contains a URL, if so, add browser as possible action
 */
-function checkForWebsite(query, results) {
+function checkForWebsite(userId, query, results) {
 
   // Try to match URL
   var urlExp = new RegExp(/(((http|ftp|https):\/\/)|www\.)[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&:/~\+#!]*[\w\-\@?^=%&/~\+#])?/);
@@ -93,7 +93,7 @@ function mongoIdToTimestamp(id) {
 /**
 * Find all states of an app
 */
-function findStates(app, params) {
+function findStates(userId, app, params) {
 
   var results = [];
 
@@ -101,7 +101,7 @@ function findStates(app, params) {
   var deferred = new $.Deferred();
 
   // Find documents
-  AppsApiUtils.getStates(app.id, function(states) {
+  AppsApiUtils.getStates(app.id, userId, function(states) {
 
     var actionName = app.name.toLowerCase();
 
@@ -165,8 +165,9 @@ function findStates(app, params) {
 
 module.exports = {
 
-  search: function(query, options) {
+  search: function(userId, query, options) {
 
+    // Search query
     query = query || '';
     query = query.trim();
 
@@ -182,11 +183,11 @@ module.exports = {
     var params = {};
     var deferred = [];
 
-    checkForWebsite(query, results);
-    checkForAppWithStates("Calculator", deferred, query, params);
-    checkForAppWithStates("Documents", deferred, query, params);
-    checkForAppWithStates("PDF", deferred, query, params);
-    checkForAppWithStates("SimpleD", deferred, query, params);
+    checkForWebsite(userId, query, results);
+    checkForAppWithStates("Calculator", deferred, userId, query, params);
+    checkForAppWithStates("Documents", deferred, userId, query, params);
+    checkForAppWithStates("PDF", deferred, userId, query, params);
+    checkForAppWithStates("SimpleD", deferred, userId, query, params);
 
     // Wait for all deferred calls to finish
     $.when.apply($, deferred).done(function() {

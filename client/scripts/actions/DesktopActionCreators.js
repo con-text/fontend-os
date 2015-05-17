@@ -6,9 +6,10 @@ var ActionTypes      = DesktopConstants.ActionTypes;
 var SearchActions = require('./SearchActionCreators');
 
 module.exports = {
-  toggleSearch: function() {
+  toggleSearch: function(uuid) {
     AppDispatcher.handleViewAction({
-      type: ActionTypes.TOGGLE_SEARCH
+      type: ActionTypes.TOGGLE_SEARCH,
+      uuid: uuid
     });
   },
 

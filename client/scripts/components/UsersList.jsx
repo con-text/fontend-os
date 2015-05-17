@@ -66,6 +66,7 @@ var UsersList = React.createClass({
           disabled={this.props.disabled || user.state === "stale"}
           showNames={this.props.showNames}
           loggedIn={isActive}
+          sessionActive={active}
           isLoggingIn={isLoggingIn}
            />
       );

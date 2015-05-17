@@ -8,8 +8,15 @@ var assign = require('object-assign');
 
 var _ = require('lodash');
 var CHANGE_EVENT = 'change';
+var userId;
+
+var SessionStore = require('../stores/SessionStore');
 
 var DesktopStore = assign({}, EventEmitter.prototype, {
+
+  getUser: function() {
+      return userId;
+  },
 
   init: function() {
     this._isSearchVisible = false;
@@ -56,6 +63,7 @@ DesktopStore.dispatchToken = AppDispatcher.register(function(payload) {
   switch(action.type) {
 
     case ActionTypes.TOGGLE_SEARCH:
+      userId = action.uuid || SessionStore.getCurrentUser().uuid;
       DesktopStore.toggleSearchVisible();
       break;
     case ActionTypes.CLOSE_SEARCH:

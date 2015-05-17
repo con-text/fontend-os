@@ -93,6 +93,7 @@ var Desktop = React.createClass({
 
   getStateFromStores: function() {
     return {
+      searchUser: DesktopStore.getUser(),
       showSearch: DesktopStore.isSearchVisible(),
       currentApps: AppsStore.getOpened(),
     };
@@ -141,13 +142,17 @@ var Desktop = React.createClass({
 
 
     return (
-      <div className="container" onClickCapture={this.handleClick}>
+      <div className='container' onClickCapture={this.handleClick}>
         <NotificationArea />
         <Sidebar />
-        <div className="desktop" >
+        <div className='desktop'>
           <Clock />
-          <SearchBox boxVisible={this.state.showSearch} />
-          <div id="dragOverlay"
+
+          <SearchBox
+            boxVisible={this.state.showSearch}
+            user={this.state.searchUser} />
+
+          <div id='dragOverlay'
             {...this.dropTargetFor(ItemTypes.WINDOW)}/>
           {containers}
         </div>
@@ -164,12 +169,11 @@ var Desktop = React.createClass({
 
   windowDragOver: function(appContainer) {
     //$(appContainer.getDOMNode()).css('z-index', -1);
-
   },
 
   windowDragFinished: function(appContainer) {
     $('#dragOverlay').css('z-index', -1);
-    $(".appContainer").css('z-index', 1);
+    $('.appContainer').css('z-index', 1);
     $(appContainer.getDOMNode()).css('z-index', 2);
   },
 

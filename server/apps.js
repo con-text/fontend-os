@@ -100,7 +100,14 @@ module.exports = {
     app.get('/apps/:id', authenticated, function(req, res) {
 
       var appId = req.params.id;
+
       var userId = req.session.user.id;
+
+      if(req.query.userId) {
+        console.log('Search for user ' + req.query.userId);
+        userId = req.query.userId;
+      }
+
       unirest.get(config.baseApiUrl + '/users/' + userId + '/apps/' + appId)
         .end(function(response) {
 

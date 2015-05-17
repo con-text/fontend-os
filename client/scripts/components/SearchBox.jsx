@@ -25,7 +25,7 @@ var SearchResultItem = React.createClass({
     result: React.PropTypes.object.isRequired,
     mouseEnter: React.PropTypes.func,
     mouseLeave: React.PropTypes.func,
-    handleClick: React.PropTypes.func.isRequired
+    handleClick: React.PropTypes.func.isRequired,
   },
 
   getDefaultProps: function() {
@@ -101,7 +101,8 @@ var SearchResultItem = React.createClass({
 var SearchBox = React.createClass({
 
   propTypes: {
-    boxVisible: React.PropTypes.bool.isRequired
+    boxVisible: React.PropTypes.bool.isRequired,
+    user: React.PropTypes.string.isRequired
   },
 
   getDefaultProps: function() {
@@ -128,7 +129,7 @@ var SearchBox = React.createClass({
     SearchResultsStore.addChangeListener(this._onChange);
 
     if(this.state.searchTerm.trim() !== '') {
-      SearchActions.search(this.state.searchTerm);
+      SearchActions.search(this.props.user, this.state.searchTerm);
     }
   },
 
@@ -262,7 +263,7 @@ var SearchBox = React.createClass({
     this.setState({searchTerm: newValue});
 
     if(newValue !== oldValue) {
-      SearchActions.search(newValue);
+      SearchActions.search(this.props.user, newValue);
     }
   },
 

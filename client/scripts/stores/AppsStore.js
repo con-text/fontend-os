@@ -58,7 +58,7 @@ var AppsStore = assign({}, EventEmitter.prototype, {
       }.bind(this));
   },
 
-  open: function (id, params) {
+  open: function (id, params, userId) {
 
     // Try close app with that id first
     this.close(id);
@@ -66,7 +66,7 @@ var AppsStore = assign({}, EventEmitter.prototype, {
     // Create a window from a DOM element
     var app = AppsStore.getApp(id);
 
-    var uuid = SessionStore.getCurrentUser().uuid;
+    var uuid = userId || SessionStore.getCurrentUser().uuid;
 
     params = params || {};
     // What is my current state?
@@ -219,7 +219,7 @@ AppDispatcher.register(function(payload) {
 
   switch(action.type) {
     case ActionTypes.LAUNCH_APP:
-      AppsStore.open(action.app.id, action.params, action.store);
+      AppsStore.open(action.app.id, action.params, action.userId);
       AppsStore.emitChange();
 
       // Close search box if opened

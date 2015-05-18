@@ -9,15 +9,17 @@ module.exports = {
   /** Action opening a window with the app
   * specified by app id
   */
-  open: function(app, param) {
+  open: function(app, param, userId) {
+
+    var uuid = userId || SessionStore.getCurrentUser().uuid;
 
     AppDispatcher.handleViewAction({
       type: ActionTypes.LAUNCH_APP,
       app: app,
-      params: param
+      params: param,
+      userId: uuid
     });
 
-    var uuid = SessionStore.getCurrentUser().uuid;
     AppsApiUtils.updateState(uuid, app, {isOpened: true}, function() {
       //...
     });

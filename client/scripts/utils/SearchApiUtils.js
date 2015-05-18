@@ -1,10 +1,8 @@
-var baseUrl = 'http://localhost:5000';
 var _ = require('lodash');
 
 // Apps Store
 var AppsStore = require('../stores/AppsStore');
 var AppsActionCreator = require('../actions/AppsActionCreators');
-var StateInterface = require('./StateInterface');
 var AppsApiUtils = require('./AppsApiUtils');
 
 /**
@@ -16,7 +14,6 @@ function findAppByName(appName) {
 
   var apps = AppsStore.getApps();
   var app;
-  console.log("APPS = ", apps);
 
   // Find browser
   for(var id in apps) {
@@ -26,57 +23,6 @@ function findAppByName(appName) {
   }
 
   return app;
-}
-
-/**
-* Find app by name and check for states
-*/
-function checkForAppWithStates(appName, deferred, userId, query, params) {
-
-  if(appName.toLowerCase().indexOf(query.toLowerCase()) !== -1 && query !== '') {
-
-    var app = findAppByName(appName);
-
-    // State search is async, so add promise to the deferred objects array
-    deferred.push(findStates(userId, app, params));
-  }
-}
-
-/**
-* Check if query contains a URL, if so, add browser as possible action
-*/
-function checkForWebsite(userId, query, results) {
-
-  // Try to match URL
-  var urlExp = new RegExp(/(((http|ftp|https):\/\/)|www\.)[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&:/~\+#!]*[\w\-\@?^=%&/~\+#])?/);
-  if(urlExp.test(query)) {
-
-    app = findAppByName("Browser");
-
-    // Pass argument to the app
-    var browserParams = {};
-
-    browserParams.args = {
-      query: query
-    };
-
-    // Don't create object for website
-    browserParams.useDefault = true;
-
-    // Push to result array
-    results.push({
-      value: "Go to: " + query,
-      type: "Website",
-      app: {
-        id: app.id,
-        state: {}
-      },
-      action: AppsActionCreator.open.bind(
-        AppsActionCreator,
-        app,
-        browserParams)
-    });
-  }
 }
 
 /**
@@ -106,15 +52,15 @@ function findStates(userId, app, params) {
     var actionName = app.name.toLowerCase();
 
     // Special cases:
-    if(actionName === "documents") {
-      actionName = "document";
-    } else if(actionName === "calculator") {
-      actionName = "calculator";
+    if(actionName === 'documents') {
+      actionName = 'document';
+    } else if(actionName === 'calculator') {
+      actionName = 'calculator';
     }
 
     results.push({
-      value: "Open new " + actionName,
-      type: "App",
+      value: 'Open new ' + actionName,
+      type: 'App',
       app: {
         id: app.id,
         state: {}
@@ -122,7 +68,8 @@ function findStates(userId, app, params) {
       action: AppsActionCreator.open.bind(
         AppsActionCreator,
         app,
-        params)
+        params,
+        userId)
     });
 
     states.forEach(function(state) {
@@ -134,15 +81,15 @@ function findStates(userId, app, params) {
       var timestamp = mongoIdToTimestamp(state._id);
       var stateName = '';
       if(state.title) {
-        stateName = " - " + state.title;
+        stateName = ' - ' + state.title;
       } else {
         // Extract timestamp
-        stateName = " from " + timestamp.toDateString();
+        stateName = ' from ' + timestamp.toDateString();
       }
 
       results.push({
-        value: "\t\tOpen " + actionName + stateName,
-        type: "App",
+        value: '\t\tOpen ' + actionName + stateName,
+        type: 'App',
         timestamp: timestamp,
         // App parameters
         app: {
@@ -152,7 +99,8 @@ function findStates(userId, app, params) {
         action: AppsActionCreator.open.bind(
           AppsActionCreator,
           app,
-          appParams)
+          appParams,
+          userId)
       });
     });
 
@@ -161,6 +109,60 @@ function findStates(userId, app, params) {
   });
 
   return deferred;
+}
+
+/**
+* Find app by name and check for states
+*/
+function checkForAppWithStates(appName, deferred, userId, query, params) {
+
+  if(appName.toLowerCase().indexOf(query.toLowerCase()) !== -1 &&
+    query !== '') {
+
+    var app = findAppByName(appName);
+
+    // State search is async, so add promise to the deferred objects array
+    deferred.push(findStates(userId, app, params));
+  }
+}
+
+/**
+* Check if query contains a URL, if so, add browser as possible action
+*/
+function checkForWebsite(userId, query, results) {
+
+  // Try to match URL
+  var urlExp = new RegExp(/(((http|ftp|https):\/\/)|www\.)[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&:/~\+#!]*[\w\-\@?^=%&/~\+#])?/);
+
+  if(urlExp.test(query)) {
+
+    var app = findAppByName('Browser');
+
+    // Pass argument to the app
+    var browserParams = {};
+
+    browserParams.args = {
+      query: query
+    };
+
+    // Don't create object for website
+    browserParams.useDefault = true;
+
+    // Push to result array
+    results.push({
+      value: 'Go to: ' + query,
+      type: 'Website',
+      app: {
+        id: app.id,
+        state: {}
+      },
+      action: AppsActionCreator.open.bind(
+        AppsActionCreator,
+        app,
+        browserParams,
+        userId)
+    });
+  }
 }
 
 module.exports = {
@@ -173,21 +175,17 @@ module.exports = {
 
     options = options || {};
     var successCallback = options.success;
-    var errorCallback   = options.error;
     var results = [];
-    var app;
-    var apps = AppsStore.getApps();
-    var id;
 
     // Params for app
     var params = {};
     var deferred = [];
 
     checkForWebsite(userId, query, results);
-    checkForAppWithStates("Calculator", deferred, userId, query, params);
-    checkForAppWithStates("Documents", deferred, userId, query, params);
-    checkForAppWithStates("PDF", deferred, userId, query, params);
-    checkForAppWithStates("SimpleD", deferred, userId, query, params);
+    checkForAppWithStates('Calculator', deferred, userId, query, params);
+    checkForAppWithStates('Documents', deferred, userId, query, params);
+    checkForAppWithStates('PDF', deferred, userId, query, params);
+    checkForAppWithStates('SimpleD', deferred, userId, query, params);
 
     // Wait for all deferred calls to finish
     $.when.apply($, deferred).done(function() {

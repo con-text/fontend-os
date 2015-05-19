@@ -2,30 +2,39 @@ var rest = require('restler');
 var config = require('./../config/config');
 var authenticated = require('./authenticated');
 
+var profileCache = {};
+
 function getUserProfile(userId, cbk, errCbk) {
 
-  // Base API
-  var baseUrl = config.baseApiUrl;
-  // Call the service
-  rest.get(baseUrl + '/users/' + userId)
-  .on('success', function(data, response) {
-    cbk(data);
+  if(userId in profileCache) {
+    cbk(profileCache[userId]);
+  } else {
 
-  })
-  .on('error', function(err, response) {
+    // Base API
+    var baseUrl = config.baseApiUrl;
 
-    console.error("Fail", err, response);
+    // Call the service
+    rest
+    .get(baseUrl + '/users/' + userId)
+    .on('success', function(data) {
+      profileCache[userId] = data;
+      cbk(data);
+    })
+    .on('error', function(err, response) {
 
-    var statusCode = response ? resposne.statusCode : 500;
+      console.error('Fail', err, response);
 
-    if(errCbk) {
-      errCbk({
-        code: statusCode,
-        message: 'Failed to retreive user profile'
-      });
-    }
+      var statusCode = response ? response.statusCode : 500;
 
-  });
+      if(errCbk) {
+        errCbk({
+          code: statusCode,
+          message: 'Failed to retreive user profile'
+        });
+      }
+
+    });
+  }
 }
 
 module.exports.getUserProfile = getUserProfile;

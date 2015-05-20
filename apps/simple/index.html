@@ -148,7 +148,18 @@
 		*/
 		render: function() {
 			return (
-				<textarea id='pad'></textarea>
+				<div id="main" className="main">
+
+
+					<div className="Grid u-textCenter">
+						<div id="editor" className="editor-container Grid-cell">
+							<textarea className="editor" id="pad"></textarea>
+						</div>
+						<div className="collab-container Grid-call u-1of3">
+							<Collaborators />
+						</div>
+					</div>
+				</div>
 			);
 		}
 	});

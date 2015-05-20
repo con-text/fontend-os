@@ -26,6 +26,50 @@ if (process.platform === "darwin") {
   gui.Window.get().menu = mb;
 }
 
+/*
+// Show the dev tools on Cmd+Shift+1
+var option = {
+  key : "Ctrl+Shift+5",
+  active : function() {
+    gui.Window.get().showDevTools();
+  },
+  failed : function(msg) {
+    console.log(msg);
+  }
+};
+
+var shortcut = new gui.Shortcut(option);
+gui.App.registerGlobalHotKey(shortcut);
+
+// Toggle kiosk mode on Cmd+Shift+2
+option = {
+  key : "Ctrl+Shift+6",
+  active : function() {
+    gui.Window.get().enterKioskMode();
+  },
+  failed : function(msg) {
+    console.log(msg);
+  }
+}
+
+shortcut = new gui.Shortcut(option);
+gui.App.registerGlobalHotKey(shortcut);
+
+option = {
+  key : "Ctrl+Shift+7",
+  active : function() {
+    gui.Window.get().exitKioskMode();
+  },
+  failed : function(msg) {
+    console.log(msg);
+  }
+}
+
+shortcut = new gui.Shortcut(option);
+gui.App.registerGlobalHotKey(shortcut);
+
+*/
+
 function configAndStartServer(config) {
 
 	var params = config || {};

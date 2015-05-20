@@ -242,7 +242,7 @@ module.exports = {
 			.send(req.body)
 			.end(function(response) {
 
-				if(response.error){
+				if(response.error && response.code){
 					res.status(response.code).send(response.error);
 					return;
 				}

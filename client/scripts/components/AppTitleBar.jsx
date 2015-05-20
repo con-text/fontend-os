@@ -24,12 +24,25 @@ var AppTitleBar = React.createClass({
   },
 
   render: function () {
-    return (
-      <div className="title">
-        {this.props.app.name}
-        {this.renderDocumenTitle()}
-      </div>
-    );
+    if(this.props.app.name.toLowerCase() === 'browser') {
+      return (
+        <div className="title">
+          {this.props.app.name}
+          {this.renderInnerTitle()}
+        </div>
+      );
+    } else {
+      return (
+        <div className="title">
+          {this.props.app.name}
+          {this.renderDocumenTitle()}
+        </div>
+      );
+    }
+  },
+
+  renderInnerTitle: function() {
+    return <span className='documentTitle'>{this.props.title}</span>;
   },
 
   enterEdit: function(e) {

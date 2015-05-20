@@ -74,7 +74,7 @@ gulp.task('browserify:client',  function() {
 	var opts = {
 		insertGlobals: true,
 		extensions: ['.js', '.jsx'],
-		debug: false
+		debug: true
 	};
 
 	var entry = path.join(__dirname, 'client/scripts/main.js');

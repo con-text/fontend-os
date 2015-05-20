@@ -26,13 +26,24 @@ var itemDropTarget = {
     var app = component.props.app;
     var user = item;
 
-    AppsApiUtils.addCollaborator(app, user, function() {
-      NotificationActionCreators
-        .createTextNotification("You are sharing this with " + user.name);
-    });
+    if(app.name.toLowerCase() === 'browser') {
+      console.log("Sharing browser");
+    } else {
+      AppsApiUtils.addCollaborator(app, user, function() {
+        NotificationActionCreators
+          .createTextNotification("You are sharing this with " + user.name);
+      });
+    }
   },
 
   canDrop: function(component, item) {
+
+    var app = component.props.app;
+    if(app.name.toLowerCase() === 'browser') {
+      return false;
+    }
+
+    // Small hack, disable sharing for the browser:
     return !_.isEqual(item, component.state.currentUser);
   }
 };
@@ -78,26 +89,50 @@ var AppContainer = React.createClass({
     return {
       currentUser: SessionStore.getCurrentUser(),
       hidden: false,
-      fullscreen: false
+      fullscreen: false,
+      browserTitle: ''
     };
   },
 
   componentDidMount: function() {
+    var appContainerNode = this.refs.container.getDOMNode();
     SessionStore.addChangeListener(this._onChange);
 
     // Put other windows at level 1
-    $(".appContainer").css('z-index', 1);
-    $(this.refs.container.getDOMNode()).css('z-index', 2);
-    window.addEventListener("keydown", this._onKeyDown);
+    $('.appContainer').css('z-index', 1);
+    $(appContainerNode).css('z-index', 2);
+    window.addEventListener('keydown', this._onKeyDown);
+
   },
+
   componentWillUnmount: function() {
-    window.removeEventListener("keydown", this._onKeyDown);
+    window.removeEventListener('keydown', this._onKeyDown);
     SessionStore.removeChangeListener(this._onChange);
   },
 
   _onChange: function() {
     if(this.isMounted()) {
       this.setState({currentUser: SessionStore.getCurrentUser()});
+    }
+
+    if(this.refs.container) {
+
+      var appContainerNode = this.refs.container.getDOMNode();
+      if(appContainerNode && this.props.app.name.toLowerCase() === 'browser') {
+        var iframe = appContainerNode.getElementsByTagName('iframe')[0];
+
+        if(iframe) {
+          var innerIframe = iframe.contentDocument.
+            getElementsByTagName('iframe')[0];
+
+          if(innerIframe) {
+            var title = innerIframe.head.getElementsByTagName('title')[0]
+              .innerText;
+
+            this.setState({browserTitle: title});
+          }
+        }
+      }
     }
   },
 
@@ -143,13 +178,18 @@ var AppContainer = React.createClass({
       display: dropState.isDragging ? 'block' : 'none'
     };
 
-    var showTitleBar = !this.state.fullscreen;
+    var showTitleBar = true;
 
     var titleBarStyle = {
       display: showTitleBar ? 'flex' : 'none'
     };
 
-    return <div ref="container" className="appContainer" style={divStyle}
+    var className = 'appContainer';
+    if(this.props.app.name.toLowerCase() === 'browser') {
+      className += ' browser';
+    }
+
+    return <div ref="container" className={className} style={divStyle}
       {...this.dropTargetFor(ItemTypes.USER)}
 
       {...this.dragSourceFor(ItemTypes.WINDOW)}
@@ -157,7 +197,7 @@ var AppContainer = React.createClass({
       onKeyDown={this._onKeyDown}
       >
       <div className="titleBar" style={titleBarStyle}>
-        <AppTitleBar app={this.props.app} />
+        <AppTitleBar app={this.props.app} title={this.state.browserTitle}/>
         <div className="buttons">
           <div role="button" onClick={this.handleFullScreen}>
             <i className="fa fa-arrows-alt btn"></i>

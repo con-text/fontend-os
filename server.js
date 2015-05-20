@@ -15,6 +15,17 @@ var redisConfig = require('./config/redis');
 var bleSocket;
 var sessionStore = new session.MemoryStore();
 
+// Add support for cmd+a, cmd+c, cmd+v
+var gui = require('nw.gui');
+
+if (process.platform === "darwin") {
+  var mb = new gui.Menu({type: 'menubar'});
+  mb.createMacBuiltin('Nimble', {
+		hideWindow: true
+  });
+  gui.Window.get().menu = mb;
+}
+
 function configAndStartServer(config) {
 
 	var params = config || {};
@@ -81,7 +92,7 @@ function startServer(server, port) {
 		// Close app server
 		killChildProcess();
 	});
-	
+
 	process.on('SIGTERM', killChildProcess);
 	process.on('uncaughtException', killChildProcess);
 }

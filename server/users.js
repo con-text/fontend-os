@@ -85,8 +85,13 @@ module.exports.routeHandler = function(app, socketWithFrontend, bleSocket) {
     req.session.user = null;
 
     socketWithFrontend.emit('loginStatus', {
-      result: "logout",
+      result: 'logout',
       userId: null
+    });
+
+    // Write data to the socket
+    bleSocket.sendMessage({
+      request: 'logout'
     });
 
     res.sendStatus(200);

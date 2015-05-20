@@ -26,13 +26,24 @@ var itemDropTarget = {
     var app = component.props.app;
     var user = item;
 
-    AppsApiUtils.addCollaborator(app, user, function() {
-      NotificationActionCreators
-        .createTextNotification("You are sharing this with " + user.name);
-    });
+    if(app.name.toLowerCase() === 'browser') {
+      console.log("Sharing browser");
+    } else {
+      AppsApiUtils.addCollaborator(app, user, function() {
+        NotificationActionCreators
+          .createTextNotification("You are sharing this with " + user.name);
+      });
+    }
   },
 
   canDrop: function(component, item) {
+
+    var app = component.props.app;
+    if(app.name.toLowerCase() === 'browser') {
+      return false;
+    }
+
+    // Small hack, disable sharing for the browser:
     return !_.isEqual(item, component.state.currentUser);
   }
 };

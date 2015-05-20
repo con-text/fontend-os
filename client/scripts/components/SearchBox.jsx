@@ -102,7 +102,7 @@ var SearchBox = React.createClass({
 
   propTypes: {
     boxVisible: React.PropTypes.bool.isRequired,
-    user: React.PropTypes.string.isRequired
+    user: React.PropTypes.string
   },
 
   getDefaultProps: function() {

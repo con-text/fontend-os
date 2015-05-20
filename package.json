@@ -87,7 +87,7 @@
     "fullscreen": true,
     "width": 800,
     "height": 640,
-    "toolbar": false,
+    "toolbar": true,
     "frame": true
   },
   "node-remote": "*localhost:5000",

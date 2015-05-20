@@ -132,7 +132,7 @@ function checkForAppWithStates(appName, deferred, userId, query, params) {
 function checkForWebsite(userId, query, results) {
 
   // Try to match URL
-  var urlExp = new RegExp(/(((http|ftp|https):\/\/)|www\.)[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&:/~\+#!]*[\w\-\@?^=%&/~\+#])?/);
+  var urlExp = new RegExp(/(((http|ftp|https):\/\/)|www\.)?[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&:/~\+#!]*[\w\-\@?^=%&/~\+#])?/);
 
   if(urlExp.test(query)) {
 

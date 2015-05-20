@@ -154,7 +154,7 @@ var AppContainer = React.createClass({
       display: dropState.isDragging ? 'block' : 'none'
     };
 
-    var showTitleBar = !this.state.fullscreen;
+    var showTitleBar = true;
 
     var titleBarStyle = {
       display: showTitleBar ? 'flex' : 'none'

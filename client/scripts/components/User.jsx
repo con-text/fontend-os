@@ -24,7 +24,8 @@ var User = React.createClass({
     showNames: React.PropTypes.bool,
     user: React.PropTypes.object.isRequired,
     loggedIn: React.PropTypes.bool,
-    sessionActive: React.PropTypes.bool.isRequired
+    sessionActive: React.PropTypes.bool,
+    isFileSharing: React.PropTypes.bool
   },
 
   statics: {
@@ -46,7 +47,8 @@ var User = React.createClass({
     return {
       disabled: false,
       showNames: true,
-      loggedIn: false
+      loggedIn: false,
+      isFileSharing: false
     };
   },
 
@@ -99,6 +101,12 @@ var User = React.createClass({
       title = this.props.user.name;
     }
 
+    var userLoaderEl = '';
+    var isFileShareRequested = this.props.isFileSharing;
+    if(isFileShareRequested) {
+      userLoaderEl = <div className='loader overpic' />;
+    }
+
     var styling = '';
     var loader = '';
 
@@ -118,6 +126,7 @@ var User = React.createClass({
         onDoubleClick={this.requestShare}
         {...this.dragSourceFor(ItemTypes.USER)}>
         {pictureEl}
+        {userLoaderEl}
         {nameEl}
         {loader}
       </div>

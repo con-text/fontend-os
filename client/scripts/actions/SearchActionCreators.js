@@ -41,5 +41,16 @@ module.exports = {
 
   askForPermission: function(user) {
     ApiUtils.sendToWearble(user, RequestType.File);
+
+    AppDispatcher.handleViewAction({
+      user: user,
+      type: ActionTypes.FILE_SEARCH
+    });
+  },
+
+  fileSearchFinished: function() {
+    AppDispatcher.handleServerAction({
+      type: ActionTypes.FILE_SEARCH_FINISHED
+    });
   }
 };

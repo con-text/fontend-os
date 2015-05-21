@@ -9,6 +9,9 @@ var DesktopActions = require('../actions/DesktopActionCreators');
 var SearchActions = require('../actions/SearchActionCreators');
 var SearchResultsStore = require('../stores/SearchResultsStore');
 var AppsActions = require('../actions/AppsActionCreators');
+var SessionApiUtils = require('../utils/SessionApiUtils');
+
+var SessionStore = require('../stores/SessionStore');
 
 // Escape key code
 var ESC_KEY_CODE = 27;
@@ -118,6 +121,7 @@ var SearchBox = React.createClass({
       searchResults: SearchResultsStore.getResults(),
       hasResults: SearchResultsStore.hasResults(),
       selected: null,
+      profile: null
     };
   },
 
@@ -131,6 +135,13 @@ var SearchBox = React.createClass({
     if(this.state.searchTerm.trim() !== '') {
       SearchActions.search(this.props.user, this.state.searchTerm);
     }
+
+
+    if(this.props.user) {
+      SessionApiUtils.getProfile(this.props.user).done(function(user) {
+        this.setState({profile: user});
+      }.bind(this));
+    }
   },
 
   componentWillUnmount: function() {
@@ -140,6 +151,12 @@ var SearchBox = React.createClass({
   componentWillReceiveProps: function(nextProps) {
     if(nextProps.boxVisible) {
       this.focusInput();
+    }
+
+    if(nextProps.user) {
+      SessionApiUtils.getProfile(nextProps.user).done(function(user) {
+        this.setState({profile: user});
+      }.bind(this));
     }
   },
 
@@ -184,17 +201,25 @@ var SearchBox = React.createClass({
       return '';
     }
 
-    return  <div className="loading"></div>;
+    return  <div className='loading'></div>;
   },
 
   renderForm: function() {
+
+    var placeholder = 'Nimble Search';
+    var currentUser = SessionStore.getCurrentUser();
+
+    if(this.state.profile && this.props.user !== currentUser.uuid) {
+      placeholder = 'Searching ' + this.state.profile.name + '\'s files';
+    }
+
     return (
       <form className="searchBar" onSubmit={this.handleSubmit}>
         <i className="fa fa-search fa-lg largerFind"></i>
         <input ref="searchInput" type="search" value={this.state.searchTerm}
           onChange={this.handleTermChange}
           onKeyDown={this.handleKeyDown}
-          placeholder="Context Search" />
+          placeholder={placeholder} />
       </form>
     );
   },

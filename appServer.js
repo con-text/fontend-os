@@ -32,6 +32,14 @@ app.get('/apps/:appName/:asset', function(req, res) {
   res.sendFile(fileName, { root: './dist/apps/'+ appName + '/' });
 });
 
+// Extension of the function above, allow for serving of files in folders
+app.get('/apps/:appName/:folder/:asset', function(req, res) {
+  var appName = req.params.appName;
+  var fileName = req.params.asset;
+
+  res.sendFile(fileName, { root: './dist/apps/'+ appName + '/' + req.params.folder + '/' });
+});
+
 app.use('/uploads', express.static(__dirname + "/dist/uploads"));
 
 var server = app.listen(3001, function () {

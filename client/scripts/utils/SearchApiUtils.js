@@ -186,6 +186,7 @@ module.exports = {
     checkForAppWithStates('Documents', deferred, userId, query, params);
     checkForAppWithStates('PDF', deferred, userId, query, params);
     checkForAppWithStates('SimpleD', deferred, userId, query, params);
+    checkForAppWithStates('2048', deferred, userId, query, params);
 
     // Wait for all deferred calls to finish
     $.when.apply($, deferred).done(function() {

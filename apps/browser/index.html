@@ -128,6 +128,13 @@
 			var url = this.state.text.trim();
 			var frame = this.refs.frame.getDOMNode();
 
+			// If it's not a URL then search google
+			var urlExp = new RegExp(/(((http|ftp|https):\/\/)|www\.)?[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&:/~\+#!]*[\w\-\@?^=%&/~\+#])?/);
+
+		  if(!urlExp.test(url)) {
+				url = "http://google.co.uk/search?q=" + url;
+			}
+
 			if(url !== '' &&
 				!(_.startsWith(url, "http://") || _.startsWith(url, "https://"))) {
 				url = "http://" + url;

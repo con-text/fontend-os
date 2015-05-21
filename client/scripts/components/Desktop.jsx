@@ -29,13 +29,13 @@ var Clock = React.createClass({
   },
 
   componentDidMount: function() {
-    this.timeOut = setTimeout(function() {
+    this.timeOut = setInterval(function() {
       this.setState({currentTime: this.getTime()});
     }.bind(this), 500);
   },
 
   componentWillUnmount: function() {
-    clearTimeout(this.timeOut);
+    clearInterval(this.timeOut);
   },
 
   render: function() {

@@ -26,7 +26,7 @@ if (process.platform === "darwin") {
   gui.Window.get().menu = mb;
 }
 
-/*
+
 // Show the dev tools on Cmd+Shift+1
 var option = {
   key : "Ctrl+Shift+5",
@@ -67,8 +67,6 @@ option = {
 
 shortcut = new gui.Shortcut(option);
 gui.App.registerGlobalHotKey(shortcut);
-
-*/
 
 function configAndStartServer(config) {
 

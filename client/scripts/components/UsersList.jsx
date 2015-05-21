@@ -1,9 +1,10 @@
 var React = require('react');
-var TimeoutTransitionGroup = require('react-components/js/timeout-transition-group');
+var TimeoutTransitionGroup =
+  require('react-components/js/timeout-transition-group');
 
 // Stores
-var AvailableUsersStore = require('../stores/AvailableUsersStore');
-var SessionStore        = require('../stores/SessionStore');
+var SessionStore = require('../stores/SessionStore');
+var FileShareStore = require('../stores/FileShareStore');
 
 // Components
 var User = require('./User');
@@ -26,6 +27,24 @@ var UsersList = React.createClass({
       showNames: true,
       disabled: false
     };
+  },
+
+  getInitialState: function() {
+    return {
+      loggingUserId: FileShareStore.getUserRequest()
+    };
+  },
+
+  componentDidMount: function() {
+    FileShareStore.addChangeListener(this._onChange);
+  },
+
+  componentWillUnmount: function() {
+    FileShareStore.removeChangeListener(this._onChange);
+  },
+
+  _onChange: function() {
+    this.setState({loggingUserId: FileShareStore.getUserRequest()});
   },
 
   render: function() {
@@ -63,11 +82,12 @@ var UsersList = React.createClass({
       return (
         <User key={i}
           user={user}
-          disabled={this.props.disabled || user.state === "stale"}
+          disabled={this.props.disabled || user.state === 'stale'}
           showNames={this.props.showNames}
           loggedIn={isActive}
           sessionActive={active}
           isLoggingIn={isLoggingIn}
+          isFileSharing={this.state.loggingUserId === user.uuid}
            />
       );
 
@@ -83,13 +103,13 @@ var UsersList = React.createClass({
 
     if(isEmpty) {
       return (
-        <div id="login-list" className={"empty " + cssClass}>
+        <div id="login-list" className={'empty ' + cssClass}>
           <p className="text-center grey">Finding devices in the area.</p>
         </div>
       );
     } else {
       return(
-        <div id="login-list" className={cssClass}>
+        <div id='login-list' className={cssClass}>
           <div className={userListClass}>
             <TimeoutTransitionGroup enterTimeout={2000}
               leaveTimeout={2000}

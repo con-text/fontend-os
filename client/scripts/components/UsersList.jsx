@@ -31,20 +31,26 @@ var UsersList = React.createClass({
 
   getInitialState: function() {
     return {
-      loggingUserId: FileShareStore.getUserRequest()
+      loggingUserId: FileShareStore.getUserRequest(),
+      currentUser: SessionStore.getCurrentUser()
     };
   },
 
   componentDidMount: function() {
     FileShareStore.addChangeListener(this._onChange);
+    SessionStore.addChangeListener(this._onChange);
   },
 
   componentWillUnmount: function() {
     FileShareStore.removeChangeListener(this._onChange);
+    SessionStore.removeChangeListener(this._onChange);
   },
 
   _onChange: function() {
-    this.setState({loggingUserId: FileShareStore.getUserRequest()});
+    this.setState({
+      loggingUserId: FileShareStore.getUserRequest(),
+      currentUser: SessionStore.getCurrentUser()
+    });
   },
 
   render: function() {
@@ -53,7 +59,7 @@ var UsersList = React.createClass({
     var sortedUsers = _.sortBy(this.props.users, 'name');
 
     // Make sure that active user is first
-    var active = SessionStore.getCurrentUser();
+    var active = this.state.currentUser;
     if(active)
     {
       var index = _.findIndex(sortedUsers, active);

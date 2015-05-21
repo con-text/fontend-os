@@ -77,7 +77,7 @@
 						<button disabled={!this.canGoBack()} onClick={this.handleBackClick}><i className="fa fa-chevron-left fa-lg"></i></button>
 						<button disabled={true} onClick={this.handleBackClick}><i className="fa fa-chevron-right fa-lg"></i></button>
 
-						<input value={this.state.text} onChange={this.handleChange} onKeyDown={this.handleKeyDown} />
+						<input placeholder="Search or enter a website name" value={this.state.text} onChange={this.handleChange} onKeyDown={this.handleKeyDown} />
 						<button onClick={this.handleGoClick}><i className="fa fa-arrow-right fa-lg"></i></button>
 					</div>
 
@@ -127,6 +127,13 @@
 
 			var url = this.state.text.trim();
 			var frame = this.refs.frame.getDOMNode();
+
+			// If it's not a URL then search google
+			var urlExp = new RegExp(/(((http|ftp|https):\/\/)|www\.)?[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&:/~\+#!]*[\w\-\@?^=%&/~\+#])?/);
+
+		  if(!urlExp.test(url)) {
+				url = "http://google.co.uk/search?q=" + url;
+			}
 
 			if(url !== '' &&
 				!(_.startsWith(url, "http://") || _.startsWith(url, "https://"))) {

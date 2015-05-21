@@ -309,6 +309,10 @@ var SearchBox = React.createClass({
       isSearching: SearchResultsStore.isSearching(),
       searchResults: SearchResultsStore.getResults(),
       hasResults: SearchResultsStore.hasResults()
+    }, function() {
+      if (this.state.hasResults) {
+        this.setState({selected: _.first(this.state.searchResults)});
+      }
     });
   }
 });

@@ -12,7 +12,16 @@ function AppState(appId, userId, objectId, dependencies){
 	this.observerArray = {};
 	this.collaborators;
 	this.online;
-
+	// this.interval = setInterval(function(){
+	// 	console.log("Not got data yet, lets try again");
+	// 	if(this._state === undefined){
+	// 		this.socket.emit('getInitial', {uuid: AS.userId, objectId: AS.objectId});
+	// 	}
+	// 	else{
+	// 		//state has been recieved
+	// 		clearInterval(this.interval);
+	// 	}
+	// }.bind(this), 2000)
 
 	this.socket.on('fillData', (function(AS){
 			// console.log("Got into closure",this);
@@ -21,7 +30,6 @@ function AppState(appId, userId, objectId, dependencies){
 					data = {};
 				console.log('Got',data,'in',AS);
 				AS.fillState(data);
-				AS.emit('load');
 			};
 	})(this));
 
@@ -229,7 +237,7 @@ AppState.prototype.fillState = function(data){
 		};
 	}(this)));
 	// console.log("GOT",data);
-
+	this.emit('load');
 	// this.addWatcher();
 };
 

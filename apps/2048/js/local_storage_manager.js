@@ -2,13 +2,13 @@ window.fakeStorage = {
   _data: {},
 
   setItem: function (id, val) {
-    console.log("setting item");
+    // console.log("setting item");
     return AS._state[id] = String(val);
     // return this._data[id] = String(val);
   },
 
   getItem: function (id) {
-    console.log("Getting item", AS._state[id]);
+    // console.log("Getting item", AS._state[id]);
     return AS._state[id];
     // return this._data.hasOwnProperty(id) ? this._data[id] : undefined;
   },

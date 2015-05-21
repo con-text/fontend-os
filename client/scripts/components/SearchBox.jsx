@@ -43,7 +43,8 @@ var SearchResultItem = React.createClass({
     var divClass = "search-item" +
       (this.props.selected === result ? ' active' : '');
 
-    var icon = (result.value.indexOf("Go to:") > -1) ? 'fa fa-globe fileIcon' : 'fa fa-file-text-o fileIcon';
+    var icon = (result.value.indexOf("Go to:") > -1
+             || result.value.indexOf("Search Google for:") > -1) ? 'fa fa-globe fileIcon' : 'fa fa-file-text-o fileIcon';
 
     return <li
       onMouseEnter={this.handleMouseEnter}

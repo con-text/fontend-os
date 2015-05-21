@@ -165,6 +165,41 @@ function checkForWebsite(userId, query, results) {
   }
 }
 
+function generateWebsiteSearchLink(userId, query)
+{
+
+  var url = "http://google.co.uk/search?q=" + query;
+
+  var app = findAppByName('Browser');
+
+  // Pass argument to the app
+  var browserParams = {};
+
+  browserParams.args = {
+    query: query
+  };
+
+  // Don't create object for website
+  browserParams.useDefault = true;
+
+  // Return the app
+  var appDictionary = {
+    value: 'Search Google for: ' + query,
+    type: 'Website',
+    app: {
+      id: app.id,
+      state: {}
+    },
+    action: AppsActionCreator.open.bind(
+      AppsActionCreator,
+      app,
+      browserParams,
+      userId)
+  };
+
+  return appDictionary;
+}
+
 module.exports = {
 
   search: function(userId, query, options) {
@@ -197,8 +232,12 @@ module.exports = {
 
       // Each individual result is an array too, so join them
       args.forEach(function(resultArr) {
-        results = results.concat(resultArr);
+        results = results.concat(resultArr)
       });
+
+      if (results.length === 0 && query.length > 0) {
+        results.push(generateWebsiteSearchLink(userId, query));
+      }
 
       successCallback(results, query);
     });

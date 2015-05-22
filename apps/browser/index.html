@@ -74,9 +74,6 @@
 			return (
 				<div className="browser">
 					<div className="address-bar">
-						<button disabled={!this.canGoBack()} onClick={this.handleBackClick}><i className="fa fa-chevron-left fa-lg"></i></button>
-						<button disabled={true} onClick={this.handleBackClick}><i className="fa fa-chevron-right fa-lg"></i></button>
-
 						<input placeholder="Search or enter a website name" value={this.state.text} onChange={this.handleChange} onKeyDown={this.handleKeyDown} />
 						<button onClick={this.handleGoClick}><i className="fa fa-arrow-right fa-lg"></i></button>
 					</div>

@@ -1,7 +1,10 @@
 var AppDispatcher = require('../dispatchers/AppDispatcher');
 
 var NotificationConstants = require('../constants/NotificationConstants');
-var ActionTypes = NotificationConstants.ActionTypes;
+var NotificationActionTypes = NotificationConstants.ActionTypes;
+
+var SessionConstants = require('../constants/SessionConstants');
+var SessionActionTypes = SessionConstants.ActionTypes;
 
 var EventEmitter = require('events').EventEmitter;
 var assign = require('object-assign');
@@ -46,16 +49,20 @@ NotifactionStore.dispatchToken = AppDispatcher.register(function(payload) {
   var action = payload.action;
   switch(action.type) {
 
-    case ActionTypes.SHOW:
+    case NotificationActionTypes.SHOW:
       NotifactionStore.notifications.push(action.notification);
       NotifactionStore.emitChange();
       break;
-    case ActionTypes.DISMISS:
+    case NotificationActionTypes.DISMISS:
       var notificationId = action.id;
-      var removed = _.remove(NotifactionStore.notifications, function(notif) {
+      _.remove(NotifactionStore.notifications, function(notif) {
           return notif.id === notificationId;
       });
-      console.log("Dismissed", removed);
+
+      NotifactionStore.emitChange();
+      break;
+    case SessionActionTypes.DESTROY_SESSION:
+      NotifactionStore.init();
       NotifactionStore.emitChange();
       break;
     default:

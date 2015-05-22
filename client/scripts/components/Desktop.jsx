@@ -186,8 +186,10 @@ var Desktop = React.createClass({
   },
 
   handleClick: function(e) {
-    if(e.target.id !== "searchBox" &&
-      $(e.target).parents("#searchBox").size() === 0) {
+    if((e.target.id !== 'searchBox' && e.target.id !== 'search-toggle' &&
+      $(e.target).parents('#searchBox').size() === 0 &&
+      $(e.target).parents('#search-toggle').size() === 0)) {
+        
       DesktopActionCreators.closeSearch();
     }
   },

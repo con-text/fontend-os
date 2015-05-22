@@ -7,6 +7,7 @@ module.exports = {
     CLOSE_APPS: null,
     CLOSE_APP_WITH_STATE: null,
     DELETE_STATE: null,
-    DELETE_STATE_COMPLETED: null
+    DELETE_STATE_COMPLETED: null,
+    UPDATE_TITLE: null
   })
 };

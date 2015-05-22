@@ -62,8 +62,15 @@ module.exports = {
 
   setTitle: function(app, newTitle) {
     var uuid = SessionStore.getCurrentUser().uuid;
-    AppsApiUtils.updateState(uuid, app, {title: newTitle}, function() {
-      //...
+    AppsApiUtils.updateState(uuid, app, {title: newTitle}, function(state) {
+
+      console.log('Updated state: ', state);
+
+      AppDispatcher.handleViewAction({
+        type: ActionTypes.UPDATE_TITLE,
+        app: app,
+        state: state
+      });
     });
   },
 

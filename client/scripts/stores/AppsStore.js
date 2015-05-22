@@ -174,6 +174,11 @@ var AppsStore = assign({}, EventEmitter.prototype, {
     app.state.y = position.y;
   },
 
+  updateState: function(app, state) {
+    app = this.getApp(app.id);
+    app.state = state;
+  },
+
   deserializeState: function() {
 
     this.getApps().forEach(function(app) {
@@ -258,6 +263,10 @@ AppDispatcher.register(function(payload) {
     case SessionActionTypes.DESTROY_SESSION:
       AppsStore.onSessionDestroyed();
       AppsStore.emitChange();
+      break;
+
+    case ActionTypes.UPDATE_TITLE:
+      AppsStore.updateState(action.app, action.state);
       break;
 
     default:

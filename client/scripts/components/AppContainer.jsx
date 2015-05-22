@@ -243,11 +243,6 @@ var AppContainer = React.createClass({
     $(domNode).toggleClass('fullscreen');
     var fullscreenState = this.state.fullscreen;
     this.setState({fullscreen: !fullscreenState});
-  },
-
-  handleTitleChange: function() {
-    var newTitle = this.refs.titleInput.getDOMNode().value;
-    console.log("titleChanged");
   }
 });
 

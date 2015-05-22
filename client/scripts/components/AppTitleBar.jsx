@@ -41,11 +41,24 @@ var AppTitleBar = React.createClass({
     }
   },
 
+  componentWillReceiveProps: function(nextProps) {
+
+    var title = '';
+
+    if(nextProps.app.state) {
+      title = nextProps.app.state.title || title;
+    }
+
+    this.setState({
+      title: title
+    });
+  },
+
   renderInnerTitle: function() {
     return <span className='documentTitle'>{this.props.title}</span>;
   },
 
-  enterEdit: function(e) {
+  enterEdit: function() {
     this.setState({isEditing: true});
   },
 

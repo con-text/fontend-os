@@ -16,7 +16,7 @@ var bleSocket;
 var sessionStore = new session.MemoryStore();
 
 // Add support for cmd+a, cmd+c, cmd+v
-var gui = require('nw.gui');
+/*var gui = require('nw.gui');
 
 if (process.platform === "darwin") {
   var mb = new gui.Menu({type: 'menubar'});
@@ -66,7 +66,7 @@ option = {
 }
 
 shortcut = new gui.Shortcut(option);
-gui.App.registerGlobalHotKey(shortcut);
+gui.App.registerGlobalHotKey(shortcut);*/
 
 function configAndStartServer(config) {
 

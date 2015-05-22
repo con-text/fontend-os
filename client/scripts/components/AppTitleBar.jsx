@@ -45,13 +45,16 @@ var AppTitleBar = React.createClass({
 
     var title = '';
 
+    // State attached?
     if(nextProps.app.state) {
-      title = nextProps.app.state.title || title;
-    }
 
-    this.setState({
-      title: title
-    });
+      // Update title
+      title = nextProps.app.state.title || title;
+
+      this.setState({
+        title: title
+      });
+    }
   },
 
   renderInnerTitle: function() {
@@ -84,7 +87,6 @@ var AppTitleBar = React.createClass({
   handleTitleChange: function(e) {
     var input = e.target.value;
     this.setState({title: input});
-
   },
 
   commitChange: function() {

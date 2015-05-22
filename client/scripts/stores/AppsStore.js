@@ -177,6 +177,7 @@ var AppsStore = assign({}, EventEmitter.prototype, {
   updateState: function(app, state) {
     app = this.getApp(app.id);
     app.state = state;
+    app.state.id = state._id;
   },
 
   deserializeState: function() {

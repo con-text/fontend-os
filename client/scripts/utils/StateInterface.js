@@ -12,16 +12,6 @@ function AppState(appId, userId, objectId, dependencies){
 	this.observerArray = {};
 	this.collaborators;
 	this.online;
-	// this.interval = setInterval(function(){
-	// 	console.log("Not got data yet, lets try again");
-	// 	if(this._state === undefined){
-	// 		this.socket.emit('getInitial', {uuid: AS.userId, objectId: AS.objectId});
-	// 	}
-	// 	else{
-	// 		//state has been recieved
-	// 		clearInterval(this.interval);
-	// 	}
-	// }.bind(this), 2000)
 
 	this.socket.on('fillData', (function(AS){
 			// console.log("Got into closure",this);
@@ -72,6 +62,18 @@ function AppState(appId, userId, objectId, dependencies){
 		}
 	}.bind(this));
 	// this.socket.on('disconnect', function(){});
+}
+
+AppState.prototype.tryUntilSet = function(){
+	console.log("trying until set");
+	if(this.eventEmitter === undefined || this.eventEmitter._events === undefined || this.eventEmitter._events.load === undefined){
+		//delay for 500s
+		setTimeout(this.tryUntilSet.bind(this), 500);
+	}
+	else{
+		console.log("Sending load event");
+		this.emit('load');
+	}	
 }
 
 AppState.prototype.addWatcher = function(){
@@ -236,9 +238,9 @@ AppState.prototype.fillState = function(data){
 
 		};
 	}(this)));
-	// console.log("GOT",data);
-	this.emit('load');
-	// this.addWatcher();
+
+	this.tryUntilSet();
+
 };
 
 AppState.prototype.addArrayObserver = function(obj, fullPath){

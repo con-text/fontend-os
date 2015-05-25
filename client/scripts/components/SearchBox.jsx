@@ -156,7 +156,9 @@ var SearchBox = React.createClass({
 
     if(nextProps.user) {
       SessionApiUtils.getProfile(nextProps.user).done(function(user) {
-        this.setState({profile: user});
+        if (this.isMounted()) {
+          this.setState({profile: user});
+        }
       }.bind(this));
     }
   },

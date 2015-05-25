@@ -24,7 +24,7 @@ var User = React.createClass({
     showNames: React.PropTypes.bool,
     user: React.PropTypes.object.isRequired,
     loggedIn: React.PropTypes.bool,
-    sessionActive: React.PropTypes.bool,
+    sessionActive: React.PropTypes.object,
     isFileSharing: React.PropTypes.bool
   },
 

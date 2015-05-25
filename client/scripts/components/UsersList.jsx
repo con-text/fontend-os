@@ -47,10 +47,12 @@ var UsersList = React.createClass({
   },
 
   _onChange: function() {
-    this.setState({
-      loggingUserId: FileShareStore.getUserRequest(),
-      currentUser: SessionStore.getCurrentUser()
-    });
+    if (this.isMounted()) {
+      this.setState({
+        loggingUserId: FileShareStore.getUserRequest(),
+        currentUser: SessionStore.getCurrentUser()
+      });
+    }
   },
 
   render: function() {
